@@ -44,9 +44,15 @@ def test_high_cardinality_empty_df():
 
 def test_detect_outliers(sample_df):
     profiler = DataProfiler(sample_df)
-    outliers = profiler.detect_outliers()
+    outliers = profiler.detect_outliers(method="iqr")
     assert outliers["value"] >= 1
     assert "constant_col" not in outliers
+
+
+def test_detect_outliers_mad(sample_df):
+    profiler = DataProfiler(sample_df)
+    outliers = profiler.detect_outliers(method="mad")
+    assert outliers["value"] >= 1
 
 
 def test_duplicate_columns(sample_df):
@@ -70,6 +76,25 @@ def test_date_like_columns():
     assert "created_at" in profiler.detect_date_like_columns()
 
 
+def test_mixed_type_columns_and_negative_detection():
+    df = pd.DataFrame({
+        "mixed": [1, "2", 3],
+        "age": [10, -1, 12],
+        "name": ["a", "b", "c"],
+    })
+    profiler = DataProfiler(df)
+    assert "mixed" in profiler.detect_mixed_type_columns()
+    assert "age" in profiler.detect_negative_in_nonnegative_columns()
+
+
+def test_distribution_shape_and_memory_usage(sample_df):
+    profiler = DataProfiler(sample_df)
+    distribution = profiler.distribution_shape()
+    memory = profiler.memory_usage()
+    assert "value" in distribution
+    assert "value" in memory
+
+
 def test_generate_insights_mentions_outliers(sample_df):
     profiler = DataProfiler(sample_df)
     insights = profiler.generate_insights()
@@ -82,7 +107,9 @@ def test_run_full_profile_keys(sample_df):
     expected_keys = {
         "shape", "column_types", "missing_values", "missing_percentage",
         "duplicates", "unique_counts", "constant_columns",
-        "high_cardinality_columns", "outliers", "duplicate_columns",
-        "correlated_columns", "date_like_columns", "insights",
+        "high_cardinality_columns", "outliers_iqr", "outliers_mad",
+        "distribution_shape", "duplicate_columns", "correlated_columns",
+        "date_like_columns", "mixed_type_columns", "text_column_stats",
+        "memory_usage_kb", "negative_in_nonnegative_columns", "insights",
     }
     assert expected_keys.issubset(report.keys())
