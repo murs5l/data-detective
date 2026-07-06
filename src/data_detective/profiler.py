@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from functools import cached_property
 
 
 class DataProfiler:
@@ -12,6 +13,29 @@ class DataProfiler:
         self.df = df
 
     # -------------------------
+    # CACHED INTERNAL STATE (computed once, reused everywhere)
+    # -------------------------
+
+    @cached_property
+    def _numeric_df(self):
+        return self.df.select_dtypes(include=[np.number])
+
+    @cached_property
+    def _nunique(self):
+        return self.df.nunique()
+
+    @cached_property
+    def _null_counts(self):
+        return self.df.isnull().sum()
+
+    @cached_property
+    def _quantiles(self):
+        """Q1/Q3 for all numeric columns computed once."""
+        if self._numeric_df.empty:
+            return pd.DataFrame()
+        return self._numeric_df.quantile([0.25, 0.75])
+
+    # -------------------------
     # BASIC STRUCTURE
     # -------------------------
 
@@ -22,63 +46,84 @@ class DataProfiler:
         return self.df.dtypes.astype(str).to_dict()
 
     def missing_values(self):
-        return self.df.isnull().sum().to_dict()
+        return self._null_counts.to_dict()
 
     def missing_percentage(self):
-        return (self.df.isnull().mean() * 100).round(2).to_dict()
+        if len(self.df) == 0:
+            return {}
+        return (self._null_counts / len(self.df) * 100).round(2).to_dict()
 
     def duplicate_rows(self):
         return int(self.df.duplicated().sum())
 
     def unique_counts(self):
-        return self.df.nunique().to_dict()
+        return self._nunique.to_dict()
 
     # -------------------------
     # INTELLIGENCE LAYER
     # -------------------------
 
     def detect_constant_columns(self):
-        return [
-            col for col in self.df.columns
-            if self.df[col].nunique() <= 1
-        ]
+        return self._nunique[self._nunique <= 1].index.tolist()
 
     def detect_high_cardinality(self, threshold=0.9, min_unique=10):
         if len(self.df) == 0:
             return []
 
-        result = []
+        ratio = self._nunique / len(self.df)
+        mask = (ratio >= threshold) & (self._nunique >= min_unique)
+        return self._nunique[mask].index.tolist()
 
-        for col in self.df.columns:
-            unique_count = self.df[col].nunique()
-            unique_ratio = unique_count / len(self.df)
-
-            if unique_ratio >= threshold and unique_count >= min_unique:
-                result.append(col)
-
-        return result
-
-    def detect_outliers(self):
+    def detect_outliers(self, method="iqr"):
         """
-        IQR-based outlier detection for numeric columns.
+        method: "iqr" (default) or "mad" (robust z-score, better for skewed data)
         Returns count per column.
         """
         outliers = {}
 
-        numeric_df = self.df.select_dtypes(include=[np.number])
+        if self._numeric_df.empty:
+            return outliers
 
-        for col in numeric_df.columns:
-            q1 = numeric_df[col].quantile(0.25)
-            q3 = numeric_df[col].quantile(0.75)
-            iqr = q3 - q1
+        for col in self._numeric_df.columns:
+            series = self._numeric_df[col].dropna()
+            if series.empty:
+                outliers[col] = 0
+                continue
 
-            lower = q1 - 1.5 * iqr
-            upper = q3 + 1.5 * iqr
+            if method == "mad":
+                median = series.median()
+                mad = (series - median).abs().median()
+                if mad == 0:
+                    outliers[col] = 0
+                    continue
+                modified_z = 0.6745 * (series - median) / mad
+                count = (modified_z.abs() > 3.5).sum()
+            else:
+                q1, q3 = self._quantiles[col]
+                iqr = q3 - q1
+                lower = q1 - 1.5 * iqr
+                upper = q3 + 1.5 * iqr
+                count = ((series < lower) | (series > upper)).sum()
 
-            count = ((numeric_df[col] < lower) | (numeric_df[col] > upper)).sum()
             outliers[col] = int(count)
 
         return outliers
+
+    def distribution_shape(self):
+        """
+        Skewness and kurtosis for numeric columns — flags columns where
+        the mean/IQR-based stats alone would be misleading.
+        """
+        shape = {}
+        for col in self._numeric_df.columns:
+            series = self._numeric_df[col].dropna()
+            if len(series) < 3:
+                continue
+            shape[col] = {
+                "skewness": round(float(series.skew()), 3),
+                "kurtosis": round(float(series.kurt()), 3),
+            }
+        return shape
 
     def detect_duplicate_columns(self):
         """
@@ -100,11 +145,10 @@ class DataProfiler:
         """
         Finds pairs of numeric columns with correlation above threshold.
         """
-        numeric_df = self.df.select_dtypes(include=[np.number])
-        if numeric_df.shape[1] < 2:
+        if self._numeric_df.shape[1] < 2:
             return []
 
-        corr_matrix = numeric_df.corr().abs()
+        corr_matrix = self._numeric_df.corr().abs()
         pairs = []
         cols = corr_matrix.columns
 
@@ -137,7 +181,61 @@ class DataProfiler:
 
         return candidates
 
-    def generate_insights(self):
+    def memory_usage(self):
+        """Per-column memory footprint in KB — useful before profiling huge files."""
+        usage = self.df.memory_usage(deep=True)
+        return {
+            col: round(usage[col] / 1024, 2)
+            for col in self.df.columns
+        }
+
+    def detect_mixed_type_columns(self):
+        """
+        Flags object columns holding more than one Python type
+        (e.g. a column with both strings and ints) — a common
+        source of silent bugs downstream.
+        """
+        mixed = []
+        for col in self.df.select_dtypes(include=["object"]).columns:
+            types_seen = self.df[col].dropna().map(type).nunique()
+            if types_seen > 1:
+                mixed.append(col)
+        return mixed
+
+    def text_column_stats(self):
+        """
+        Length stats for string columns — surfaces empty/whitespace-only
+        values and unusually long/short entries.
+        """
+        stats = {}
+        for col in self.df.select_dtypes(include=["object"]).columns:
+            series = self.df[col].dropna().astype(str)
+            if series.empty:
+                continue
+            lengths = series.str.len()
+            blank_count = series.str.strip().eq("").sum()
+            stats[col] = {
+                "avg_length": round(float(lengths.mean()), 1),
+                "min_length": int(lengths.min()),
+                "max_length": int(lengths.max()),
+                "blank_or_whitespace_only": int(blank_count),
+            }
+        return stats
+
+    def detect_negative_in_nonnegative_columns(self):
+        """
+        Flags numeric columns whose name suggests they should never be
+        negative (count, age, price, quantity, etc.) but contain negatives.
+        """
+        suspicious_keywords = ("count", "age", "price", "quantity", "amount", "qty", "total")
+        flagged = []
+        for col in self._numeric_df.columns:
+            if any(kw in col.lower() for kw in suspicious_keywords):
+                if (self._numeric_df[col].dropna() < 0).any():
+                    flagged.append(col)
+        return flagged
+
+    def generate_insights(self, outlier_method="mad"):
         """
         Human-readable detective conclusions.
         """
@@ -160,10 +258,10 @@ class DataProfiler:
             insights.append(f"🆔 Column '{col}' looks like an ID (very high uniqueness).")
 
         # Outliers
-        outliers = self.detect_outliers()
+        outliers = self.detect_outliers(method=outlier_method)
         for col, count in outliers.items():
             if count > 0:
-                insights.append(f"📊 Column '{col}' has {count} potential outlier(s).")
+                insights.append(f"📊 Column '{col}' has {count} potential outlier(s) ({outlier_method.upper()} method).")
 
         # Duplicate columns
         dup_cols = self.detect_duplicate_columns()
@@ -180,9 +278,22 @@ class DataProfiler:
         for col in date_like:
             insights.append(f"📅 Column '{col}' looks like it contains dates (consider parsing as datetime).")
 
+        # Mixed-type columns
+        for col in self.detect_mixed_type_columns():
+            insights.append(f"🧩 Column '{col}' contains mixed data types.")
+
+        # Negative values in non-negative columns
+        for col in self.detect_negative_in_nonnegative_columns():
+            insights.append(f"➖ Column '{col}' contains unexpected negative values.")
+
+        # Skewed distributions
+        for col, shape in self.distribution_shape().items():
+            if abs(shape["skewness"]) > 2:
+                insights.append(f"📐 Column '{col}' is heavily skewed (skew={shape['skewness']}).")
+
         return insights
 
-    def run_full_profile(self):
+    def run_full_profile(self, outlier_method="mad"):
         return {
             "shape": self.shape(),
             "column_types": self.column_types(),
@@ -192,9 +303,15 @@ class DataProfiler:
             "unique_counts": self.unique_counts(),
             "constant_columns": self.detect_constant_columns(),
             "high_cardinality_columns": self.detect_high_cardinality(),
-            "outliers": self.detect_outliers(),
+            "outliers_iqr": self.detect_outliers(method="iqr"),
+            "outliers_mad": self.detect_outliers(method="mad"),
+            "distribution_shape": self.distribution_shape(),
             "duplicate_columns": self.detect_duplicate_columns(),
             "correlated_columns": self.detect_correlated_columns(),
             "date_like_columns": self.detect_date_like_columns(),
-            "insights": self.generate_insights()
+            "mixed_type_columns": self.detect_mixed_type_columns(),
+            "text_column_stats": self.text_column_stats(),
+            "memory_usage_kb": self.memory_usage(),
+            "negative_in_nonnegative_columns": self.detect_negative_in_nonnegative_columns(),
+            "insights": self.generate_insights(outlier_method=outlier_method)
         }
