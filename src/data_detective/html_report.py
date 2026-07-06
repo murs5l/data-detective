@@ -38,6 +38,25 @@ def _render_pairs(pairs: list, empty_message="None found.") -> str:
     return f"<ul>{''.join(lis)}</ul>"
 
 
+def _render_nested_table(d: dict, empty_message="No data.") -> str:
+    if not d:
+        return f'<p class="empty">{empty_message}</p>'
+
+    rows = []
+    for outer_key, inner_value in d.items():
+        if isinstance(inner_value, dict):
+            nested_rows = "".join(
+                f"<tr><td>{escape(str(k))}</td><td>{escape(str(v))}</td></tr>"
+                for k, v in inner_value.items()
+            )
+            nested_html = f'<table class="nested"><tbody>{nested_rows}</tbody></table>'
+        else:
+            nested_html = escape(str(inner_value))
+        rows.append(f"<tr><td>{escape(str(outer_key))}</td><td>{nested_html}</td></tr>")
+
+    return f'<table class="nested-summary"><tbody>{"".join(rows)}</tbody></table>'
+
+
 def _render_insights(insights: list) -> str:
     if not insights:
         return '<p class="empty">No notable insights — data looks clean. ✅</p>'
@@ -169,6 +188,20 @@ def generate_html_report(report: dict, output_path="report.html"):
         text-align: right;
     }}
 
+    .nested-summary td:last-child,
+    .nested td:last-child {{
+        text-align: left;
+    }}
+
+    .nested {{
+        width: 100%;
+    }}
+
+    .nested td {{
+        padding: 4px 0;
+        border-bottom: none;
+    }}
+
     tr:last-child td {{
         border-bottom: none;
     }}
@@ -244,8 +277,20 @@ def generate_html_report(report: dict, output_path="report.html"):
         </div>
 
         <div class="box">
-            <h2>📊 Outliers per Column</h2>
-            {_render_kv_table(report.get("outliers", {}), "No outliers detected.")}
+            <h2>📊 Outliers (IQR)</h2>
+            {_render_kv_table(report.get("outliers_iqr", {}), "No outliers detected.")}
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="box">
+            <h2>📊 Outliers (MAD)</h2>
+            {_render_kv_table(report.get("outliers_mad", {}), "No outliers detected.")}
+        </div>
+
+        <div class="box">
+            <h2>🧠 Distribution Shape</h2>
+            {_render_nested_table(report.get("distribution_shape", {}), "No numeric columns.")}
         </div>
     </div>
 
@@ -270,6 +315,30 @@ def generate_html_report(report: dict, output_path="report.html"):
         <div class="box">
             <h2>🔗 Correlated Columns</h2>
             {_render_pairs(report.get("correlated_columns", []), "None found.")}
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="box">
+            <h2>🧩 Mixed Type Columns</h2>
+            {_render_list(report.get("mixed_type_columns", []), "None found.")}
+        </div>
+
+        <div class="box">
+            <h2>➖ Negative Values</h2>
+            {_render_list(report.get("negative_in_nonnegative_columns", []), "None found.")}
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="box">
+            <h2>💾 Memory Usage (KB)</h2>
+            {_render_kv_table(report.get("memory_usage_kb", {}), "No data.")}
+        </div>
+
+        <div class="box">
+            <h2>📝 Text Column Stats</h2>
+            {_render_nested_table(report.get("text_column_stats", {}), "No text columns.")}
         </div>
     </div>
 
