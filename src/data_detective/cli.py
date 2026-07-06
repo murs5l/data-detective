@@ -18,13 +18,13 @@ def run_analyze(args):
     profiler = DataProfiler(df)
     report = profiler.run_full_profile()
 
+    if args.html:
+        generate_html_report(report)
+        return
+
     if args.json:
         print(json.dumps(report, indent=2))
-
-    if args.html:
-        print("📄 Generating HTML report...")
-        generate_html_report(report)
-        print("📄 HTML report generated: report.html")
+        return
 
     if not args.json and not args.html:
         print_report(report)

@@ -44,11 +44,14 @@ class DataProfiler:
         ]
 
     def detect_high_cardinality(self, threshold=0.9, min_unique=10):
+        if len(self.df) == 0:
+            return []
+
         result = []
 
         for col in self.df.columns:
-            unique_ratio = self.df[col].nunique() / len(self.df)
             unique_count = self.df[col].nunique()
+            unique_ratio = unique_count / len(self.df)
 
             if unique_ratio >= threshold and unique_count >= min_unique:
                 result.append(col)
@@ -77,6 +80,63 @@ class DataProfiler:
 
         return outliers
 
+    def detect_duplicate_columns(self):
+        """
+        Finds pairs of columns that are exactly identical.
+        Returns a list of (col_a, col_b) tuples.
+        """
+        duplicates = []
+        cols = list(self.df.columns)
+
+        for i in range(len(cols)):
+            for j in range(i + 1, len(cols)):
+                col_a, col_b = cols[i], cols[j]
+                if self.df[col_a].equals(self.df[col_b]):
+                    duplicates.append((col_a, col_b))
+
+        return duplicates
+
+    def detect_correlated_columns(self, threshold=0.9):
+        """
+        Finds pairs of numeric columns with correlation above threshold.
+        """
+        numeric_df = self.df.select_dtypes(include=[np.number])
+        if numeric_df.shape[1] < 2:
+            return []
+
+        corr_matrix = numeric_df.corr().abs()
+        pairs = []
+        cols = corr_matrix.columns
+
+        for i in range(len(cols)):
+            for j in range(i + 1, len(cols)):
+                value = corr_matrix.iloc[i, j]
+                if pd.notna(value) and value >= threshold:
+                    pairs.append((cols[i], cols[j], round(float(value), 3)))
+
+        return pairs
+
+    def detect_date_like_columns(self, sample_size=20):
+        """
+        Flags object/string columns whose values look like dates,
+        so they can be considered for parsing as datetime.
+        """
+        candidates = []
+        object_cols = self.df.select_dtypes(include=["object"]).columns
+
+        for col in object_cols:
+            sample = self.df[col].dropna().astype(str).head(sample_size)
+            if sample.empty:
+                continue
+
+            parsed = pd.to_datetime(sample, errors="coerce", format="mixed")
+            success_ratio = parsed.notna().mean()
+
+            if success_ratio >= 0.8:
+                candidates.append(col)
+
+        return candidates
+
     def generate_insights(self):
         """
         Human-readable detective conclusions.
@@ -103,7 +163,22 @@ class DataProfiler:
         outliers = self.detect_outliers()
         for col, count in outliers.items():
             if count > 0:
-                insights.append(f"🆔 Column '{col}' may be an ID-like field")
+                insights.append(f"📊 Column '{col}' has {count} potential outlier(s).")
+
+        # Duplicate columns
+        dup_cols = self.detect_duplicate_columns()
+        for col_a, col_b in dup_cols:
+            insights.append(f"🧬 Columns '{col_a}' and '{col_b}' are identical.")
+
+        # Correlated columns
+        correlated = self.detect_correlated_columns()
+        for col_a, col_b, value in correlated:
+            insights.append(f"🔗 Columns '{col_a}' and '{col_b}' are highly correlated ({value}).")
+
+        # Date-like columns
+        date_like = self.detect_date_like_columns()
+        for col in date_like:
+            insights.append(f"📅 Column '{col}' looks like it contains dates (consider parsing as datetime).")
 
         return insights
 
@@ -118,5 +193,8 @@ class DataProfiler:
             "constant_columns": self.detect_constant_columns(),
             "high_cardinality_columns": self.detect_high_cardinality(),
             "outliers": self.detect_outliers(),
+            "duplicate_columns": self.detect_duplicate_columns(),
+            "correlated_columns": self.detect_correlated_columns(),
+            "date_like_columns": self.detect_date_like_columns(),
             "insights": self.generate_insights()
         }
