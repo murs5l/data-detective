@@ -166,7 +166,7 @@ class DataProfiler:
         so they can be considered for parsing as datetime.
         """
         candidates = []
-        object_cols = self.df.select_dtypes(include=["object"]).columns
+        object_cols = self.df.select_dtypes(include=["object", "string"]).columns
 
         for col in object_cols:
             sample = self.df[col].dropna().astype(str).head(sample_size)
@@ -196,7 +196,7 @@ class DataProfiler:
         source of silent bugs downstream.
         """
         mixed = []
-        for col in self.df.select_dtypes(include=["object"]).columns:
+        for col in self.df.select_dtypes(include=["object", "string"]).columns:
             types_seen = self.df[col].dropna().map(type).nunique()
             if types_seen > 1:
                 mixed.append(col)
@@ -208,7 +208,7 @@ class DataProfiler:
         values and unusually long/short entries.
         """
         stats = {}
-        for col in self.df.select_dtypes(include=["object"]).columns:
+        for col in self.df.select_dtypes(include=["object", "string"]).columns:
             series = self.df[col].dropna().astype(str)
             if series.empty:
                 continue
