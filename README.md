@@ -63,13 +63,6 @@ pytest
 ## License
 
 See [LICENSE](LICENSE).
-- Shape, column types, missing values (count + %)
-- Duplicate rows and duplicate columns
-- Constant (no-variation) columns
-- High-cardinality columns (likely IDs)
-- Outliers (IQR method) on numeric columns
-- Highly correlated numeric column pairs
-- Columns that look like dates but aren't parsed as such
 
 ## Development
 
