@@ -1,8 +1,26 @@
-venv/
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
 *.egg-info/
-dist/
+.eggs/
 build/
-.DS_Store
+dist/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Tool output
 report.html
+*.report.html
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
