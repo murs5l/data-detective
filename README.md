@@ -5,17 +5,17 @@
 Point Data Detective at a CSV and get an automated data-quality intelligence
 report back: shape, missing values, duplicates, outliers, high-cardinality
 (likely ID) columns, correlated/duplicate columns, skew, and plain-English
-insights — as a CLI, a JSON/HTML report, or a full web app you can run with
-one command.
+insights, delivered as a CLI, a JSON/HTML report, or a full web app you can
+run with one command.
 
 Two ways to use it:
 
-- **CLI** — a local, pip-installable tool for scripting and CI pipelines.
-- **Web app** — drag-and-drop a CSV in the browser, backed by a FastAPI
+- **CLI**: a local, pip-installable tool for scripting and CI pipelines.
+- **Web app**: drag-and-drop a CSV in the browser, backed by a FastAPI
   service, with a live correlation heatmap and histograms.
 
-Your data is never uploaded to a third party and never persisted to disk —
-everything runs on infrastructure you control (your own machine, or your own
+Your data is never uploaded to a third party and never persisted to disk.
+Everything runs on infrastructure you control (your own machine, or your own
 server via Docker).
 
 ---
@@ -32,19 +32,19 @@ Then open **http://localhost:8000** and drop in a CSV.
 
 Under the hood:
 
-- `backend/` — a FastAPI service that wraps the same profiling engine as the
+- `backend/`: a FastAPI service that wraps the same profiling engine as the
   CLI (`POST /api/analyze` for JSON, `POST /api/analyze/html` for a
   standalone HTML report). Uploads are validated (extension, size, empty
-  file) and processed entirely in memory / a short-lived temp file — nothing
-  is written to persistent storage.
-- `frontend/` — a dependency-free HTML/CSS/JS single-page app: insights lead,
-  technical tables (missing %, outliers, correlation pairs, etc.) are tucked
-  behind a "Full technical report" toggle so the page reads clearly for
-  non-technical users while still giving data engineers the full detail.
-- `tools/fastscan/` — a small Go CLI that streams a CSV once to report
+  file) and processed entirely in memory / a short-lived temp file, so
+  nothing is written to persistent storage.
+- `frontend/`: a dependency-free HTML/CSS/JS single-page app. Insights lead,
+  and technical tables (missing %, outliers, correlation pairs, etc.) are
+  tucked behind a "Full technical report" toggle so the page reads clearly
+  for non-technical users while still giving data engineers the full detail.
+- `tools/fastscan/`: a small Go CLI that streams a CSV once to report
   row/column counts and delimiter in milliseconds. The backend calls it
   (if present) for an instant "quick scan" stat alongside the full pandas
-  profile; if it's missing (e.g. a plain `pip install` without Go), the app
+  profile. If it's missing (e.g. a plain `pip install` without Go), the app
   works identically without it.
 
 To run the backend directly without Docker:
