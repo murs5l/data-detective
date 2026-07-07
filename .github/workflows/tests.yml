@@ -26,4 +26,44 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Run tests
-        run: pytest -v
+        run: pytest -v tests
+
+  backend-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package and API dependencies
+        run: |
+          pip install -e ".[api]"
+          pip install -r backend/requirements-dev.txt
+
+      - name: Run backend API tests
+        run: pytest -v backend/tests
+
+  fastscan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Vet and test fastscan
+        working-directory: tools/fastscan
+        run: |
+          go vet ./...
+          go test ./... -v
+
+      - name: Build fastscan
+        working-directory: tools/fastscan
+        run: go build -o /tmp/fastscan .
