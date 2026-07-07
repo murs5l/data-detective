@@ -114,29 +114,33 @@ def test_run_full_profile_keys(sample_df):
     }
     assert expected_keys.issubset(report.keys())
 
-    def test_correlation_matrix_shape():
-        df = pd.DataFrame({"a": [1, 2, 3, 4], "b": [2, 4, 6, 8], "c": ["x", "y", "x", "y"]})
-        profiler = DataProfiler(df)
-        matrix = profiler.correlation_matrix()
-        assert "a" in matrix and "b" in matrix
-        assert "c" not in matrix
-        assert matrix["a"]["a"] == 1.0
 
-    def test_correlation_matrix_single_numeric_column():
-        df = pd.DataFrame({"a": [1, 2, 3], "b": ["x", "y", "z"]})
-        profiler = DataProfiler(df)
-        assert profiler.correlation_matrix() == {}
+def test_correlation_matrix_shape():
+    df = pd.DataFrame({"a": [1, 2, 3, 4], "b": [2, 4, 6, 8], "c": ["x", "y", "x", "y"]})
+    profiler = DataProfiler(df)
+    matrix = profiler.correlation_matrix()
+    assert "a" in matrix and "b" in matrix
+    assert "c" not in matrix
+    assert matrix["a"]["a"] == 1.0
 
-    def test_histogram_data_basic():
-        df = pd.DataFrame({"a": list(range(100))})
-        profiler = DataProfiler(df)
-        hist = profiler.histogram_data(bins=5)
-        assert "a" in hist
-        assert len(hist["a"]["counts"]) == 5
-        assert len(hist["a"]["bin_edges"]) == 6
-        assert sum(hist["a"]["counts"]) == 100
 
-    def test_histogram_data_skips_constant_column():
-        df = pd.DataFrame({"constant": [5, 5, 5, 5]})
-        profiler = DataProfiler(df)
-        assert profiler.histogram_data() == {}
+def test_correlation_matrix_single_numeric_column():
+    df = pd.DataFrame({"a": [1, 2, 3], "b": ["x", "y", "z"]})
+    profiler = DataProfiler(df)
+    assert profiler.correlation_matrix() == {}
+
+
+def test_histogram_data_basic():
+    df = pd.DataFrame({"a": list(range(100))})
+    profiler = DataProfiler(df)
+    hist = profiler.histogram_data(bins=5)
+    assert "a" in hist
+    assert len(hist["a"]["counts"]) == 5
+    assert len(hist["a"]["bin_edges"]) == 6
+    assert sum(hist["a"]["counts"]) == 100
+
+
+def test_histogram_data_skips_constant_column():
+    df = pd.DataFrame({"constant": [5, 5, 5, 5]})
+    profiler = DataProfiler(df)
+    assert profiler.histogram_data() == {}
