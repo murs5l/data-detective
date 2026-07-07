@@ -160,6 +160,37 @@ class DataProfiler:
 
         return pairs
 
+    def correlation_matrix(self):
+        """
+        Full pairwise correlation matrix for numeric columns, as a
+        nested dict: {col_a: {col_b: correlation_value, ...}, ...}.
+        Used for heatmap visualization.
+        """
+        if self._numeric_df.shape[1] < 2:
+            return {}
+
+        corr = self._numeric_df.corr().round(3)
+        # Replace NaN (e.g. constant columns) with 0 so it's JSON-safe.
+        corr = corr.fillna(0)
+        return {col: corr[col].to_dict() for col in corr.columns}
+
+    def histogram_data(self, bins=10):
+        """
+        Histogram bin edges + counts for each numeric column.
+        Returns: {col: {"bin_edges": [...], "counts": [...]}, ...}
+        """
+        histograms = {}
+        for col in self._numeric_df.columns:
+            series = self._numeric_df[col].dropna()
+            if series.empty or series.nunique() <= 1:
+                continue
+            counts, bin_edges = np.histogram(series, bins=bins)
+            histograms[col] = {
+                "bin_edges": [round(float(edge), 3) for edge in bin_edges],
+                "counts": [int(c) for c in counts],
+            }
+        return histograms
+
     def detect_date_like_columns(self, sample_size=20):
         """
         Flags object/string columns whose values look like dates,
@@ -308,6 +339,8 @@ class DataProfiler:
             "distribution_shape": self.distribution_shape(),
             "duplicate_columns": self.detect_duplicate_columns(),
             "correlated_columns": self.detect_correlated_columns(),
+            "correlation_matrix": self.correlation_matrix(),
+            "histogram_data": self.histogram_data(),
             "date_like_columns": self.detect_date_like_columns(),
             "mixed_type_columns": self.detect_mixed_type_columns(),
             "text_column_stats": self.text_column_stats(),
