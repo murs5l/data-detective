@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Data Detective — Instant CSV Intelligence</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="shell">
+
+  <header class="top">
+    <div class="brand">
+      <span class="brand-icon">🕵️</span>
+      <div>
+        <h1>Data Detective</h1>
+        <p>Drop a CSV. Get a data-quality intelligence report in seconds.</p>
+      </div>
+    </div>
+    <a class="link-muted" href="https://github.com/murs5l/data-detective" target="_blank" rel="noopener">
+      View on GitHub ↗
+    </a>
+  </header>
+
+  <section id="upload-section" class="card upload-card">
+    <div id="dropzone" class="dropzone">
+      <div class="dropzone-icon">📄</div>
+      <p class="dropzone-title">Drag &amp; drop a CSV file here</p>
+      <p class="dropzone-sub">or click to browse — processed in memory, never stored</p>
+      <input id="file-input" type="file" accept=".csv,text/csv" hidden />
+    </div>
+
+    <div class="upload-options">
+      <label for="outlier-method">Outlier detection</label>
+      <select id="outlier-method">
+        <option value="mad" selected>MAD (robust, default)</option>
+        <option value="iqr">IQR (classic)</option>
+      </select>
+      <button id="analyze-btn" class="btn btn-primary" disabled>Analyze CSV</button>
+      <span id="selected-filename" class="filename"></span>
+    </div>
+
+    <p id="error-banner" class="error-banner" hidden></p>
+  </section>
+
+  <section id="loading" class="card loading-card" hidden>
+    <div class="spinner"></div>
+    <p>Profiling your data…</p>
+  </section>
+
+  <section id="results" class="results" hidden>
+
+    <div class="card insights-card">
+      <div class="card-header">
+        <h2>🧠 Insights</h2>
+        <div class="actions">
+          <button id="download-json" class="btn btn-ghost">Download JSON</button>
+          <button id="download-html" class="btn btn-ghost">Download HTML report</button>
+        </div>
+      </div>
+      <ul id="insights-list" class="insights-list"></ul>
+    </div>
+
+    <div class="stat-grid" id="stat-grid"></div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h2>🔗 Correlation Heatmap</h2>
+        <div id="heatmap-wrap" class="heatmap-wrap"></div>
+      </div>
+      <div class="card">
+        <h2>📊 Distributions</h2>
+        <div id="histograms" class="histograms"></div>
+      </div>
+    </div>
+
+    <details class="card details-card">
+      <summary>🔬 Full technical report</summary>
+      <div class="tech-grid">
+        <div class="tech-box">
+          <h3>Column types</h3>
+          <div id="tech-column-types"></div>
+        </div>
+        <div class="tech-box">
+          <h3>Missing values (%)</h3>
+          <div id="tech-missing"></div>
+        </div>
+        <div class="tech-box">
+          <h3>Outliers (MAD)</h3>
+          <div id="tech-outliers-mad"></div>
+        </div>
+        <div class="tech-box">
+          <h3>Outliers (IQR)</h3>
+          <div id="tech-outliers-iqr"></div>
+        </div>
+        <div class="tech-box">
+          <h3>High-cardinality columns</h3>
+          <div id="tech-high-cardinality"></div>
+        </div>
+        <div class="tech-box">
+          <h3>Constant columns</h3>
+          <div id="tech-constant"></div>
+        </div>
+        <div class="tech-box">
+          <h3>Duplicate columns</h3>
+          <div id="tech-dup-columns"></div>
+        </div>
+        <div class="tech-box">
+          <h3>Correlated pairs</h3>
+          <div id="tech-correlated"></div>
+        </div>
+        <div class="tech-box">
+          <h3>Date-like columns</h3>
+          <div id="tech-date-like"></div>
+        </div>
+        <div class="tech-box">
+          <h3>Mixed-type columns</h3>
+          <div id="tech-mixed-type"></div>
+        </div>
+        <div class="tech-box">
+          <h3>Negative values (unexpected)</h3>
+          <div id="tech-negative"></div>
+        </div>
+        <div class="tech-box">
+          <h3>Memory usage (KB)</h3>
+          <div id="tech-memory"></div>
+        </div>
+      </div>
+    </details>
+
+    <button id="reset-btn" class="btn btn-ghost reset-btn">Analyze another file</button>
+  </section>
+
+  <footer class="footer">
+    <p>Your file is processed in memory for this request only and is never written to disk or stored.</p>
+  </footer>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
