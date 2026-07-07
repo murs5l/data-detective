@@ -1,6 +1,1006 @@
-age,salary,department
-25,50000,IT
-30,60000,Finance
-35,70000,HR
-40,80000,IT
-
+employee_id,employee_id_copy,full_name,email,department,country,hire_date,currency,age,salary,bonus,performance_score,login_count,balance,zip_code,notes
+218,218,Robert Taylor,robert.taylor218@example.com,Finance,USA,2022-11-06,USD,50,40181.21,3935.91,98,210,9455.85,90750,Transferred from EMEA office in Q2.
+76,76,Elizabeth Wilson,elizabeth.wilson76@example.com,Support,France,2021-05-07,USD,46,63304.02,6387.83,62,294,1973.65,48780,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+216,216,Patricia Smith,patricia.smith216@example.com,Sales,Japan,2018-03-19,USD,36,54591.8,5243.74,,175,3941.92,25806,On leave until further notice.
+944,944,Elizabeth Hernandez,elizabeth.hernandez944@example.com,HR,Japan,2018-03-20,USD,59,106891.94,10782.22,88,11,11451.05,47209,-
+603,603,John Wilson,john.wilson603@example.com,Marketing,France,2021-02-02,USD,34,66317.63,6900.83,,260,5118.46,25083,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+768,768,Karen Gonzalez,karen.gonzalez768@example.com,Engineering,India,2024-07-16,USD,35,73234.19,7702.91,83,216,10365.83,45369,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+648,648,Joseph Jackson,joseph.jackson648@example.com,Engineering,Canada,2020-11-15,USD,44,82124.34,8115.56,,313,-7006.78,32954,On leave until further notice.
+636,636,Joseph Anderson,joseph.anderson636@example.com,HR,Brazil,2020-08-11,USD,39,69595.03,6866.5,,330,8390.48,UNKNOWN,N/A
+821,821,Elizabeth Garcia,elizabeth.garcia821@example.com,Finance,Brazil,2023-06-26,USD,59,81437.94,8405.95,,213,-1381.12,21219,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+748,748,Robert Davis,robert.davis748@example.com,Marketing,USA,2019-01-12,USD,57,57352.23,5629.55,,466,5698.74,55789,N/A
+557,557,Patricia Thomas,patricia.thomas557@example.com,Engineering,Japan,2020-12-18,USD,53,57928.46,5818.47,49,63,1836.77,47239,   
+317,317,Susan Gonzalez,susan.gonzalez317@example.com,HR,Brazil,2021-06-01,USD,46,56398.41,5420.58,79,32,5397.6,19514,N/A
+162,162,Robert Johnson,robert.johnson162@example.com,HR,India,2023-02-18,USD,25,81798.26,8249.17,42,146,3791.12,63591,   
+680,680,Linda Lopez,linda.lopez680@example.com,HR,Mexico,2023-11-28,USD,52,66234.1,6330.83,,326,3900.11,52229,Promoted last quarter after strong review cycle.
+456,456,Thomas Wilson,thomas.wilson456@example.com,Engineering,France,2024-08-13,USD,65,51366.88,5038.07,46,469,14008.42,79637,N/A
+244,244,Linda Rodriguez,linda.rodriguez244@example.com,Finance,USA,2024-04-19,USD,46,64899.62,6255.97,51,121,17097.25,87662,N/A
+316,316,John Smith,john.smith316@example.com,HR,India,2018-02-03,USD,25,37888.26,3855.44,,420,10481.77,39837,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+785,785,David Garcia,david.garcia785@example.com,Engineering,Canada,2021-06-27,USD,35,51511.69,5298.43,,37,-6174.92,37563,On leave until further notice.
+963,963,Linda Anderson,linda.anderson963@example.com,Sales,USA,2022-05-18,USD,39,73177.36,7388.24,44,463,12981.08,17977,"Remote employee, works PST hours."
+175,175,Michael Hernandez,michael.hernandez175@example.com,Sales,Brazil,2022-04-16,USD,57,52140.89,4963.13,,420,-7795.96,74303,Transferred from EMEA office in Q2.
+873,873,Patricia Davis,patricia.davis873@example.com,Marketing,Japan,2020-01-19,USD,55,80781.58,7919.76,67,146,1905.51,33385,   
+940,940,Mary Martin,mary.martin940@example.com,HR,UK,2023-05-09,USD,22,,3864.38,48,140,5856.44,45003,Transferred from EMEA office in Q2.
+866,866,William Brown,william.brown866@example.com,Support,Germany,2021-12-14,USD,45,28000,3024.96,,185,9924.13,95633,Transferred from EMEA office in Q2.
+479,479,William Davis,william.davis479@example.com,Engineering,Germany,2023-07-28,USD,34,57485.32,5848.06,71,27,8458.28,89879,Transferred from EMEA office in Q2.
+229,229,Susan Davis,susan.davis229@example.com,Marketing,Germany,2021-12-11,USD,39,73974.98,7166.23,,344,9104.99,77603,Promoted last quarter after strong review cycle.
+72,72,Robert Hernandez,robert.hernandez72@example.com,Operations,Australia,2021-06-21,USD,53,53458.93,5383.5,,323,3445.42,99705,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+205,205,Jessica Wilson,jessica.wilson205@example.com,Support,Japan,2021-12-27,USD,50,58784.34,5884.33,,389,5379.78,39470,-
+324,324,James Hernandez,james.hernandez324@example.com,Sales,Germany,2023-12-21,USD,49,74840.13,7452.51,61,449,12445.44,72908,Transferred from EMEA office in Q2.
+832,832,James Garcia,james.garcia832@example.com,Marketing,Australia,2024-09-07,USD,44,71500.71,7349.79,51,335,-610.86,29844,N/A
+33,33,Elizabeth Moore,elizabeth.moore33@example.com,Sales,Germany,2021-11-13,USD,65,64891.28,6365.46,65,280,8419.1,37549,On leave until further notice.
+257,257,Jessica Brown,jessica.brown257@example.com,Marketing,Brazil,2021-08-22,USD,38,80802.18,8216.05,,453,1220.32,15848,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+924,924,John Jones,john.jones924@example.com,Support,India,2024-01-03,USD,41,57223.26,5751.72,,202,740.8,31671,Transferred from EMEA office in Q2.
+542,542,David Moore,david.moore542@example.com,HR,France,2023-12-12,USD,65,56654.94,5954.75,64,4,16149.58,61508,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+826,826,Mary Miller,mary.miller826@example.com,Finance,UK,2022-12-16,USD,30,59252.67,5974.93,59,321,16839.99,50749,Promoted last quarter after strong review cycle.
+674,674,James Brown,james.brown674@example.com,Engineering,Brazil,2022-07-21,USD,40,72699.4,7256.93,85,68,134.08,35954,Transferred from EMEA office in Q2.
+120,120,Robert Lopez,robert.lopez120@example.com,Sales,Canada,2024-10-24,USD,43,63636.3,6488.29,,329,10543.37,32949,Transferred from EMEA office in Q2.
+9,9,Susan Martin,susan.martin9@example.com,Engineering,Brazil,2021-10-15,USD,55,64830.82,6736.95,83,369,17506.38,44973,N/A
+452,452,Robert Jones,robert.jones452@example.com,Finance,Canada,2024-05-09,USD,30,45431.42,4423.31,,379,731.09,24621,"Excellent performer, candidate for team lead role next cycle."
+151,151,Charles Davis,charles.davis151@example.com,Sales,USA,2023-09-08,USD,62,65741.89,6665.56,,241,16081.07,10679,-
+898,898,John Moore,john.moore898@example.com,HR,Brazil,2018-05-04,USD,49,69208.8,7239.86,57,267,4658.75,52255,"Excellent performer, candidate for team lead role next cycle."
+735,735,Linda Rodriguez,linda.rodriguez735@example.com,Sales,France,2018-09-22,USD,59,84476.89,8652.92,81,131,12769.14,82204,"Remote employee, works PST hours."
+515,515,Charles Williams,charles.williams515@example.com,Engineering,Mexico,2024-01-17,USD,35,56746.37,5170.24,,386,-15982.17,22934,"Remote employee, works PST hours."
+696,696,David Anderson,david.anderson696@example.com,Marketing,USA,2018-02-03,USD,29,59289.75,5632.33,41,300,5805.04,85101,"Excellent performer, candidate for team lead role next cycle."
+64,64,Joseph Williams,joseph.williams64@example.com,Marketing,France,2020-02-25,USD,47,55718.6,5818.62,,445,-6208.27,81118,Transferred from EMEA office in Q2.
+242,242,Linda Moore,linda.moore242@example.com,Operations,USA,2021-12-12,USD,52,75486.79,7327.33,72,164,2456.77,60905,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+297,297,Joseph Hernandez,joseph.hernandez297@example.com,Marketing,USA,2024-04-28,USD,51,52380.71,5535.34,85,336,-736.36,22771,"Remote employee, works PST hours."
+771,771,Richard Smith,richard.smith771@example.com,Finance,Mexico,2019-02-24,USD,64,57614.97,5708.58,92,480,3533.68,51486,Promoted last quarter after strong review cycle.
+797,797,William Smith,william.smith797@example.com,Engineering,Japan,2018-07-24,USD,41,61122.76,6443.06,75,396,742.35,61554,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+131,131,Elizabeth Gonzalez,elizabeth.gonzalez131@example.com,Support,Japan,2022-07-25,USD,48,67610.91,6690.97,81,37,-6486.78,55156,   
+398,398,Michael Moore,michael.moore398@example.com,Finance,France,2022-08-20,USD,31,67425.24,6642.01,97,339,-6183.48,79048,Promoted last quarter after strong review cycle.
+803,803,Joseph Gonzalez,joseph.gonzalez803@example.com,Sales,Japan,2018-06-07,USD,59,66312.32,6391.64,,483,1666.39,30184,-
+305,305,Thomas Brown,thomas.brown305@example.com,Engineering,Brazil,2019-01-22,USD,25,72734.83,7590.23,,146,3170.45,18130,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+876,876,Sarah Miller,sarah.miller876@example.com,Engineering,Japan,2024-01-12,USD,35,82684.37,8171.84,68,266,24057.99,26538,Transferred from EMEA office in Q2.
+135,135,Susan Martin,susan.martin135@example.com,Support,USA,2021-11-18,USD,40,57008.68,5568.88,,413,2330.0,19564,Promoted last quarter after strong review cycle.
+844,844,,user844@example.com,Engineering,USA,2021-09-08,USD,63,51535.67,5019.3,96,497,12366.75,39852,Promoted last quarter after strong review cycle.
+264,264,Charles Martin,charles.martin264@example.com,HR,USA,2019-05-13,USD,31,56845.17,5461.91,65,455,-3178.6,53449,"Remote employee, works PST hours."
+474,474,Michael Jones,michael.jones474@example.com,Support,France,2022-08-14,USD,37,40066.18,4260.76,,92,833.29,75521,"Excellent performer, candidate for team lead role next cycle."
+548,548,   ,user548@example.com,Finance,Mexico,2023-04-03,USD,51,84828.39,8582.13,,205,16784.53,91003,On leave until further notice.
+563,563,Karen Jones,karen.jones563@example.com,Marketing,Canada,2024-06-17,USD,34,33843.12,3411.44,76,307,-6906.18,58265,"Excellent performer, candidate for team lead role next cycle."
+220,220,Karen Martinez,karen.martinez220@example.com,Operations,USA,2024-11-10,USD,35,56064.49,5369.21,58,330,3937.29,17152,"Remote employee, works PST hours."
+576,576,John Martinez,john.martinez576@example.com,Support,Brazil,2021-11-21,USD,45,51119.62,5214.14,79,106,-8753.11,47022,
+419,419,Patricia Wilson,patricia.wilson419@example.com,Sales,UK,2023-05-20,USD,64,57754.71,5524.53,51,494,-5111.01,14697,
+172,172,James Miller,james.miller172@example.com,Sales,Canada,2023-08-08,USD,60,68908.14,6833.23,,164,-2704.82,47101,On leave until further notice.
+860,860,Linda Johnson,linda.johnson860@example.com,Support,France,2020-01-22,USD,44,49823.76,4923.81,,55,4391.6,20155,-
+21,21,Robert Davis,robert.davis21@example.com,HR,Canada,2022-04-19,USD,60,71011.84,7121.63,76,267,2481.17,97782,N/A
+379,379,William Anderson,william.anderson379@example.com,Marketing,Mexico,2024-09-06,USD,26,48925.93,4850.12,74,187,-8264.76,76316,On leave until further notice.
+678,678,Jessica Hernandez,jessica.hernandez678@example.com,Finance,Brazil,2020-06-22,USD,43,60173.23,6385.82,82,204,4948.61,59602,"Excellent performer, candidate for team lead role next cycle."
+26,26,Sarah Wilson,sarah.wilson26@example.com,Finance,USA,2018-02-23,USD,31,95693.52,9205.41,49,220,711.94,26704,Promoted last quarter after strong review cycle.
+394,394,Robert Gonzalez,robert.gonzalez394@example.com,Finance,Brazil,2024-12-05,USD,30,62929.92,6161.05,76,100,5635.69,83553,"Excellent performer, candidate for team lead role next cycle."
+872,872,Thomas Williams,thomas.williams872@example.com,Sales,USA,2022-10-12,USD,65,41746.96,4059.28,72,369,-1304.49,87080,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+125,125,Mary Lopez,mary.lopez125@example.com,Finance,Brazil,2020-11-26,USD,25,84037.62,8533.18,91,383,-3483.29,28714,"Excellent performer, candidate for team lead role next cycle."
+830,830,Jessica Lopez,jessica.lopez830@example.com,Support,France,2021-07-23,USD,28,66518.13,6294.64,,145,8291.32,69910,
+118,118,Karen Moore,karen.moore118@example.com,Engineering,Australia,2022-04-23,USD,31,49047.05,4901.84,76,213,5432.68,34551,
+810,810,Elizabeth Davis,elizabeth.davis810@example.com,Sales,India,2023-02-06,USD,33,74903.53,7381.55,82,242,12668.34,66088,N/A
+801,801,Susan Anderson,susan.anderson801@example.com,Support,Canada,2022-09-08,USD,58,286544.98,28686.59,,395,4313.46,44578,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+310,310,William Anderson,william.anderson310@example.com,Support,UK,2018-03-11,USD,60,79487.53,8389.49,82,154,10833.05,74297,"Excellent performer, candidate for team lead role next cycle."
+987,987,William Wilson,william.wilson987@example.com,Sales,Germany,2018-09-12,USD,52,,6573.15,40,194,7664.36,23115,N/A
+487,487,David Martin,david.martin487@example.com,Finance,Mexico,2024-04-26,USD,65,92022.95,9403.21,43,263,16288.04,16758,
+805,805,Elizabeth Jackson,elizabeth.jackson805@example.com,Support,Canada,2019-08-04,USD,,66883.74,7111.44,,14,-4733.5,56131,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+201,201,Jennifer Lopez,jennifer.lopez201@example.com,Marketing,Germany,2021-02-09,USD,64,76944.48,7508.3,78,198,-3141.63,55603,N/A
+610,610,Sarah Thomas,sarah.thomas610@example.com,Operations,Brazil,2022-02-26,USD,63,65055.95,6360.98,92,343,-3096.73,68350,
+71,71,Patricia Anderson,patricia.anderson71@example.com,Engineering,Australia,2021-01-24,USD,31,46530.09,4809.34,,240,6235.42,91691,On leave until further notice.
+702,702,Mary Miller,mary.miller702@example.com,Sales,France,2024-04-05,USD,60,71632.69,6909.75,,373,1558.52,91567,On leave until further notice.
+334,334,Jennifer Rodriguez,jennifer.rodriguez334@example.com,Sales,Australia,2021-10-19,USD,62,62494.95,6566.23,58,484,6489.04,21239,"Remote employee, works PST hours."
+302,302,William Martinez,william.martinez302@example.com,HR,UK,2019-07-20,USD,54,52180.55,5123.97,85,377,16856.89,82559,"Remote employee, works PST hours."
+660,660,Robert Hernandez,robert.hernandez660@example.com,Engineering,Mexico,2022-08-13,USD,54,41601.33,4067.82,40,119,502.77,12780,"Excellent performer, candidate for team lead role next cycle."
+901,901,Patricia Moore,patricia.moore901@example.com,HR,India,2018-01-20,USD,51,60377.05,5996.12,96,115,4241.7,UNKNOWN,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+564,564,Jennifer Wilson,jennifer.wilson564@example.com,Support,Brazil,2018-01-17,USD,43,,7967.99,85,79,2991.2,74922,-
+921,921,Jennifer Lopez,jennifer.lopez921@example.com,Marketing,UK,2021-09-06,USD,23,45735.96,4677.15,84,222,3918.12,41927,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+345,345,Joseph Smith,joseph.smith345@example.com,Sales,Australia,2020-04-02,USD,,41824.53,4161.94,83,18,-2425.05,30636,
+506,506,David Thomas,david.thomas506@example.com,Support,Canada,2020-09-24,USD,,45220.85,4676.19,49,163,5682.29,70429,   
+139,139,James Williams,james.williams139@example.com,HR,Australia,2021-04-07,USD,59,62089.82,6260.4,96,431,-106.06,80345,Promoted last quarter after strong review cycle.
+68,68,John Williams,john.williams68@example.com,Marketing,Brazil,2020-09-09,USD,22,72694.64,7234.96,82,250,11594.35,29476,Transferred from EMEA office in Q2.
+180,180,Linda Davis,linda.davis180@example.com,Marketing,Canada,2023-11-25,USD,24,83080.16,8470.58,43,326,9330.26,11238,   
+467,467,Michael Jones,michael.jones467@example.com,Engineering,Germany,2018-12-19,USD,37,59601.38,5965.02,59,255,-9823.87,68891,Promoted last quarter after strong review cycle.
+109,109,Charles Jones,charles.jones109@example.com,Marketing,France,2023-12-22,USD,47,81243.11,8351.92,,286,-5124.64,26750,-
+341,341,Susan Jackson,susan.jackson341@example.com,Marketing,Mexico,2020-11-13,USD,35,42553.86,4436.91,63,286,-760.52,50193,"Excellent performer, candidate for team lead role next cycle."
+390,390,Richard Jackson,richard.jackson390@example.com,Sales,Canada,2023-06-26,USD,52,92227.77,9396.87,76,419,18233.33,22499,"Excellent performer, candidate for team lead role next cycle."
+815,815,Michael Williams,michael.williams815@example.com,Sales,Brazil,2023-02-09,USD,62,51098.92,4723.59,96,269,12981.03,55723,N/A
+399,399,David Garcia,david.garcia399@example.com,Engineering,France,2019-12-20,USD,39,85670.79,8662.58,,198,-1298.84,96520,N/A
+167,167,Thomas Martinez,thomas.martinez167@example.com,Sales,Mexico,2020-10-20,USD,65,69594.79,6825.78,82,266,6223.81,17989,-
+905,905,Robert Johnson,robert.johnson905@example.com,Sales,Australia,2024-08-14,USD,64,52467.07,5276.75,55,286,-5806.86,72190,N/A
+57,57,Susan Martin,susan.martin57@example.com,Finance,Mexico,2019-09-13,USD,50,75576.13,7466.25,67,156,2438.3,23006,"Remote employee, works PST hours."
+922,922,Barbara Martin,barbara.martin922@example.com,Marketing,Japan,2023-07-10,USD,24,48129.21,5215.82,97,474,2006.02,76448,
+701,701,Elizabeth Moore,elizabeth.moore701@example.com,HR,UK,2022-08-23,USD,42,28000,2717.04,74,261,5912.06,15863,"Remote employee, works PST hours."
+579,579,Mary Moore,mary.moore579@example.com,Marketing,UK,2024-12-28,USD,54,59422.25,5885.07,,484,-3176.59,24539,
+290,290,Karen Rodriguez,karen.rodriguez290@example.com,Support,Canada,2020-06-06,USD,29,57153.93,5299.61,,197,16959.6,72684,On leave until further notice.
+762,762,Patricia Anderson,patricia.anderson762@example.com,Marketing,UK,2020-03-03,USD,39,45179.54,4352.36,,363,1545.49,70390,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+857,857,James Brown,james.brown857@example.com,Marketing,Mexico,2023-06-27,USD,38,74350.28,7257.86,,4,-15333.36,72941,-
+599,599,Patricia Moore,patricia.moore599@example.com,Engineering,Germany,2022-09-19,USD,25,82567.03,8192.3,72,459,16642.63,79711,   
+354,354,Susan Thomas,susan.thomas354@example.com,Finance,USA,2022-06-13,USD,65,84366.07,8472.43,,265,-3726.7,70302,N/A
+81,81,Richard Smith,richard.smith81@example.com,Marketing,Australia,2018-08-12,USD,65,64927.36,6336.78,80,481,-3289.41,71797,Promoted last quarter after strong review cycle.
+601,601,James Hernandez,james.hernandez601@example.com,HR,UK,2021-01-28,USD,55,60248.0,6165.4,,50,-1333.05,33942,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+571,571,John Davis,john.davis571@example.com,HR,Australia,2019-02-10,USD,51,74375.86,7605.54,,462,12168.86,73576,Transferred from EMEA office in Q2.
+890,890,Robert Williams,robert.williams890@example.com,Finance,Brazil,2018-01-24,USD,56,498523.23,49761.57,90,200,2188.82,35465,"Excellent performer, candidate for team lead role next cycle."
+746,746,Susan Rodriguez,susan.rodriguez746@example.com,Sales,Canada,2020-03-06,USD,46,60920.76,5951.74,66,308,12465.76,93440,N/A
+514,514,Barbara Smith,barbara.smith514@example.com,Engineering,UK,2024-12-09,USD,59,60105.25,5942.28,86,313,8866.62,41696,-
+382,382,Patricia Thomas,patricia.thomas382@example.com,Sales,Canada,2018-10-21,USD,46,61415.15,6007.92,56,-25,-3182.45,58018,"Remote employee, works PST hours."
+193,193,Joseph Martinez,joseph.martinez193@example.com,Operations,Canada,2024-07-22,USD,53,73171.83,7447.52,,78,1941.62,19694,Transferred from EMEA office in Q2.
+957,957,Linda Lopez,linda.lopez957@example.com,Finance,India,2023-05-10,USD,32,53348.57,5264.55,83,150,13175.28,26849,   
+53,53,Elizabeth Rodriguez,elizabeth.rodriguez53@example.com,Sales,Canada,2023-04-11,USD,29,63353.4,5844.84,52,110,4539.55,REDACTED,-
+911,911,Jennifer Jones,jennifer.jones911@example.com,Engineering,Brazil,2024-02-02,USD,50,61504.55,6095.9,,278,2310.73,95865,"Excellent performer, candidate for team lead role next cycle."
+867,867,Karen Davis,karen.davis867@example.com,HR,Brazil,2019-10-27,USD,30,75041.61,7436.7,83,299,-501.31,47602,N/A
+154,154,Karen Brown,karen.brown154@example.com,Marketing,France,2021-11-18,USD,55,69018.52,6429.78,69,139,5722.61,35272,
+865,865,Karen Thomas,karen.thomas865@example.com,Support,Australia,2022-08-11,USD,-39,71646.44,7410.91,61,124,11678.02,40263,Transferred from EMEA office in Q2.
+604,604,Mary Hernandez,mary.hernandez604@example.com,HR,Australia,2021-02-16,USD,23,50209.93,4899.02,57,283,8205.19,86830,
+263,263,John Jackson,john.jackson263@example.com,Finance,Mexico,2024-02-04,USD,58,69859.73,6640.94,96,176,9510.33,95824,Transferred from EMEA office in Q2.
+757,757,Mary Hernandez,mary.hernandez757@example.com,Engineering,France,2018-06-25,USD,40,82076.28,8147.24,,200,1713.77,98432,
+971,971,David Davis,david.davis971@example.com,Marketing,Japan,2024-05-12,USD,31,56640.01,5966.25,60,230,1328.71,64673,Promoted last quarter after strong review cycle.
+759,759,Jennifer Jones,jennifer.jones759@example.com,Support,Japan,2018-11-03,USD,,85356.6,8294.55,89,367,15922.92,77672,"Excellent performer, candidate for team lead role next cycle."
+851,851,Patricia Lopez,patricia.lopez851@example.com,Support,UK,2018-04-23,USD,,55296.22,5351.76,,255,8278.33,87101,On leave until further notice.
+718,718,Barbara Miller,barbara.miller718@example.com,Engineering,Germany,2020-01-05,USD,47,68062.19,6648.44,,341,8415.21,36082,Transferred from EMEA office in Q2.
+247,247,Mary Smith,mary.smith247@example.com,Sales,Mexico,2023-03-25,USD,29,81967.86,7870.46,63,360,12499.45,23242,N/A
+846,846,Sarah Jones,sarah.jones846@example.com,Engineering,Japan,2018-10-12,USD,44,,4272.49,,118,13037.26,22057,"Excellent performer, candidate for team lead role next cycle."
+224,224,Sarah Hernandez,sarah.hernandez224@example.com,HR,Mexico,2023-11-22,USD,63,81693.47,8452.78,94,122,10000.74,17589,"Remote employee, works PST hours."
+237,237,Robert Davis,robert.davis237@example.com,Marketing,Brazil,2022-01-22,USD,41,62071.97,6817.52,,207,11227.66,82105,"Remote employee, works PST hours."
+484,484,Richard Thomas,richard.thomas484@example.com,Operations,Canada,2021-08-08,USD,27,47326.97,4703.18,100,111,4545.54,27394,N/A
+612,612,Michael Williams,michael.williams612@example.com,Operations,Mexico,2023-05-26,USD,36,67950.62,6818.11,57,252,14289.66,89433,"Remote employee, works PST hours."
+926,926,Jessica Garcia,jessica.garcia926@example.com,Marketing,Canada,2021-09-22,USD,47,80736.67,7933.92,93,237,-11765.02,41816,
+641,641,Joseph Anderson,joseph.anderson641@example.com,Operations,Australia,2018-06-05,USD,58,73986.74,7276.95,71,414,942.38,39555,On leave until further notice.
+917,917,Jennifer Martinez,jennifer.martinez917@example.com,Marketing,Japan,2020-02-16,USD,44,52769.54,5189.04,68,424,-5267.94,14814,"Excellent performer, candidate for team lead role next cycle."
+869,869,Jennifer Brown,jennifer.brown869@example.com,HR,France,2024-09-23,USD,52,64649.99,6361.13,,220,9780.57,19570,   
+670,670,David Lopez,david.lopez670@example.com,Finance,Japan,2023-12-12,USD,25,77825.78,7516.06,55,244,-9850.1,14522,N/A
+729,729,John Miller,john.miller729@example.com,HR,Australia,2023-05-25,USD,57,96452.7,9579.19,85,60,7537.86,64919,-
+126,126,Joseph Johnson,joseph.johnson126@example.com,Sales,Canada,2019-11-12,USD,45,31520.07,2960.16,83,230,11951.47,58623,N/A
+945,945,Jessica Davis,jessica.davis945@example.com,HR,Australia,2019-07-20,USD,29,73632.92,7443.63,76,148,7042.17,62575,-
+853,853,Susan Moore,susan.moore853@example.com,Engineering,France,2018-09-25,USD,44,95393.88,9370.7,61,472,7944.25,87458,"Remote employee, works PST hours."
+307,307,Linda Taylor,linda.taylor307@example.com,Operations,France,2023-11-02,USD,46,36409.64,3966.32,60,494,3776.26,42943,"Remote employee, works PST hours."
+531,531,Mary Martinez,mary.martinez531@example.com,Finance,Brazil,2024-04-20,USD,27,61028.36,5845.44,57,34,-4000.25,65981,"Remote employee, works PST hours."
+461,461,William Rodriguez,william.rodriguez461@example.com,Sales,Canada,2020-01-13,USD,46,62379.82,6299.09,56,91,-3665.78,36302,"Excellent performer, candidate for team lead role next cycle."
+438,438,Charles Jones,charles.jones438@example.com,Finance,Canada,2021-12-26,USD,28,67213.68,6588.49,74,236,15292.06,62535,"Excellent performer, candidate for team lead role next cycle."
+122,122,Jessica Rodriguez,jessica.rodriguez122@example.com,Engineering,Germany,2020-06-28,USD,25,76841.7,7803.64,,188,-365.91,67272,On leave until further notice.
+657,657,Karen Miller,karen.miller657@example.com,Finance,Brazil,2021-02-08,USD,35,75430.74,7652.2,,334,1788.54,70132,"Remote employee, works PST hours."
+19,19,David Anderson,david.anderson19@example.com,Marketing,Brazil,2023-12-26,USD,57,55890.62,5392.61,,111,15322.93,81066,Promoted last quarter after strong review cycle.
+863,863,Karen Miller,karen.miller863@example.com,Operations,India,2022-12-25,USD,54,69946.04,6685.62,64,425,-5159.73,29670,On leave until further notice.
+969,969,Michael Brown,michael.brown969@example.com,Operations,Germany,2019-05-17,USD,41,57145.71,5937.06,,153,9937.47,98065,   
+453,453,Jennifer Jackson,jennifer.jackson453@example.com,Support,UK,2023-08-12,USD,33,63353.92,6645.3,91,270,9743.9,21062,   
+389,389,Thomas Moore,thomas.moore389@example.com,Finance,Mexico,2019-02-02,USD,51,59955.1,6081.49,77,127,6557.57,22046,"Excellent performer, candidate for team lead role next cycle."
+724,724,William Wilson,william.wilson724@example.com,HR,USA,2022-07-21,USD,25,61362.14,6083.22,,179,10971.38,64797,"Remote employee, works PST hours."
+377,377,Mary Lopez,mary.lopez377@example.com,Support,UK,2023-09-26,USD,28,72679.22,7371.38,90,330,5609.05,67503,"Remote employee, works PST hours."
+569,569,Sarah Smith,sarah.smith569@example.com,Engineering,Brazil,2018-01-06,USD,63,42223.02,4266.26,87,308,3975.53,90837,N/A
+526,526,David Thomas,david.thomas526@example.com,Finance,Brazil,2022-11-12,USD,40,61665.59,6146.08,,428,6727.26,58026,N/A
+973,973,Barbara Smith,barbara.smith973@example.com,Marketing,Brazil,2024-07-11,USD,57,55696.64,5520.58,,257,-953.53,19755,"Remote employee, works PST hours."
+822,822,   ,user822@example.com,Finance,UK,2021-07-04,USD,30,60753.2,5771.76,83,364,2953.71,56865,Transferred from EMEA office in Q2.
+786,786,Richard Hernandez,richard.hernandez786@example.com,Support,Japan,2024-03-06,USD,41,66779.28,6803.16,78,437,5319.59,14122,
+2,2,Karen Smith,karen.smith2@example.com,Finance,Germany,2023-11-23,USD,56,66319.89,6440.9,,445,9232.27,10851,   
+405,405,Jennifer Hernandez,jennifer.hernandez405@example.com,Engineering,Australia,2022-12-04,USD,33,52280.59,5603.05,88,163,11034.3,63903,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+837,837,John Jackson,john.jackson837@example.com,Finance,Germany,2019-05-16,USD,50,60364.18,5907.49,67,416,-8907.37,21274,"Excellent performer, candidate for team lead role next cycle."
+243,243,Jennifer Smith,jennifer.smith243@example.com,Marketing,Mexico,2019-01-26,USD,39,108232.39,11045.58,89,299,26611.44,23124,"Remote employee, works PST hours."
+835,835,Patricia Brown,patricia.brown835@example.com,HR,Japan,2020-04-25,USD,37,89391.74,9192.86,64,386,22833.79,18116,"Excellent performer, candidate for team lead role next cycle."
+975,975,Karen Jackson,karen.jackson975@example.com,HR,USA,2018-01-21,USD,43,62652.98,6454.81,47,241,13851.85,52538,On leave until further notice.
+83,83,Mary Johnson,mary.johnson83@example.com,Marketing,Japan,2018-02-08,USD,56,75855.28,7751.09,87,356,12862.78,30253,On leave until further notice.
+787,787,William Lopez,william.lopez787@example.com,HR,Mexico,2022-09-01,USD,32,53610.84,5340.2,,310,6697.55,77075,   
+296,296,Patricia Gonzalez,patricia.gonzalez296@example.com,HR,USA,2022-09-01,USD,27,67461.96,6879.57,96,260,-14852.6,83706,"Remote employee, works PST hours."
+5,5,Linda Brown,linda.brown5@example.com,HR,France,2021-11-27,USD,45,72331.61,7393.03,84,479,3751.32,93227,   
+679,679,Mary Lopez,mary.lopez679@example.com,Operations,India,2024-02-01,USD,51,75447.05,7397.38,99,71,9043.66,79550,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+813,813,David Thomas,david.thomas813@example.com,Marketing,India,2021-01-27,USD,44,60731.25,6244.14,82,438,15202.12,73485,
+393,393,Joseph Martin,joseph.martin393@example.com,Finance,Australia,2018-04-14,USD,40,66923.23,6582.06,,243,2707.87,62322,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+915,915,Jennifer Hernandez,jennifer.hernandez915@example.com,Finance,USA,2024-03-26,USD,22,67944.48,6984.18,,370,11430.07,99245,"Remote employee, works PST hours."
+587,587,Robert Johnson,robert.johnson587@example.com,Finance,India,2021-12-24,USD,30,46440.62,4612.06,,261,-4201.52,93320,   
+504,504,Elizabeth Jackson,elizabeth.jackson504@example.com,Marketing,Japan,2022-12-15,USD,36,54219.91,5435.79,,489,5093.99,93958,Transferred from EMEA office in Q2.
+209,209,Mary Jackson,mary.jackson209@example.com,Marketing,Australia,2020-10-18,USD,32,54550.04,5734.28,,136,14189.07,99037,
+598,598,William Moore,william.moore598@example.com,Engineering,Japan,2023-05-21,USD,,51769.39,5385.65,90,395,-4355.65,50481,-
+141,141,Robert Gonzalez,robert.gonzalez141@example.com,Finance,Japan,2024-09-09,USD,61,,6089.36,65,191,7026.74,57920,   
+429,429,Joseph Martinez,joseph.martinez429@example.com,Sales,Australia,2020-03-04,USD,45,70666.4,6728.08,68,259,14072.27,75543,   
+818,818,Elizabeth Smith,elizabeth.smith818@example.com,HR,USA,2019-05-27,USD,59,54043.56,5569.68,,180,11484.32,96540,Promoted last quarter after strong review cycle.
+615,615,David Moore,david.moore615@example.com,HR,USA,2021-11-22,USD,63,98586.06,10009.93,66,140,11976.73,74955,N/A
+74,74,John Davis,john.davis74@example.com,Finance,Brazil,2022-11-26,USD,33,53021.3,5341.22,79,349,7843.37,41566,Transferred from EMEA office in Q2.
+136,136,Jennifer Anderson,jennifer.anderson136@example.com,HR,Japan,2021-04-11,USD,60,53433.04,5589.66,,440,17486.88,55268,On leave until further notice.
+155,155,William Garcia,william.garcia155@example.com,Support,Japan,2023-05-23,USD,33,78548.88,7870.92,,345,5227.34,93719,On leave until further notice.
+63,63,Robert Thomas,robert.thomas63@example.com,Marketing,Brazil,2020-06-22,USD,28,73405.78,7201.1,58,339,18802.01,82102,Promoted last quarter after strong review cycle.
+240,240,Jennifer Jackson,jennifer.jackson240@example.com,HR,Brazil,2021-01-13,USD,65,68862.12,6718.76,57,143,8325.05,68459,   
+690,690,Jessica Martinez,jessica.martinez690@example.com,Support,Brazil,2018-06-05,USD,,64534.95,6723.32,,376,-10240.47,16889,   
+707,707,Sarah Rodriguez,sarah.rodriguez707@example.com,Finance,Canada,2018-03-11,USD,46,76463.99,7974.82,90,272,-10675.82,62776,Transferred from EMEA office in Q2.
+327,327,Sarah Moore,sarah.moore327@example.com,HR,UK,2020-07-08,USD,59,63691.38,6204.19,72,46,-2530.46,96858,"Remote employee, works PST hours."
+185,185,Joseph Thomas,joseph.thomas185@example.com,Sales,India,2022-07-14,USD,33,55571.86,5291.37,,316,3307.2,19634,
+169,169,John Martinez,john.martinez169@example.com,HR,UK,2024-09-16,USD,37,72415.07,7104.24,91,237,13844.22,64592,-
+665,665,Thomas Williams,thomas.williams665@example.com,HR,Japan,2020-03-24,USD,34,65297.98,6654.35,,146,-13593.23,36398,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+473,473,Richard Garcia,richard.garcia473@example.com,Engineering,Japan,2018-01-01,USD,33,86009.86,8460.76,58,213,70.68,72391,   
+347,347,Barbara Lopez,barbara.lopez347@example.com,Operations,France,2019-10-07,USD,51,82737.81,8161.97,,208,-5223.85,75951,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+778,778,Joseph Wilson,joseph.wilson778@example.com,Operations,Brazil,2018-06-26,USD,36,84471.56,8289.49,59,429,4700.17,64357,"Remote employee, works PST hours."
+58,58,Michael Rodriguez,michael.rodriguez58@example.com,Support,Canada,2019-04-06,USD,57,62790.11,6292.05,78,240,5266.08,48175,Promoted last quarter after strong review cycle.
+692,692,Michael Moore,michael.moore692@example.com,HR,Canada,2019-06-25,USD,-59,76618.87,7706.28,59,234,3007.64,95804,   
+285,285,Sarah Rodriguez,sarah.rodriguez285@example.com,HR,UK,2019-12-22,USD,62,80651.35,8077.35,,266,3633.75,27978,On leave until further notice.
+75,75,Charles Jones,charles.jones75@example.com,Sales,Japan,2023-05-15,USD,38,48973.66,4526.32,58,346,1999.41,55293,"Excellent performer, candidate for team lead role next cycle."
+298,298,James Hernandez,james.hernandez298@example.com,Marketing,France,2022-09-12,USD,28,77466.71,7861.52,,367,6359.07,63636,
+823,823,Barbara Wilson,barbara.wilson823@example.com,HR,Brazil,2021-08-01,USD,57,90242.6,9080.65,,71,-86.71,41804,"Excellent performer, candidate for team lead role next cycle."
+782,782,William Miller,william.miller782@example.com,Engineering,Canada,2018-07-01,USD,,56645.71,5679.04,74,471,425.37,20324,"Excellent performer, candidate for team lead role next cycle."
+344,344,Karen Johnson,karen.johnson344@example.com,Support,Brazil,2021-10-21,USD,55,71164.38,6999.53,,396,25049.28,32973,Transferred from EMEA office in Q2.
+743,743,Jennifer Brown,jennifer.brown743@example.com,Sales,Canada,2020-06-03,USD,61,57877.98,5951.34,45,458,9410.36,66181,-
+436,436,John Williams,john.williams436@example.com,Operations,Japan,2018-08-10,USD,65,48719.44,4661.89,100,114,-5750.92,28837,"Excellent performer, candidate for team lead role next cycle."
+119,119,Thomas Lopez,thomas.lopez119@example.com,Engineering,Australia,2022-09-26,USD,54,50930.22,5026.61,80,198,11076.09,12128,N/A
+90,90,John Rodriguez,john.rodriguez90@example.com,Finance,Mexico,2022-12-11,USD,46,57176.28,5963.45,78,220,4667.97,22999,
+1000,1000,Patricia Davis,patricia.davis1000@example.com,HR,Canada,2018-09-23,USD,40,81096.01,8239.24,75,481,10270.95,20874,-
+65,65,Susan Johnson,susan.johnson65@example.com,Sales,Australia,2020-10-25,USD,53,47127.03,4473.17,,281,9483.37,73532,
+88,88,Thomas Brown,thomas.brown88@example.com,Support,Canada,2021-08-25,USD,45,66166.16,6520.84,100,314,4680.59,15683,-
+40,40,Robert Wilson,robert.wilson40@example.com,HR,India,2022-08-14,USD,25,76971.54,7753.09,77,484,13046.75,12560,"Excellent performer, candidate for team lead role next cycle."
+4,4,Richard Williams,richard.williams4@example.com,Finance,France,2024-11-20,USD,45,42282.19,3952.06,,116,-835.57,47930,
+265,265,Mary Thomas,mary.thomas265@example.com,Marketing,India,2018-06-27,USD,41,54217.1,5778.6,83,50,10668.9,N/A,Transferred from EMEA office in Q2.
+883,883,Patricia Martinez,patricia.martinez883@example.com,HR,Japan,2020-04-22,USD,49,77522.45,7900.98,,58,361.66,26784,Transferred from EMEA office in Q2.
+476,476,Joseph Miller,joseph.miller476@example.com,Marketing,USA,2019-02-26,USD,31,31490.73,2940.86,51,81,-14326.98,97836,Promoted last quarter after strong review cycle.
+972,972,Richard Johnson,richard.johnson972@example.com,HR,India,2023-03-15,USD,39,83039.68,8613.86,,366,6524.76,43545,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+369,369,Richard Davis,richard.davis369@example.com,Marketing,Canada,2021-11-08,USD,55,68002.43,6363.22,83,139,2149.66,45235,On leave until further notice.
+513,513,Thomas Jackson,thomas.jackson513@example.com,Engineering,Japan,2018-05-02,USD,26,64312.73,6458.51,,63,9755.48,36217,   
+796,796,Charles Smith,charles.smith796@example.com,Marketing,USA,2023-10-01,USD,51,76741.1,7591.84,97,273,20002.1,79142,Promoted last quarter after strong review cycle.
+427,427,Sarah Moore,sarah.moore427@example.com,Engineering,Germany,2022-11-11,USD,44,72802.66,7326.23,61,192,-5770.78,84839,"Excellent performer, candidate for team lead role next cycle."
+129,129,William Lopez,william.lopez129@example.com,Support,Canada,2022-09-10,USD,41,79071.1,7653.47,80,89,7586.06,25907,"Remote employee, works PST hours."
+433,433,Patricia Smith,patricia.smith433@example.com,Finance,Australia,2022-02-07,USD,56,57257.8,5867.27,,360,8478.89,32449,
+509,509,James Jones,james.jones509@example.com,Finance,France,2020-08-14,USD,43,72866.53,7229.77,,257,5933.09,83224,"Excellent performer, candidate for team lead role next cycle."
+492,492,Thomas Smith,thomas.smith492@example.com,Marketing,Brazil,2023-09-05,USD,52,70493.42,6925.66,58,96,12115.16,18250,Promoted last quarter after strong review cycle.
+153,153,Sarah Johnson,sarah.johnson153@example.com,Sales,Brazil,2024-03-02,USD,47,67275.7,6602.78,95,474,4457.36,49110,"Excellent performer, candidate for team lead role next cycle."
+714,714,Linda Moore,linda.moore714@example.com,Operations,Canada,2020-05-16,USD,40,74986.31,7497.39,65,111,5532.78,49953,-
+525,525,Susan Jones,susan.jones525@example.com,Marketing,Brazil,2021-02-19,USD,65,45977.63,4612.83,70,243,687.95,17305,On leave until further notice.
+693,693,Charles Jones,charles.jones693@example.com,HR,Japan,2020-03-07,USD,35,68315.38,6707.18,63,371,7294.8,29346,On leave until further notice.
+113,113,Jessica Miller,jessica.miller113@example.com,Marketing,Mexico,2021-08-25,USD,40,68117.69,6578.98,50,418,8387.63,42768,Promoted last quarter after strong review cycle.
+95,95,James Martin,james.martin95@example.com,Support,France,2018-03-09,USD,41,77287.53,7640.73,,73,-2403.64,28595,Promoted last quarter after strong review cycle.
+741,741,Mary Moore,mary.moore741@example.com,Support,France,2023-09-04,USD,23,68169.22,6733.89,,261,11266.73,10158,"Remote employee, works PST hours."
+475,475,Robert Martinez,robert.martinez475@example.com,Marketing,Brazil,2018-09-08,USD,34,78636.53,8029.11,,185,20308.73,76524,"Remote employee, works PST hours."
+854,854,James Hernandez,james.hernandez854@example.com,Support,Mexico,2021-07-26,USD,25,54676.99,5557.29,99,347,-4502.93,47672,-
+993,993,Jessica Anderson,jessica.anderson993@example.com,HR,Australia,2021-03-28,USD,60,65207.9,6513.71,97,462,4695.52,80777,N/A
+376,376,Jessica Martin,jessica.martin376@example.com,Sales,India,2024-02-08,USD,32,,6877.26,,496,5006.18,91937,Promoted last quarter after strong review cycle.
+178,178,Jessica Smith,jessica.smith178@example.com,Engineering,Australia,2022-07-01,USD,23,299996.73,29842.1,41,257,3821.52,98346,On leave until further notice.
+315,315,Sarah Smith,sarah.smith315@example.com,Support,Canada,2019-11-21,USD,35,75419.2,7384.25,,275,12801.82,67047,
+282,282,Jennifer Williams,jennifer.williams282@example.com,Operations,USA,2020-05-15,USD,55,,7419.44,48,175,865.42,74248,N/A
+48,48,Patricia Wilson,patricia.wilson48@example.com,Marketing,Japan,2023-03-14,USD,33,64486.84,6395.94,,413,-15649.49,80539,Transferred from EMEA office in Q2.
+100,100,Mary Wilson,mary.wilson100@example.com,Engineering,Japan,2018-06-19,USD,49,41468.53,3865.24,47,207,-597.69,12733,N/A
+928,928,Linda Martin,linda.martin928@example.com,Sales,Germany,2020-06-11,USD,54,66807.99,6802.78,98,39,-4844.02,94617,"Remote employee, works PST hours."
+378,378,James Gonzalez,james.gonzalez378@example.com,Marketing,UK,2020-01-16,USD,50,37878.97,3554.71,76,95,1372.92,81253,N/A
+277,277,Robert Davis,robert.davis277@example.com,Marketing,Germany,2023-05-14,USD,43,51218.43,5313.42,47,240,15709.42,86062,"Excellent performer, candidate for team lead role next cycle."
+902,902,Elizabeth Wilson,elizabeth.wilson902@example.com,Finance,France,2020-10-25,USD,47,67093.34,6944.45,52,39,881.58,87678,   
+28,28,Jennifer Wilson,jennifer.wilson28@example.com,Engineering,UK,2023-06-26,USD,48,60915.71,6220.37,57,81,-10129.19,24168,On leave until further notice.
+446,446,Jessica Wilson,jessica.wilson446@example.com,Sales,Canada,2019-11-26,USD,48,69324.32,7202.6,99,217,-8037.71,91690,   
+885,885,William Wilson,william.wilson885@example.com,HR,Japan,2021-07-09,USD,25,62219.65,6542.65,,419,13360.56,39007,"Excellent performer, candidate for team lead role next cycle."
+10,10,Patricia Martinez,patricia.martinez10@example.com,HR,UK,2021-01-24,USD,38,85556.4,8889.23,46,445,2618.29,91959,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+868,868,William Brown,william.brown868@example.com,Engineering,Brazil,2021-09-05,USD,58,47330.4,4320.29,,92,5601.91,69515,Promoted last quarter after strong review cycle.
+403,403,Robert Gonzalez,robert.gonzalez403@example.com,Finance,Mexico,2024-11-22,USD,36,48014.48,4930.94,59,465,-1890.92,27271,"Remote employee, works PST hours."
+792,792,Susan Martinez,susan.martinez792@example.com,Finance,Australia,2020-07-01,USD,29,40815.45,4156.81,62,125,11387.99,19521,"Remote employee, works PST hours."
+462,462,Richard Garcia,richard.garcia462@example.com,Support,Japan,2018-03-18,USD,49,71365.39,7193.21,85,132,16261.67,23538,Promoted last quarter after strong review cycle.
+45,45,James Martin,james.martin45@example.com,Sales,Germany,2019-08-22,USD,29,55319.93,5477.13,89,188,10401.74,25012,   
+712,712,James Wilson,james.wilson712@example.com,Support,Australia,2023-06-08,USD,64,303096.09,30664.42,73,350,474.07,89848,Promoted last quarter after strong review cycle.
+994,994,Karen Brown,karen.brown994@example.com,HR,Japan,2023-10-07,USD,30,78233.66,7843.58,54,337,9140.49,20772,
+592,592,Thomas Gonzalez,thomas.gonzalez592@example.com,Finance,Australia,2022-07-28,USD,38,72606.81,7015.15,84,476,-750.32,74165,On leave until further notice.
+894,894,Jennifer Miller,jennifer.miller894@example.com,Operations,Japan,2022-04-03,USD,31,28000,2486.81,93,290,13723.12,40465,Promoted last quarter after strong review cycle.
+134,134,Jennifer Martin,jennifer.martin134@example.com,Support,Mexico,2020-10-02,USD,23,49448.94,5370.02,56,333,14519.41,37631,"Excellent performer, candidate for team lead role next cycle."
+946,946,Susan Lopez,susan.lopez946@example.com,Operations,Germany,2021-10-09,USD,42,72957.68,7332.01,83,491,-6191.89,92984,N/A
+147,147,Thomas Miller,thomas.miller147@example.com,Finance,India,2023-08-17,USD,46,61392.72,6252.85,61,279,-3382.44,99226,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+888,888,Susan Miller,susan.miller888@example.com,Finance,Germany,2018-01-28,USD,23,91738.69,9181.74,90,248,-4777.99,15542,   
+871,871,Karen Martin,karen.martin871@example.com,Engineering,USA,2018-12-12,USD,50,82927.47,8142.47,67,148,5597.35,34045,"Excellent performer, candidate for team lead role next cycle."
+960,960,Thomas Thomas,thomas.thomas960@example.com,Sales,Japan,2021-01-22,USD,26,88751.79,8780.83,,142,10755.54,89775,
+850,850,Mary Lopez,mary.lopez850@example.com,HR,Mexico,2021-05-03,USD,35,88063.99,9133.1,59,379,-3058.99,82478,"Remote employee, works PST hours."
+918,918,Richard Jones,richard.jones918@example.com,Finance,Mexico,2019-12-14,USD,44,44231.5,4239.11,,175,-4615.76,76029,-
+775,775,Susan Taylor,susan.taylor775@example.com,Operations,India,2018-03-15,USD,49,51704.44,5351.95,,223,-6366.08,99165,On leave until further notice.
+35,35,Elizabeth Taylor,elizabeth.taylor35@example.com,Support,Mexico,2020-02-27,USD,37,60010.66,5874.86,,12,27032.81,90120,
+251,251,Barbara Hernandez,barbara.hernandez251@example.com,Sales,Canada,2024-12-22,USD,62,63239.09,6144.53,,107,5008.65,43640,
+82,82,Karen Moore,karen.moore82@example.com,Marketing,Mexico,2019-11-03,USD,62,81247.11,8320.87,,209,-10677.41,25292,   
+365,365,Mary Lopez,mary.lopez365@example.com,Operations,India,2024-08-15,USD,56,82355.0,8135.12,,485,3386.01,88326,Transferred from EMEA office in Q2.
+717,717,Linda Thomas,linda.thomas717@example.com,HR,India,2020-06-14,USD,33,53423.01,5306.34,82,429,923.31,66880,Promoted last quarter after strong review cycle.
+37,37,Linda Garcia,linda.garcia37@example.com,Operations,Australia,2021-01-18,USD,37,71627.14,7112.29,,237,-6766.65,88047,N/A
+691,691,Jessica Gonzalez,jessica.gonzalez691@example.com,Marketing,UK,2018-09-13,USD,43,49989.25,5105.0,,200,-2593.27,47098,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+551,551,Jennifer Wilson,jennifer.wilson551@example.com,Operations,UK,2018-05-09,USD,37,40826.34,3788.68,83,331,3887.26,27459,N/A
+381,381,Sarah Jones,sarah.jones381@example.com,Finance,France,2020-07-21,USD,42,79032.81,8058.99,,427,9640.47,14099,"Remote employee, works PST hours."
+754,754,Richard Garcia,richard.garcia754@example.com,Operations,Australia,2022-02-27,USD,51,49842.64,4696.32,64,84,6645.42,17165,N/A
+203,203,Thomas Gonzalez,thomas.gonzalez203@example.com,HR,Mexico,2019-10-13,USD,49,73370.87,7598.39,81,476,15179.1,74178,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+292,292,John Thomas,john.thomas292@example.com,HR,Canada,2021-08-02,USD,26,48215.85,4808.92,83,268,11930.23,85582,"Excellent performer, candidate for team lead role next cycle."
+130,130,John Davis,john.davis130@example.com,Operations,Japan,2018-06-18,USD,58,47785.04,4533.27,79,452,15590.12,21300,
+640,640,Linda Taylor,linda.taylor640@example.com,Finance,Australia,2024-08-24,USD,51,56934.97,5647.79,67,394,7854.83,64747,"Remote employee, works PST hours."
+780,780,Sarah Gonzalez,sarah.gonzalez780@example.com,Sales,Mexico,2023-07-27,USD,25,82153.33,8298.59,,325,-4964.81,61172,   
+143,143,John Hernandez,john.hernandez143@example.com,Finance,India,2019-07-20,USD,41,50158.42,4883.66,71,362,-3379.79,12180,N/A
+836,836,David Brown,david.brown836@example.com,Engineering,Canada,2021-06-20,USD,62,59341.38,6178.78,,357,-10275.52,68918,On leave until further notice.
+212,212,Jessica Hernandez,jessica.hernandez212@example.com,Finance,USA,2024-12-03,USD,51,41893.47,3984.64,90,273,-4268.86,N/A,"Remote employee, works PST hours."
+213,213,Susan Miller,susan.miller213@example.com,HR,France,2020-05-11,USD,57,47893.23,4667.76,61,457,3963.65,23051,Transferred from EMEA office in Q2.
+6,6,Sarah Davis,sarah.davis6@example.com,Sales,Japan,2021-05-21,USD,57,59722.28,6005.83,43,117,11954.63,14207,N/A
+210,210,John Wilson,john.wilson210@example.com,Engineering,France,2024-11-05,USD,30,59687.34,5969.37,88,431,17612.07,98635,On leave until further notice.
+938,938,Susan Gonzalez,susan.gonzalez938@example.com,Engineering,UK,2023-05-24,USD,63,64248.57,6421.12,47,406,1751.79,35119,"Excellent performer, candidate for team lead role next cycle."
+602,602,Robert Jones,robert.jones602@example.com,Marketing,Brazil,2023-03-02,USD,61,61809.24,6303.73,59,199,3775.63,22942,N/A
+882,882,Thomas Garcia,thomas.garcia882@example.com,Marketing,Germany,2020-11-16,USD,53,56953.69,5753.15,70,151,-2641.5,22652,"Remote employee, works PST hours."
+661,661,Patricia Martinez,patricia.martinez661@example.com,Sales,Brazil,2024-04-20,USD,27,78513.45,7922.58,,77,-3146.6,41203,"Excellent performer, candidate for team lead role next cycle."
+217,217,John Thomas,john.thomas217@example.com,Engineering,Germany,2021-02-24,USD,28,76444.47,7760.07,,195,6965.43,27451,   
+133,133,Barbara Taylor,barbara.taylor133@example.com,Marketing,Canada,2020-04-21,USD,57,61784.98,6455.33,45,257,-1775.08,86106,   
+889,889,Elizabeth Martinez,elizabeth.martinez889@example.com,Engineering,Germany,2023-12-08,USD,24,63916.13,6493.35,81,205,13923.53,45389,
+673,673,Elizabeth Wilson,elizabeth.wilson673@example.com,Operations,Canada,2018-11-19,USD,44,69663.24,6820.71,,383,-502.92,32072,Transferred from EMEA office in Q2.
+772,772,John Anderson,john.anderson772@example.com,Sales,Japan,2024-06-04,USD,65,37118.43,3510.05,,230,10383.32,26478,Transferred from EMEA office in Q2.
+386,386,Jennifer Moore,jennifer.moore386@example.com,HR,Australia,2020-11-06,USD,56,49866.47,5203.01,60,281,4914.82,52553,N/A
+518,518,Karen Martinez,karen.martinez518@example.com,Support,Japan,2019-09-14,USD,40,71561.08,7366.55,97,430,4202.28,72347,N/A
+909,909,Patricia Lopez,patricia.lopez909@example.com,Marketing,Australia,2018-10-09,USD,24,52066.27,4977.79,84,360,4786.06,84996,Promoted last quarter after strong review cycle.
+117,117,Michael Jones,michael.jones117@example.com,Finance,Mexico,2022-07-04,USD,40,65593.23,6660.97,,327,7408.18,24530,Transferred from EMEA office in Q2.
+527,527,Charles Smith,charles.smith527@example.com,Operations,India,2021-02-14,USD,44,80436.89,8033.26,,125,5173.33,87664,
+458,458,William Garcia,william.garcia458@example.com,Marketing,Australia,2018-11-01,USD,26,87364.07,8826.84,,228,5272.38,56073,"Remote employee, works PST hours."
+966,966,Charles Martin,charles.martin966@example.com,Operations,Japan,2018-05-25,USD,,59412.83,5753.97,,259,-541.51,73344,-
+124,124,Elizabeth Hernandez,elizabeth.hernandez124@example.com,Engineering,Canada,2020-11-10,USD,41,74694.65,7169.58,,227,9240.82,56077,Transferred from EMEA office in Q2.
+497,497,Richard Thomas,richard.thomas497@example.com,Operations,UK,2021-06-05,USD,22,83523.82,8305.51,81,361,194.39,85199,   
+643,643,Karen Martin,karen.martin643@example.com,Finance,Brazil,2021-04-13,USD,26,55536.33,5525.85,,291,16095.03,49930,
+422,422,,user422@example.com,Marketing,Australia,2022-10-12,USD,30,44831.92,4306.78,71,252,-1165.32,33580,"Excellent performer, candidate for team lead role next cycle."
+929,929,John Thomas,john.thomas929@example.com,Sales,USA,2019-05-14,USD,27,53337.35,5580.18,58,159,-6247.43,14564,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+196,196,James Brown,james.brown196@example.com,Marketing,Germany,2022-12-17,USD,57,79786.59,7749.72,65,237,-73.24,99070,"Excellent performer, candidate for team lead role next cycle."
+24,24,James Moore,james.moore24@example.com,Marketing,Canada,2019-05-04,USD,28,44773.29,4471.79,,107,354.96,54942,"Remote employee, works PST hours."
+8,8,David Jackson,david.jackson8@example.com,HR,Mexico,2021-06-08,USD,30,76239.54,7536.79,,56,4791.06,30033,   
+431,431,Richard Taylor,richard.taylor431@example.com,Engineering,USA,2020-01-22,USD,60,74361.3,7306.31,46,266,6343.29,12946,"Excellent performer, candidate for team lead role next cycle."
+703,703,Robert Moore,robert.moore703@example.com,Marketing,France,2021-11-06,USD,47,30268.45,3158.02,100,355,8356.91,92518,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+839,839,Jessica Miller,jessica.miller839@example.com,Operations,Germany,2022-08-17,USD,44,45044.93,4840.97,91,34,-5395.22,19288,"Excellent performer, candidate for team lead role next cycle."
+254,254,Robert Hernandez,robert.hernandez254@example.com,Finance,Mexico,2021-12-01,USD,49,59247.96,6037.13,50,27,3300.18,23272,N/A
+105,105,Joseph Anderson,joseph.anderson105@example.com,Engineering,USA,2020-05-03,USD,63,84399.99,8143.8,72,196,-4892.81,15376,Transferred from EMEA office in Q2.
+38,38,Joseph Martin,joseph.martin38@example.com,Operations,Australia,2021-09-15,USD,32,28000,2790.96,,126,-4070.14,93579,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+695,695,Linda Johnson,linda.johnson695@example.com,Engineering,Germany,2021-08-10,USD,60,85934.72,8511.53,84,407,3344.03,70774,On leave until further notice.
+114,114,Jessica Lopez,jessica.lopez114@example.com,Finance,Canada,2023-09-28,USD,29,84423.25,8368.15,,463,18249.18,77286,   
+676,676,Jennifer Williams,jennifer.williams676@example.com,Marketing,Canada,2021-02-09,USD,26,53324.72,5187.2,83,389,13888.54,23213,Promoted last quarter after strong review cycle.
+235,235,Linda Williams,linda.williams235@example.com,Sales,UK,2024-10-04,USD,31,,7925.66,,61,-15158.16,37215,Transferred from EMEA office in Q2.
+11,11,Thomas Martin,thomas.martin11@example.com,Sales,UK,2020-03-18,USD,55,82675.36,8135.05,47,475,-10149.81,50306,"Remote employee, works PST hours."
+110,110,Robert Wilson,robert.wilson110@example.com,Finance,India,2018-06-10,USD,33,83587.26,8533.08,52,115,2790.44,28030,   
+586,586,Joseph Miller,joseph.miller586@example.com,Finance,Mexico,2024-10-21,USD,50,83054.53,8169.91,65,397,-10825.91,35859,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+190,190,Joseph Brown,joseph.brown190@example.com,Sales,France,2018-07-11,USD,61,47738.3,4483.75,67,417,15911.21,95332,"Excellent performer, candidate for team lead role next cycle."
+335,335,Joseph Martin,joseph.martin335@example.com,HR,Japan,2019-04-27,USD,48,43491.26,4138.45,51,319,1628.14,99861,N/A
+988,988,Barbara Martinez,barbara.martinez988@example.com,Operations,Canada,2021-11-10,USD,36,50677.08,5151.72,64,448,4993.8,71782,Promoted last quarter after strong review cycle.
+511,511,Elizabeth Lopez,elizabeth.lopez511@example.com,Sales,Japan,2022-09-25,USD,43,71004.53,7250.99,47,113,13502.9,39697,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+261,261,John Johnson,john.johnson261@example.com,HR,Canada,2023-07-07,USD,62,77071.58,7922.59,,372,7556.82,60868,-
+375,375,Michael Lopez,michael.lopez375@example.com,Engineering,Germany,2018-04-21,USD,49,60903.19,6198.34,,61,263.7,15504,"Excellent performer, candidate for team lead role next cycle."
+732,732,Thomas Anderson,thomas.anderson732@example.com,Finance,Australia,2020-05-28,USD,36,65441.99,6498.77,,114,11059.82,15978,-
+591,591,Charles Miller,charles.miller591@example.com,Operations,India,2021-02-05,USD,49,67934.74,6720.61,,454,8806.71,20233,N/A
+181,181,Robert Thomas,robert.thomas181@example.com,Operations,Brazil,2023-06-19,USD,28,91555.91,8880.19,,461,16303.81,72324,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+355,355,James Smith,james.smith355@example.com,Support,Germany,2021-10-04,USD,42,45745.67,4878.61,,134,5729.11,90358,N/A
+198,198,Jessica Lopez,jessica.lopez198@example.com,HR,Canada,2021-12-23,USD,50,76208.69,7549.96,47,11,11136.55,54967,
+891,891,Elizabeth Hernandez,elizabeth.hernandez891@example.com,HR,Australia,2023-01-10,USD,39,58353.87,5858.79,76,241,-1052.84,39131,On leave until further notice.
+698,698,Richard Smith,richard.smith698@example.com,HR,Australia,2024-09-26,USD,55,68178.22,6576.51,85,419,5694.82,95419,
+490,490,Robert Lopez,robert.lopez490@example.com,Marketing,Japan,2021-09-17,USD,29,87516.35,8509.52,97,149,6837.07,69241,"Excellent performer, candidate for team lead role next cycle."
+274,274,   ,user274@example.com,Finance,Germany,2018-10-13,USD,64,88579.81,8811.48,,254,8979.39,48745,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+927,927,Richard Jones,richard.jones927@example.com,Marketing,UK,2021-06-10,USD,65,63060.03,6097.33,44,177,-8103.7,86864,Promoted last quarter after strong review cycle.
+161,161,Mary Anderson,mary.anderson161@example.com,Sales,Australia,2021-08-19,USD,,44091.97,4301.25,,11,-6693.23,38560,"Excellent performer, candidate for team lead role next cycle."
+329,329,Mary Davis,mary.davis329@example.com,Operations,Japan,2019-02-09,USD,45,,7019.22,90,184,-8645.32,16086,Promoted last quarter after strong review cycle.
+482,482,Sarah Davis,sarah.davis482@example.com,Engineering,Brazil,2024-09-16,USD,35,49272.84,4607.69,,373,-3292.09,66113,"Remote employee, works PST hours."
+278,278,Robert Thomas,robert.thomas278@example.com,Sales,Australia,2018-11-13,USD,55,72041.3,7184.18,48,102,7545.05,54914,On leave until further notice.
+293,293,Linda Hernandez,linda.hernandez293@example.com,Finance,Australia,2023-12-20,USD,28,42959.79,4427.89,82,346,2137.88,83183,"Excellent performer, candidate for team lead role next cycle."
+766,766,Joseph Moore,joseph.moore766@example.com,Operations,Japan,2018-02-06,USD,28,49141.21,5306.96,52,205,-3968.05,53086,
+862,862,Barbara Hernandez,barbara.hernandez862@example.com,HR,India,2021-05-20,USD,23,59137.42,5946.02,98,302,7043.2,13346,
+46,46,Elizabeth Brown,elizabeth.brown46@example.com,Finance,USA,2020-10-22,USD,,82831.92,8030.79,,353,12664.67,92213,"Remote employee, works PST hours."
+687,687,William Gonzalez,william.gonzalez687@example.com,Finance,USA,2020-01-19,USD,56,70485.76,7232.83,89,186,10485.48,26555,-
+760,760,Thomas Hernandez,thomas.hernandez760@example.com,HR,UK,2020-05-12,USD,61,97746.26,9905.78,89,349,-1680.57,60807,"Remote employee, works PST hours."
+496,496,Michael Moore,michael.moore496@example.com,Support,USA,2023-06-12,USD,31,57699.7,5596.08,,154,12140.09,25923,Promoted last quarter after strong review cycle.
+583,583,Linda Jones,linda.jones583@example.com,Operations,Brazil,2021-07-15,USD,55,68932.29,6711.09,,74,6606.58,REDACTED,
+358,358,Sarah Hernandez,sarah.hernandez358@example.com,Operations,Japan,2020-05-18,USD,58,65960.08,6683.25,,110,6078.56,43330,Transferred from EMEA office in Q2.
+351,351,William Lopez,william.lopez351@example.com,Sales,Mexico,2020-03-24,USD,65,73821.98,7327.08,55,376,5313.47,40042,"Remote employee, works PST hours."
+559,559,Linda Thomas,linda.thomas559@example.com,Support,Canada,2020-01-10,USD,65,72598.86,7247.95,99,487,10559.79,13784,
+959,959,   ,user959@example.com,HR,Japan,2022-03-12,USD,63,81364.88,8461.39,,191,-8150.9,94984,   
+491,491,Barbara Williams,barbara.williams491@example.com,Sales,Japan,2018-02-13,USD,33,56027.5,6089.29,,141,8451.21,29726,"Remote employee, works PST hours."
+635,635,Richard Jackson,richard.jackson635@example.com,Sales,India,2020-09-03,USD,30,65127.89,6345.56,54,298,14267.97,54089,On leave until further notice.
+313,313,Joseph Davis,joseph.davis313@example.com,Support,Mexico,2022-04-02,USD,65,76067.46,7477.73,47,197,4468.61,13238,-
+833,833,Charles Hernandez,charles.hernandez833@example.com,HR,UK,2020-11-10,USD,47,91089.71,9267.91,70,310,-672.72,76450,-
+288,288,Thomas Williams,thomas.williams288@example.com,Support,Canada,2020-11-08,USD,51,45816.7,4748.82,46,416,4523.06,32898,Promoted last quarter after strong review cycle.
+383,383,Karen Williams,karen.williams383@example.com,Engineering,Germany,2023-08-27,USD,27,44019.65,4458.87,87,480,16478.63,17641,"Excellent performer, candidate for team lead role next cycle."
+54,54,Karen Martinez,karen.martinez54@example.com,Engineering,Germany,2020-04-12,USD,33,52962.6,5195.04,,23,16882.08,17146,-
+834,834,David Jones,david.jones834@example.com,Support,India,2022-10-12,USD,59,48476.71,4697.21,,436,-474.64,30863,"Remote employee, works PST hours."
+852,852,Elizabeth Williams,elizabeth.williams852@example.com,Engineering,France,2024-10-13,USD,53,54800.99,5675.13,54,105,5928.26,59719,   
+413,413,William Anderson,william.anderson413@example.com,Engineering,UK,2021-10-23,USD,34,69824.77,6923.98,,332,16914.59,26193,
+43,43,James Williams,james.williams43@example.com,Support,Brazil,2019-08-06,USD,25,64148.14,6592.56,61,389,9699.54,65255,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+194,194,Karen Thomas,karen.thomas194@example.com,Finance,Brazil,2022-09-28,USD,48,39165.27,3576.01,97,415,1168.27,80373,"Excellent performer, candidate for team lead role next cycle."
+223,223,Thomas Martinez,thomas.martinez223@example.com,Support,Australia,2024-07-14,USD,47,81163.76,8239.18,57,42,1481.0,36633,   
+793,793,Barbara Lopez,barbara.lopez793@example.com,Sales,India,2018-01-11,USD,22,62845.72,6148.87,60,460,5322.25,47173,"Excellent performer, candidate for team lead role next cycle."
+219,219,Michael Williams,michael.williams219@example.com,Engineering,UK,2024-02-19,USD,46,55536.88,5723.88,55,141,1285.19,88774,"Excellent performer, candidate for team lead role next cycle."
+708,708,Charles Jones,charles.jones708@example.com,Marketing,USA,2023-09-23,USD,31,55107.41,5449.85,57,27,1289.02,93780,N/A
+444,444,Patricia Martinez,patricia.martinez444@example.com,Operations,USA,2019-07-23,USD,59,63501.45,6212.34,64,222,9316.29,81449,"Remote employee, works PST hours."
+749,749,John Martinez,john.martinez749@example.com,HR,UK,2024-09-14,USD,37,67612.62,6899.59,47,492,3514.62,13453,On leave until further notice.
+630,630,Michael Martinez,michael.martinez630@example.com,HR,Germany,2020-06-22,USD,32,51854.64,5698.0,96,222,-2944.43,18569,
+70,70,William Thomas,william.thomas70@example.com,Support,Brazil,2021-11-26,USD,63,84810.42,8713.24,,257,3875.13,87356,N/A
+459,459,Elizabeth Rodriguez,elizabeth.rodriguez459@example.com,Sales,USA,2018-10-03,USD,25,85314.75,8421.28,100,306,-3118.11,25725,
+145,145,Linda Johnson,linda.johnson145@example.com,Finance,Japan,2019-09-21,USD,61,67259.27,6532.64,55,16,-6153.78,35006,Promoted last quarter after strong review cycle.
+968,968,Jessica Garcia,jessica.garcia968@example.com,Sales,Canada,2024-07-22,USD,41,66561.94,6986.03,,351,13914.1,80594,   
+611,611,Barbara Gonzalez,barbara.gonzalez611@example.com,Operations,Mexico,2020-07-06,USD,22,,7657.81,,4,5284.64,46848,N/A
+280,280,Charles Garcia,charles.garcia280@example.com,HR,Canada,2019-10-14,USD,62,70865.45,6895.29,40,19,8634.54,79963,"Remote employee, works PST hours."
+388,388,Mary Martinez,mary.martinez388@example.com,Finance,USA,2022-03-10,USD,22,61100.95,6066.03,41,395,10385.8,46170,-
+202,202,Joseph Martin,joseph.martin202@example.com,Sales,France,2022-10-03,USD,65,52158.4,5282.57,,93,7987.73,58929,   
+623,623,Barbara Wilson,barbara.wilson623@example.com,HR,Mexico,2021-03-08,USD,30,399258.05,39858.21,,223,-6579.56,56890,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+986,986,Charles Brown,charles.brown986@example.com,Engineering,UK,2022-10-24,USD,55,69966.34,7239.25,,250,14310.84,89278,N/A
+516,516,Thomas Thomas,thomas.thomas516@example.com,Marketing,Mexico,2019-08-22,USD,28,55652.52,5644.07,53,263,11793.65,39825,On leave until further notice.
+295,295,Thomas Davis,thomas.davis295@example.com,Finance,Brazil,2021-04-03,USD,51,46621.25,4751.76,,255,1198.6,75191,Promoted last quarter after strong review cycle.
+533,533,Jennifer Smith,jennifer.smith533@example.com,Support,Australia,2024-03-19,USD,53,73853.24,7883.25,69,137,14109.21,90533,On leave until further notice.
+621,621,Karen Martin,karen.martin621@example.com,Engineering,Japan,2021-08-26,USD,,80189.61,7828.63,,480,4174.77,77792,N/A
+730,730,Thomas Smith,thomas.smith730@example.com,Sales,Mexico,2020-12-05,USD,40,62015.67,6449.58,84,97,7912.25,62100,Transferred from EMEA office in Q2.
+884,884,Jessica Martin,jessica.martin884@example.com,HR,Germany,2018-05-09,USD,54,77361.43,7821.02,75,395,20236.5,52361,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+540,540,Susan Rodriguez,susan.rodriguez540@example.com,Operations,Mexico,2018-08-18,USD,45,71475.29,7117.04,70,349,1277.62,42289,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+47,47,Patricia Martinez,patricia.martinez47@example.com,Operations,Mexico,2024-02-26,USD,58,,6601.24,63,35,-2304.11,65057,Transferred from EMEA office in Q2.
+784,784,Mary Rodriguez,mary.rodriguez784@example.com,Engineering,UK,2023-01-21,USD,59,62516.57,6316.68,47,54,2121.43,28590,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+949,949,Karen Taylor,karen.taylor949@example.com,Engineering,Mexico,2022-12-14,USD,23,59833.95,6118.54,70,350,11471.27,88819,On leave until further notice.
+439,439,Susan Davis,susan.davis439@example.com,Finance,Germany,2022-03-16,USD,46,74380.12,7493.13,67,401,15273.8,54852,-
+387,387,Susan Wilson,susan.wilson387@example.com,Operations,India,2022-04-19,USD,56,70742.38,7406.25,56,184,13462.76,62047,Promoted last quarter after strong review cycle.
+984,984,Sarah Lopez,sarah.lopez984@example.com,Engineering,India,2024-06-08,USD,64,75970.94,7640.58,57,119,11570.04,38473,N/A
+428,428,Richard Garcia,richard.garcia428@example.com,Finance,Canada,2024-05-23,USD,42,44417.67,4402.02,,449,-1165.92,41148,N/A
+246,246,Linda Martin,linda.martin246@example.com,Sales,USA,2022-08-01,USD,43,81232.8,8239.98,,367,2352.84,33260,N/A
+505,505,Patricia Martinez,patricia.martinez505@example.com,HR,UK,2021-12-21,USD,37,90111.0,9071.58,44,306,4706.01,84130,On leave until further notice.
+545,545,William Anderson,william.anderson545@example.com,Support,USA,2024-01-21,USD,63,71566.58,7354.67,40,205,7108.05,85472,
+639,639,Elizabeth Lopez,elizabeth.lopez639@example.com,Operations,Brazil,2021-10-25,USD,63,86795.63,8701.32,100,76,8814.6,37508,Transferred from EMEA office in Q2.
+207,207,Sarah Johnson,sarah.johnson207@example.com,Operations,Japan,2022-04-14,USD,,63079.42,6017.81,,447,13744.11,55688,
+448,448,Susan Moore,susan.moore448@example.com,Finance,India,2018-01-19,USD,52,55951.3,5567.71,84,40,1235.74,28623,-
+481,481,David Jones,david.jones481@example.com,Engineering,Japan,2021-07-06,USD,43,67362.24,6900.51,,406,-2118.49,32273,"Excellent performer, candidate for team lead role next cycle."
+647,647,Michael Taylor,michael.taylor647@example.com,Support,Japan,2020-04-01,USD,31,38624.4,3987.23,55,269,61.62,74350,Transferred from EMEA office in Q2.
+541,541,John Lopez,john.lopez541@example.com,HR,India,2024-05-01,USD,63,85023.98,8445.89,82,409,16418.62,98027,"Remote employee, works PST hours."
+633,633,,user633@example.com,Sales,Australia,2021-11-25,USD,54,52228.7,5394.73,,364,-3650.1,74853,Transferred from EMEA office in Q2.
+530,530,Jennifer Martin,jennifer.martin530@example.com,Marketing,India,2021-04-16,USD,62,81907.7,8392.76,74,109,-6521.9,N/A,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+896,896,Sarah Thomas,sarah.thomas896@example.com,Marketing,Germany,2020-08-23,USD,52,75211.09,7127.1,45,471,3567.04,23768,On leave until further notice.
+174,174,William Wilson,william.wilson174@example.com,Engineering,Mexico,2024-04-24,USD,31,51855.54,5438.15,86,213,6033.28,48691,   
+34,34,Charles Martin,charles.martin34@example.com,Support,India,2021-08-15,USD,65,53959.02,5447.1,90,376,13822.84,32241,
+859,859,Jessica Jones,jessica.jones859@example.com,Sales,UK,2019-10-21,USD,25,67376.53,7027.55,,259,11744.93,15499,-
+343,343,William Moore,william.moore343@example.com,Finance,USA,2019-07-21,USD,22,74355.47,7084.71,78,222,10316.83,58606,
+60,60,Linda Jones,linda.jones60@example.com,Marketing,UK,2018-01-06,USD,41,55606.42,5252.24,68,63,-3388.55,71433,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+597,597,John Taylor,john.taylor597@example.com,Support,Japan,2024-08-22,USD,50,79349.44,8194.77,,319,797.06,40516,On leave until further notice.
+402,402,Thomas Rodriguez,thomas.rodriguez402@example.com,Operations,USA,2023-05-13,USD,23,52123.66,5670.72,,174,-1713.28,61491,   
+547,547,David Garcia,david.garcia547@example.com,Support,Mexico,2024-06-26,USD,40,69919.77,7188.24,,448,-5888.04,84762,"Remote employee, works PST hours."
+426,426,John Anderson,john.anderson426@example.com,Operations,Australia,2020-08-26,USD,48,65643.94,6625.44,76,371,3809.34,98892,N/A
+652,652,James Rodriguez,james.rodriguez652@example.com,Engineering,UK,2020-11-24,USD,51,35490.62,3474.21,55,365,5287.59,67373,   
+338,338,Thomas Wilson,thomas.wilson338@example.com,Marketing,USA,2023-09-14,USD,36,47977.35,5010.21,62,301,1537.08,85513,
+517,517,Patricia Hernandez,patricia.hernandez517@example.com,Engineering,Japan,2018-09-05,USD,53,,6369.04,42,42,3129.89,47173,Transferred from EMEA office in Q2.
+694,694,Susan Garcia,susan.garcia694@example.com,Engineering,Canada,2020-08-06,USD,25,59534.32,6131.65,,222,11474.24,29473,On leave until further notice.
+713,713,Karen Anderson,karen.anderson713@example.com,Sales,Australia,2019-03-03,USD,,74594.35,7256.19,67,253,-607.39,24841,N/A
+469,469,John Jackson,john.jackson469@example.com,Sales,Canada,2018-12-05,USD,53,55379.59,5352.16,42,124,3725.26,32577,Promoted last quarter after strong review cycle.
+309,309,Joseph Garcia,joseph.garcia309@example.com,Support,Canada,2019-03-24,USD,54,68161.54,6855.42,,135,12249.76,43425,Promoted last quarter after strong review cycle.
+529,529,James Thomas,james.thomas529@example.com,Finance,USA,2020-07-19,USD,,62010.25,6282.5,84,345,7564.09,97475,N/A
+669,669,Richard Wilson,richard.wilson669@example.com,HR,India,2021-08-10,USD,63,70748.96,7068.87,98,63,-2741.85,35457,On leave until further notice.
+52,52,Richard Davis,richard.davis52@example.com,Marketing,Mexico,2020-08-18,USD,55,65895.0,6214.53,62,359,27444.97,69473,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+811,811,James Garcia,james.garcia811@example.com,Marketing,Canada,2019-11-25,USD,22,32078.03,2913.48,71,447,5060.23,12279,"Excellent performer, candidate for team lead role next cycle."
+266,266,William Rodriguez,william.rodriguez266@example.com,Support,Brazil,2022-11-03,USD,34,63144.68,5901.37,71,388,11336.97,77698,N/A
+303,303,Michael Miller,michael.miller303@example.com,Finance,France,2023-06-22,USD,30,86588.47,8624.93,72,277,2580.54,25126,N/A
+522,522,Patricia Johnson,patricia.johnson522@example.com,Operations,Canada,2021-11-01,USD,33,65727.23,6349.49,,318,13111.48,91688,
+471,471,William Gonzalez,william.gonzalez471@example.com,Marketing,Canada,2023-10-18,USD,30,48134.34,5279.18,,23,-1030.79,25826,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+179,179,Jennifer Brown,jennifer.brown179@example.com,Engineering,Australia,2019-04-07,USD,61,37814.56,3720.64,,203,22799.04,70161,"Excellent performer, candidate for team lead role next cycle."
+56,56,Richard Thomas,richard.thomas56@example.com,Engineering,Mexico,2023-11-02,USD,31,94834.67,9635.74,,127,13295.37,25525,-
+671,671,James Jones,james.jones671@example.com,Marketing,Mexico,2021-11-05,USD,38,65320.19,6794.82,50,6,7615.57,60377,On leave until further notice.
+160,160,Thomas Miller,thomas.miller160@example.com,Finance,Australia,2019-03-11,USD,55,74110.64,7128.97,71,46,9317.34,76895,Transferred from EMEA office in Q2.
+878,878,Robert Hernandez,robert.hernandez878@example.com,Sales,Australia,2020-05-15,USD,62,74364.88,7409.36,,352,-6897.1,51262,Promoted last quarter after strong review cycle.
+62,62,Charles Smith,charles.smith62@example.com,Operations,France,2022-01-25,USD,33,66750.02,6389.58,51,299,7140.7,67132,Transferred from EMEA office in Q2.
+667,667,Richard Wilson,richard.wilson667@example.com,Operations,Canada,2024-05-20,USD,,78854.32,8149.32,,237,2755.83,83681,"Excellent performer, candidate for team lead role next cycle."
+638,638,William Rodriguez,william.rodriguez638@example.com,Marketing,France,2019-12-20,USD,30,79507.28,8284.88,98,133,4866.05,11118,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+20,20,William Johnson,william.johnson20@example.com,Engineering,Mexico,2021-09-28,USD,55,61144.81,6394.11,,95,22012.39,18981,"Excellent performer, candidate for team lead role next cycle."
+528,528,Robert Martinez,robert.martinez528@example.com,Engineering,India,2019-01-18,USD,42,86676.16,8952.46,72,461,7726.14,65203,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+16,16,Patricia Wilson,patricia.wilson16@example.com,Marketing,Brazil,2021-08-28,USD,25,38412.26,3574.52,,206,-15416.15,54473,
+995,995,Richard Martinez,richard.martinez995@example.com,Finance,Canada,2019-04-09,USD,33,63411.03,6173.14,69,342,-3122.29,44960,   
+420,420,Elizabeth Hernandez,elizabeth.hernandez420@example.com,Marketing,Brazil,2024-02-25,USD,49,70464.24,7086.97,47,355,2558.21,45968,N/A
+560,560,Joseph Thomas,joseph.thomas560@example.com,HR,France,2022-11-01,USD,43,73198.99,7606.89,60,485,2792.97,84600,   
+934,934,Joseph Lopez,joseph.lopez934@example.com,Engineering,Mexico,2023-06-09,USD,49,68664.4,6778.9,74,136,10717.43,33426,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+895,895,Jessica Rodriguez,jessica.rodriguez895@example.com,HR,France,2023-06-27,USD,31,87324.96,8802.0,95,2,4376.42,83716,Transferred from EMEA office in Q2.
+465,465,Charles Moore,charles.moore465@example.com,Marketing,India,2023-05-13,USD,25,39461.29,3572.98,,273,9410.09,70245,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+396,396,Elizabeth Garcia,elizabeth.garcia396@example.com,Marketing,Mexico,2024-08-20,USD,31,75754.64,7152.58,,350,11640.3,58997,   
+508,508,Jennifer Moore,jennifer.moore508@example.com,Marketing,India,2024-11-26,USD,41,84794.67,8437.87,74,296,17266.83,56088,   
+434,434,Elizabeth Martin,elizabeth.martin434@example.com,Marketing,Australia,2021-01-05,USD,23,46519.43,4356.94,,27,7194.52,21287,On leave until further notice.
+362,362,Elizabeth Rodriguez,elizabeth.rodriguez362@example.com,Finance,Brazil,2020-08-25,USD,45,71563.68,7153.16,50,94,-4704.71,13027,   
+226,226,Barbara Taylor,barbara.taylor226@example.com,Finance,France,2019-06-05,USD,39,42486.54,4237.93,61,413,1013.0,66272,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+737,737,Jessica Garcia,jessica.garcia737@example.com,HR,UK,2024-03-07,USD,58,40787.43,4098.0,41,158,7603.79,61668,"Excellent performer, candidate for team lead role next cycle."
+838,838,James Brown,james.brown838@example.com,Sales,USA,2024-03-01,USD,45,60274.95,6067.06,61,94,-5247.79,99438,-
+294,294,Mary Smith,mary.smith294@example.com,Support,UK,2022-08-28,USD,53,58395.25,5893.32,55,169,2691.45,46458,Promoted last quarter after strong review cycle.
+485,485,Elizabeth Davis,elizabeth.davis485@example.com,Support,Canada,2018-08-22,USD,41,73753.23,7563.92,77,12,13833.36,28169,On leave until further notice.
+936,936,John Jones,john.jones936@example.com,Support,Japan,2021-05-12,USD,51,70650.47,7009.09,93,477,-550.66,78623,"Excellent performer, candidate for team lead role next cycle."
+80,80,William Brown,william.brown80@example.com,HR,Canada,2019-04-28,USD,65,93554.66,9265.27,91,285,-17076.06,57942,
+745,745,David Williams,david.williams745@example.com,Operations,USA,2024-03-25,USD,63,70132.06,7103.26,90,402,19526.25,24832,"Excellent performer, candidate for team lead role next cycle."
+502,502,Susan Wilson,susan.wilson502@example.com,Sales,Mexico,2022-02-05,USD,35,63741.48,6178.17,61,33,27557.06,87421,On leave until further notice.
+594,594,Barbara Brown,barbara.brown594@example.com,Finance,Brazil,2018-02-12,USD,58,66067.49,6546.86,,156,14431.4,59081,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+50,50,James Thomas,james.thomas50@example.com,Operations,India,2019-08-07,USD,44,69529.22,7006.93,84,450,-1970.29,46211,-
+722,722,Linda Wilson,linda.wilson722@example.com,Sales,Japan,2023-02-23,USD,54,76241.09,7525.03,80,324,1674.99,29493,"Remote employee, works PST hours."
+112,112,Joseph Johnson,joseph.johnson112@example.com,HR,India,2023-12-08,USD,50,71242.71,6867.58,54,273,-3558.9,41348,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+275,275,Susan Gonzalez,susan.gonzalez275@example.com,HR,USA,2022-12-19,USD,34,51898.12,5453.34,80,401,-13793.9,56988,-
+94,94,Sarah Lopez,sarah.lopez94@example.com,Engineering,France,2022-04-26,USD,49,,5914.44,79,345,-12916.43,94239,-
+256,256,Barbara Smith,barbara.smith256@example.com,HR,Canada,2020-11-21,USD,60,52487.85,5159.13,,326,5445.51,48248,
+566,566,Sarah Williams,sarah.williams566@example.com,Engineering,Australia,2018-09-14,USD,48,80847.66,8328.56,56,181,11581.23,43405,"Excellent performer, candidate for team lead role next cycle."
+326,326,Robert Smith,robert.smith326@example.com,Operations,Australia,2023-01-27,USD,59,79375.68,7636.31,,18,-1516.68,82298,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+523,523,Robert Taylor,robert.taylor523@example.com,Operations,Japan,2024-08-07,USD,40,55863.61,5388.71,,175,8642.59,12316,Promoted last quarter after strong review cycle.
+89,89,Elizabeth Anderson,elizabeth.anderson89@example.com,Support,USA,2018-08-28,USD,47,351513.1,35194.03,68,37,10687.87,29442,
+36,36,Joseph Wilson,joseph.wilson36@example.com,Support,Mexico,2019-12-23,USD,46,77344.51,7584.96,40,457,5211.34,23970,On leave until further notice.
+440,440,Linda Garcia,linda.garcia440@example.com,Support,Canada,2023-12-19,USD,53,62591.7,6461.93,,49,12089.19,68355,   
+501,501,Richard Lopez,richard.lopez501@example.com,Engineering,France,2020-06-10,USD,50,69521.72,6891.35,68,379,19420.06,47831,   
+289,289,Elizabeth Lopez,elizabeth.lopez289@example.com,Operations,India,2021-12-04,USD,28,83735.08,8035.29,,70,2466.51,56861,Transferred from EMEA office in Q2.
+291,291,Jennifer Brown,jennifer.brown291@example.com,Sales,USA,2024-03-04,USD,48,79611.47,7839.61,68,92,-5639.22,90131,Promoted last quarter after strong review cycle.
+464,464,James Taylor,james.taylor464@example.com,Support,Japan,2021-07-13,USD,26,88154.09,8799.64,92,399,4837.55,73185,
+626,626,William Jackson,william.jackson626@example.com,Finance,India,2022-05-14,USD,43,83686.62,8483.94,42,253,12501.14,38757,Promoted last quarter after strong review cycle.
+15,15,Robert Taylor,robert.taylor15@example.com,Sales,France,2023-08-07,USD,56,88668.57,9212.85,70,124,8134.05,34957,
+157,157,Joseph Rodriguez,joseph.rodriguez157@example.com,Marketing,France,2022-12-19,USD,22,63973.0,6585.61,,341,10044.49,63138,-
+631,631,John Jones,john.jones631@example.com,Operations,Germany,2019-09-13,USD,45,58418.69,6034.75,98,23,5873.93,80184,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+168,168,Charles Garcia,charles.garcia168@example.com,Support,Brazil,2022-08-02,USD,44,77472.39,8025.73,60,356,717.46,64568,On leave until further notice.
+3,3,Susan Hernandez,susan.hernandez3@example.com,Marketing,UK,2019-06-04,USD,27,54692.36,5598.41,,135,9546.01,80284,
+556,556,Jessica Jones,jessica.jones556@example.com,Finance,Japan,2018-04-05,USD,25,63291.85,6336.01,,361,7144.82,71228,On leave until further notice.
+271,271,James Smith,james.smith271@example.com,HR,UK,2023-03-20,USD,22,68369.55,7107.09,85,495,3378.48,59345,N/A
+494,494,John Martinez,john.martinez494@example.com,Sales,France,2019-08-12,USD,40,51356.71,5143.38,69,489,2528.21,31805,"Excellent performer, candidate for team lead role next cycle."
+935,935,Barbara Wilson,barbara.wilson935@example.com,Engineering,Japan,2020-05-21,USD,24,53374.58,5231.0,,378,1053.08,80121,
+87,87,Sarah Rodriguez,sarah.rodriguez87@example.com,Operations,UK,2018-11-28,USD,23,74553.85,7594.15,77,165,11251.92,26614,On leave until further notice.
+958,958,Karen Martinez,karen.martinez958@example.com,Operations,Brazil,2020-11-08,USD,23,87385.97,8895.36,,6,-3526.84,44002,N/A
+192,192,William Gonzalez,william.gonzalez192@example.com,Marketing,Brazil,2020-02-19,USD,34,48599.59,4649.76,75,13,-502.43,70505,"Remote employee, works PST hours."
+858,858,Michael Wilson,michael.wilson858@example.com,Engineering,Mexico,2018-05-20,USD,57,73160.62,7287.57,,392,7678.28,46194,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+550,550,Michael Rodriguez,michael.rodriguez550@example.com,Marketing,Japan,2021-03-14,USD,35,49510.75,4422.46,,346,-10379.18,34820,On leave until further notice.
+950,950,Sarah Taylor,sarah.taylor950@example.com,Operations,Germany,2024-03-15,USD,45,72803.99,7255.48,85,471,-832.58,36186,N/A
+728,728,Michael Anderson,michael.anderson728@example.com,Engineering,Canada,2022-10-11,USD,41,47879.97,4694.72,,369,-18897.11,30142,Promoted last quarter after strong review cycle.
+32,32,Barbara Wilson,barbara.wilson32@example.com,Engineering,India,2022-06-22,USD,29,43567.72,4324.84,,209,-1639.44,52753,On leave until further notice.
+311,311,Sarah Lopez,sarah.lopez311@example.com,Engineering,India,2022-04-06,USD,55,81184.71,8217.01,74,206,9738.82,37964,N/A
+645,645,Michael Davis,michael.davis645@example.com,Marketing,Australia,2018-08-02,USD,45,55851.55,5570.89,66,200,7137.46,80313,On leave until further notice.
+11,11,Thomas Martin,thomas.martin11@example.com,Sales,UK,2020-03-18,USD,55,82675.36,8135.05,47,475,-10149.81,50306,"Remote employee, works PST hours."
+607,607,David Martin,david.martin607@example.com,Marketing,Brazil,2020-11-07,USD,59,71577.04,7020.82,,273,-1240.95,61813,
+269,269,Linda Lopez,linda.lopez269@example.com,HR,Mexico,2021-03-28,USD,52,53105.48,5214.21,,457,4179.76,21847,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+981,981,Susan Rodriguez,susan.rodriguez981@example.com,HR,Japan,2023-03-21,USD,43,84429.94,8570.97,,270,7548.68,66675,Promoted last quarter after strong review cycle.
+567,567,Robert Taylor,robert.taylor567@example.com,Engineering,Canada,2023-11-15,USD,33,71503.83,6775.48,,213,9807.41,86966,Transferred from EMEA office in Q2.
+348,348,William Brown,william.brown348@example.com,Operations,Australia,2020-09-27,USD,58,64248.26,6424.63,70,394,13651.65,41886,N/A
+84,84,Patricia Thomas,patricia.thomas84@example.com,Finance,Brazil,2020-01-23,USD,45,59794.0,6023.7,,185,13494.4,23022,N/A
+699,699,Michael Brown,michael.brown699@example.com,Sales,Mexico,2023-03-01,USD,57,52679.31,5324.48,,294,6288.18,83727,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+233,233,David Williams,david.williams233@example.com,Engineering,Germany,2024-09-14,USD,45,40942.3,4179.91,72,68,-214.01,87580,"Excellent performer, candidate for team lead role next cycle."
+206,206,Elizabeth Garcia,elizabeth.garcia206@example.com,Operations,Japan,2022-12-25,USD,53,68801.53,6786.86,,396,3794.58,81186,N/A
+897,897,Robert Gonzalez,robert.gonzalez897@example.com,Sales,USA,2019-09-24,USD,,73087.75,7494.29,42,453,649.95,78758,Transferred from EMEA office in Q2.
+267,267,Mary Taylor,mary.taylor267@example.com,Operations,UK,2018-05-23,USD,54,261265.23,26325.21,76,14,12524.41,36309,Promoted last quarter after strong review cycle.
+189,189,Jessica Jones,jessica.jones189@example.com,Engineering,UK,2021-05-14,USD,41,59027.9,5910.71,,126,3297.68,90828,"Remote employee, works PST hours."
+675,675,Jennifer Taylor,jennifer.taylor675@example.com,Engineering,Japan,2022-04-06,USD,34,73882.16,7434.23,56,461,10967.46,91844,
+721,721,Karen Smith,karen.smith721@example.com,HR,Japan,2020-05-16,USD,27,65774.55,6426.9,,261,7511.6,25075,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+585,585,Thomas Martinez,thomas.martinez585@example.com,HR,Brazil,2023-12-18,USD,41,62685.9,6097.82,,423,3176.9,29249,On leave until further notice.
+441,441,Elizabeth Gonzalez,elizabeth.gonzalez441@example.com,Engineering,Mexico,2018-11-27,USD,60,66957.39,6502.29,82,31,17422.71,86122,Promoted last quarter after strong review cycle.
+182,182,Mary Williams,mary.williams182@example.com,Support,France,2022-10-22,USD,24,41887.99,4356.23,,106,19083.52,86943,   
+364,364,David Martin,david.martin364@example.com,Sales,Canada,2023-07-10,USD,36,46881.23,4690.8,48,269,11540.76,32361,Promoted last quarter after strong review cycle.
+952,952,William Garcia,william.garcia952@example.com,Sales,Japan,2023-02-01,USD,24,61995.98,6114.99,70,441,-2435.95,60504,
+802,802,Robert Lopez,robert.lopez802@example.com,Finance,Germany,2023-11-24,USD,35,54345.1,5407.72,53,6,2025.05,97883,"Remote employee, works PST hours."
+188,188,Elizabeth Wilson,elizabeth.wilson188@example.com,HR,Canada,2023-09-08,USD,58,,5430.94,,137,3391.57,49469,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+352,352,Linda Martin,linda.martin352@example.com,Marketing,UK,2024-02-04,USD,27,76766.52,7544.0,88,438,-5546.5,80972,Promoted last quarter after strong review cycle.
+142,142,Michael Martin,michael.martin142@example.com,Finance,Brazil,2022-01-02,USD,24,51888.26,5306.13,69,76,10461.46,89463,-
+486,486,Jennifer Lopez,jennifer.lopez486@example.com,Support,Japan,2023-11-01,USD,62,62528.1,6634.96,,16,12275.19,48874,On leave until further notice.
+903,903,Patricia Miller,patricia.miller903@example.com,Marketing,UK,2020-10-04,USD,30,70794.37,6824.81,61,294,6474.95,46338,"Excellent performer, candidate for team lead role next cycle."
+418,418,Jennifer Jones,jennifer.jones418@example.com,Engineering,India,2018-03-28,USD,24,44909.99,4300.88,,471,-8234.86,21495,Promoted last quarter after strong review cycle.
+624,624,Charles Moore,charles.moore624@example.com,Operations,UK,2019-08-10,USD,60,63205.34,6214.79,,300,11404.06,96203,   
+414,414,Patricia Anderson,patricia.anderson414@example.com,Support,India,2018-09-23,USD,,50257.54,4947.01,50,193,-16523.02,82134,On leave until further notice.
+97,97,John Garcia,john.garcia97@example.com,Operations,Mexico,2018-11-03,USD,39,50239.76,5097.48,66,139,7058.02,55242,On leave until further notice.
+720,720,Patricia Brown,patricia.brown720@example.com,Operations,USA,2019-03-12,USD,54,64602.78,6762.92,,424,6040.74,54845,On leave until further notice.
+340,340,Patricia Taylor,patricia.taylor340@example.com,Engineering,Brazil,2023-04-23,USD,42,39389.96,3859.2,77,129,7058.36,44249,-
+558,558,Jennifer Taylor,jennifer.taylor558@example.com,Operations,France,2022-11-19,USD,35,73206.23,6858.66,76,92,-5701.69,64580,
+251,251,Barbara Hernandez,barbara.hernandez251@example.com,Sales,Canada,2024-12-22,USD,62,63239.09,6144.53,,107,5008.65,43640,
+31,31,Barbara Hernandez,barbara.hernandez31@example.com,HR,Mexico,2022-02-13,USD,58,66661.86,6722.23,73,473,9238.25,97900,"Remote employee, works PST hours."
+753,753,David Jackson,david.jackson753@example.com,Finance,France,2023-04-14,USD,32,64099.34,6496.95,100,64,4651.08,17339,"Remote employee, works PST hours."
+184,184,Barbara Johnson,barbara.johnson184@example.com,Engineering,Brazil,2019-02-11,USD,,42803.12,4339.62,89,167,-14771.44,13883,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+937,937,Joseph Johnson,joseph.johnson937@example.com,Engineering,India,2020-01-05,USD,60,86152.13,8573.89,64,262,8215.67,93458,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+999,999,William Thomas,william.thomas999@example.com,Operations,Australia,2021-11-04,USD,64,80759.64,7809.29,,400,-2608.86,81213,   
+166,166,Karen Johnson,karen.johnson166@example.com,HR,Mexico,2023-12-28,USD,25,57853.53,5787.34,74,111,7405.21,17398,   
+424,424,Sarah Miller,sarah.miller424@example.com,Engineering,Germany,2023-05-09,USD,26,64901.29,6405.71,,3,13890.64,UNKNOWN,N/A
+543,543,Elizabeth Williams,elizabeth.williams543@example.com,Operations,Germany,2020-04-28,USD,32,83300.14,8187.55,89,329,3253.23,20498,Transferred from EMEA office in Q2.
+578,578,Barbara Garcia,barbara.garcia578@example.com,Sales,Australia,2018-02-11,USD,49,45089.5,4617.13,71,132,8765.57,54606,N/A
+997,997,John Johnson,john.johnson997@example.com,Operations,Germany,2019-07-11,USD,22,49488.22,4848.17,,321,19510.81,63170,Transferred from EMEA office in Q2.
+123,123,Joseph Gonzalez,joseph.gonzalez123@example.com,Marketing,UK,2021-12-16,USD,45,81140.45,8003.22,86,217,14557.13,33652,-
+367,367,Elizabeth Smith,elizabeth.smith367@example.com,Engineering,Australia,2024-03-12,USD,40,63097.55,6314.73,100,386,3927.56,66418,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+608,608,John Moore,john.moore608@example.com,Marketing,Brazil,2019-10-17,USD,42,60102.79,6369.92,88,362,-7855.35,69338,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+7,7,Richard Rodriguez,richard.rodriguez7@example.com,Engineering,Germany,2022-12-11,USD,35,56573.04,5490.99,69,73,4437.91,83579,-
+323,323,Elizabeth Martin,elizabeth.martin323@example.com,Engineering,Germany,2020-08-15,USD,43,55460.81,5432.03,76,290,402.81,66139,   
+976,976,John Jones,john.jones976@example.com,Finance,France,2022-04-18,USD,27,83656.15,8200.59,82,133,7697.33,82964,-
+919,919,David Williams,david.williams919@example.com,Finance,Germany,2020-04-15,USD,38,72280.29,7247.46,51,243,11789.49,58795,"Excellent performer, candidate for team lead role next cycle."
+417,417,Linda Miller,linda.miller417@example.com,Finance,Japan,2021-07-15,USD,27,63614.1,6347.77,57,317,-5236.03,37215,Promoted last quarter after strong review cycle.
+817,817,Barbara Martinez,barbara.martinez817@example.com,Engineering,USA,2021-11-05,USD,51,57322.89,5511.44,,285,1510.44,47782,
+239,239,Charles Jackson,charles.jackson239@example.com,Marketing,Canada,2018-02-07,USD,63,57615.57,5798.1,93,414,3841.35,70423,Promoted last quarter after strong review cycle.
+339,339,Susan Jones,susan.jones339@example.com,Marketing,Japan,2024-04-28,USD,27,58630.83,6263.44,52,2,1415.08,85757,-
+312,312,William Lopez,william.lopez312@example.com,Marketing,Germany,2024-10-17,USD,52,70792.33,7451.76,40,58,4684.53,97679,N/A
+925,925,James Jones,james.jones925@example.com,Sales,UK,2020-05-03,USD,33,65876.88,6722.03,,125,10770.51,59054,Promoted last quarter after strong review cycle.
+688,688,Karen Jackson,karen.jackson688@example.com,Sales,Canada,2021-01-18,USD,51,31580.72,3009.92,,112,18478.38,75514,Transferred from EMEA office in Q2.
+463,463,Robert Williams,robert.williams463@example.com,Finance,France,2024-08-01,USD,53,77733.42,8003.52,82,199,3720.14,61292,"Excellent performer, candidate for team lead role next cycle."
+221,221,Jessica Gonzalez,jessica.gonzalez221@example.com,Engineering,Germany,2021-11-20,USD,26,28000,2702.48,99,162,15730.53,84498,On leave until further notice.
+406,406,Joseph Rodriguez,joseph.rodriguez406@example.com,Sales,Germany,2018-03-06,USD,23,54392.78,5460.78,,290,-5974.43,90263,"Remote employee, works PST hours."
+666,666,Jessica Williams,jessica.williams666@example.com,Marketing,Brazil,2021-03-16,USD,50,46842.66,4441.75,49,419,10120.88,73176,Promoted last quarter after strong review cycle.
+620,620,Elizabeth Martin,elizabeth.martin620@example.com,Support,Brazil,2018-02-22,USD,25,59745.62,5818.82,46,316,2567.03,63884,"Remote employee, works PST hours."
+503,503,Robert Smith,robert.smith503@example.com,HR,France,2021-03-18,USD,51,58779.09,5552.76,,95,8269.04,74302,Promoted last quarter after strong review cycle.
+29,29,Mary Thomas,mary.thomas29@example.com,Sales,Germany,2024-08-12,USD,41,78026.04,7436.72,,337,7496.13,19099,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+259,259,Susan Jackson,susan.jackson259@example.com,Sales,Australia,2018-07-27,USD,55,48799.17,5001.1,70,293,11697.01,20348,On leave until further notice.
+979,979,Mary Taylor,mary.taylor979@example.com,Marketing,USA,2022-07-02,USD,54,445956.71,44468.29,58,294,3502.24,19902,"Excellent performer, candidate for team lead role next cycle."
+769,769,Jennifer Williams,jennifer.williams769@example.com,Sales,Canada,2020-07-03,USD,41,76533.31,7497.17,53,342,8993.95,17044,
+668,668,Jessica Williams,jessica.williams668@example.com,Marketing,UK,2023-08-07,USD,31,76495.29,7665.35,86,371,4631.73,59054,Transferred from EMEA office in Q2.
+66,66,James Martin,james.martin66@example.com,Operations,Germany,2023-03-10,USD,57,74066.81,7610.71,,430,5702.95,24871,Transferred from EMEA office in Q2.
+152,152,Jennifer Wilson,jennifer.wilson152@example.com,Support,Japan,2021-11-07,USD,40,80204.33,7895.82,45,333,15394.2,85252,"Remote employee, works PST hours."
+489,489,Linda Moore,linda.moore489@example.com,Engineering,Japan,2023-10-28,USD,35,65505.93,6212.33,,459,3685.08,46325,Promoted last quarter after strong review cycle.
+767,767,William Hernandez,william.hernandez767@example.com,Finance,Japan,2019-12-24,USD,52,77435.18,7888.45,100,240,8383.8,84475,Promoted last quarter after strong review cycle.
+914,914,David Moore,david.moore914@example.com,Marketing,Canada,2020-08-19,USD,27,76500.29,7446.01,,46,1395.92,33920,
+573,573,Charles Martin,charles.martin573@example.com,Support,Australia,2020-01-16,USD,47,45017.5,4525.08,83,-463,8765.71,17956,-
+460,460,Karen Jones,karen.jones460@example.com,HR,Mexico,2024-03-04,USD,,47045.23,4699.82,80,232,13971.95,46226,On leave until further notice.
+845,845,Mary Smith,mary.smith845@example.com,Operations,Germany,2022-10-28,USD,46,54819.66,5184.13,43,198,6213.5,66324,On leave until further notice.
+23,23,Patricia Williams,patricia.williams23@example.com,Finance,Germany,2022-05-05,USD,,87599.07,8480.01,50,224,11265.47,90173,-
+176,176,Jennifer Lopez,jennifer.lopez176@example.com,Sales,UK,2023-09-16,USD,33,66718.29,6888.51,43,268,12.88,14433,
+67,67,Patricia Jones,patricia.jones67@example.com,HR,France,2022-12-09,USD,48,86328.77,8150.1,,282,8198.05,88561,-
+447,447,Joseph Taylor,joseph.taylor447@example.com,HR,Australia,2024-08-13,USD,44,67395.17,6947.41,,255,8360.31,75762,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+706,706,Linda Gonzalez,linda.gonzalez706@example.com,Engineering,Canada,2019-09-24,USD,41,53548.84,5047.26,,178,-2682.42,84993,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+967,967,Elizabeth Martinez,elizabeth.martinez967@example.com,Marketing,Australia,2019-06-09,USD,65,53051.56,5240.61,88,484,5378.15,76787,Transferred from EMEA office in Q2.
+764,764,Barbara Taylor,barbara.taylor764@example.com,Operations,Mexico,2020-06-03,USD,65,38807.3,3693.74,83,-21,9538.75,91345,Promoted last quarter after strong review cycle.
+55,55,Elizabeth Jones,elizabeth.jones55@example.com,Support,Japan,2018-01-19,USD,40,49133.28,4954.52,,26,4752.2,24953,
+589,589,Thomas Lopez,thomas.lopez589@example.com,Engineering,USA,2024-11-04,USD,50,57724.99,6084.58,55,412,4718.56,92279,-
+276,276,Elizabeth Garcia,elizabeth.garcia276@example.com,Operations,Australia,2019-05-04,USD,,70414.49,7148.82,88,467,9456.76,33995,N/A
+477,477,Mary Lopez,mary.lopez477@example.com,Marketing,Germany,2021-05-11,USD,61,73587.26,7041.66,,379,14398.29,UNKNOWN,Promoted last quarter after strong review cycle.
+649,649,Linda Garcia,linda.garcia649@example.com,Finance,Brazil,2021-07-22,USD,33,62863.52,6201.37,42,122,8529.08,92324,-
+568,568,Joseph Martin,joseph.martin568@example.com,Operations,France,2020-03-07,USD,33,56182.77,6118.74,,344,15715.48,23936,On leave until further notice.
+723,723,Patricia Jones,patricia.jones723@example.com,HR,USA,2020-04-05,USD,49,74949.13,7509.69,64,208,-7264.26,40333,"Remote employee, works PST hours."
+715,715,Mary Anderson,mary.anderson715@example.com,Finance,Japan,2018-06-01,USD,61,52762.61,5317.77,,179,8960.49,56469,Promoted last quarter after strong review cycle.
+825,825,Mary Williams,mary.williams825@example.com,Engineering,France,2024-11-04,USD,43,41887.46,3981.18,84,169,7678.99,86626,-
+322,322,Sarah Williams,sarah.williams322@example.com,Marketing,Canada,2020-02-07,USD,,37012.63,3522.57,,335,5576.54,40740,
+549,549,Karen Rodriguez,karen.rodriguez549@example.com,Sales,Canada,2020-03-19,USD,29,83252.63,8346.9,99,232,9357.83,39423,"Remote employee, works PST hours."
+941,941,Karen Hernandez,karen.hernandez941@example.com,Engineering,Germany,2019-01-23,USD,42,68729.73,7143.42,78,423,-3105.96,88018,N/A
+520,520,Robert Lopez,robert.lopez520@example.com,Sales,India,2019-10-28,USD,47,76718.88,7945.53,57,391,15642.21,86273,"Excellent performer, candidate for team lead role next cycle."
+99,99,John Rodriguez,john.rodriguez99@example.com,Marketing,India,2018-01-16,USD,49,71603.8,7335.07,72,286,12248.01,19447,On leave until further notice.
+132,132,Sarah Jackson,sarah.jackson132@example.com,Sales,UK,2021-09-28,USD,25,72001.84,7318.45,,82,-3429.88,52291,"Remote employee, works PST hours."
+593,593,Jennifer Jones,jennifer.jones593@example.com,Finance,UK,2021-12-15,USD,30,82636.54,8215.77,84,108,3020.31,30557,-
+800,800,David Hernandez,david.hernandez800@example.com,Support,Mexico,2024-07-09,USD,32,57904.94,6026.23,,163,184.95,29398,"Excellent performer, candidate for team lead role next cycle."
+253,253,Linda Garcia,linda.garcia253@example.com,HR,Canada,2024-01-10,USD,,49548.88,5402.01,,87,8611.65,19830,-
+725,725,William Johnson,william.johnson725@example.com,Sales,USA,2018-01-22,USD,42,69011.98,7120.83,46,220,12752.09,57655,N/A
+138,138,Linda Garcia,linda.garcia138@example.com,Operations,India,2022-12-11,USD,,79300.59,7949.4,71,450,-4363.81,50441,Transferred from EMEA office in Q2.
+79,79,Elizabeth Hernandez,elizabeth.hernandez79@example.com,Support,Brazil,2019-04-05,USD,56,75215.88,7387.85,57,425,14065.43,73156,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+812,812,Elizabeth Davis,elizabeth.davis812@example.com,Finance,Australia,2019-03-25,USD,28,72219.22,7513.99,,251,13487.28,55977,-
+955,955,Jennifer Lopez,jennifer.lopez955@example.com,HR,India,2019-04-26,USD,52,66682.77,6755.86,44,-234,12500.22,42077,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+328,328,Karen Garcia,karen.garcia328@example.com,Operations,Australia,2019-08-06,USD,33,75700.81,7333.87,49,376,815.22,73373,N/A
+241,241,Mary Martin,mary.martin241@example.com,Finance,Mexico,2019-11-10,USD,53,48853.61,5018.23,,143,-1186.7,94233,-
+374,374,Jessica Gonzalez,jessica.gonzalez374@example.com,Support,France,2020-03-21,USD,24,71274.04,7119.03,,246,-5098.39,93692,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+380,380,Jennifer Smith,jennifer.smith380@example.com,Finance,India,2024-10-08,USD,42,72382.16,7185.11,64,97,-6529.67,78690,Transferred from EMEA office in Q2.
+442,442,John Jones,john.jones442@example.com,HR,Australia,2020-07-20,USD,58,79891.58,7860.85,59,291,6769.45,99071,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+672,672,Charles Williams,charles.williams672@example.com,Finance,Germany,2021-03-27,USD,49,69419.32,6938.87,82,453,11785.71,60172,"Excellent performer, candidate for team lead role next cycle."
+373,373,David Gonzalez,david.gonzalez373@example.com,Operations,USA,2018-12-08,USD,46,67157.62,6501.33,42,101,-8322.06,78306,"Remote employee, works PST hours."
+268,268,Linda Johnson,linda.johnson268@example.com,HR,USA,2020-12-07,USD,39,92154.3,9064.17,99,63,11578.03,99282,Promoted last quarter after strong review cycle.
+397,397,Robert Brown,robert.brown397@example.com,Support,USA,2019-10-05,USD,40,87991.74,8825.69,,230,-2067.33,80517,"Remote employee, works PST hours."
+781,781,Richard Hernandez,richard.hernandez781@example.com,Finance,UK,2021-04-04,USD,30,43813.96,4373.84,93,390,672.33,82470,   
+410,410,Sarah Taylor,sarah.taylor410@example.com,Support,USA,2022-02-15,USD,51,84036.88,8431.08,73,275,2915.03,61853,Promoted last quarter after strong review cycle.
+776,776,Elizabeth Martin,elizabeth.martin776@example.com,Operations,Canada,2018-02-03,USD,63,84622.4,8924.15,,383,6913.75,91766,-
+790,790,Patricia Jackson,patricia.jackson790@example.com,Operations,Mexico,2020-03-26,USD,35,92474.38,9469.1,67,305,2349.04,45608,N/A
+704,704,Michael Lopez,michael.lopez704@example.com,Finance,Australia,2022-03-14,USD,31,72932.16,7150.6,78,126,17879.33,20161,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+747,747,John Davis,john.davis747@example.com,HR,Brazil,2022-08-18,USD,56,46425.79,4654.1,,42,-2314.05,85743,"Remote employee, works PST hours."
+197,197,Thomas Jones,thomas.jones197@example.com,Marketing,USA,2021-02-10,USD,48,70580.02,7017.43,86,72,751.94,37114,-
+582,582,William Martinez,william.martinez582@example.com,Finance,UK,2018-05-12,USD,48,77967.94,7607.33,,385,14085.69,79422,On leave until further notice.
+565,565,Thomas Williams,thomas.williams565@example.com,Marketing,Japan,2021-02-26,USD,52,51549.52,5702.3,59,430,5071.51,84519,Promoted last quarter after strong review cycle.
+931,931,Jennifer Hernandez,jennifer.hernandez931@example.com,Sales,Mexico,2022-07-22,USD,51,86790.56,8700.25,67,394,12927.17,93115,
+425,425,William Gonzalez,william.gonzalez425@example.com,Support,Mexico,2022-01-27,USD,33,74791.69,7834.88,70,469,2874.82,27793,Transferred from EMEA office in Q2.
+450,450,Mary Hernandez,mary.hernandez450@example.com,Finance,USA,2021-08-17,USD,52,45019.57,4341.5,91,150,1782.06,47907,   
+495,495,Jennifer Moore,jennifer.moore495@example.com,Marketing,UK,2019-12-23,USD,64,67452.65,6631.25,,162,-2698.1,58453,   
+627,627,Linda Davis,linda.davis627@example.com,HR,Mexico,2019-04-16,USD,43,70129.01,6831.13,92,3,2961.79,13934,-
+22,22,Linda Rodriguez,linda.rodriguez22@example.com,HR,UK,2023-11-10,USD,51,75661.06,7431.23,,234,17218.69,91416,"Excellent performer, candidate for team lead role next cycle."
+250,250,Mary Garcia,mary.garcia250@example.com,Finance,India,2024-10-08,USD,62,53438.43,4913.27,,381,-2523.84,20198,"Remote employee, works PST hours."
+824,824,Thomas Lopez,thomas.lopez824@example.com,Sales,Mexico,2022-10-10,USD,25,56569.26,5663.62,40,236,-2984.83,77896,Transferred from EMEA office in Q2.
+13,13,Jennifer Rodriguez,jennifer.rodriguez13@example.com,Finance,Mexico,2021-04-18,USD,34,61507.97,5954.42,63,224,12080.56,42493,"Remote employee, works PST hours."
+149,149,Jessica Lopez,jessica.lopez149@example.com,Finance,France,2020-02-19,USD,65,34269.43,3312.94,62,488,5650.22,15513,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+755,755,Susan Miller,susan.miller755@example.com,Marketing,Canada,2018-02-12,USD,60,67440.37,6566.17,,83,2159.24,88264,Promoted last quarter after strong review cycle.
+765,765,Linda Moore,linda.moore765@example.com,Engineering,UK,2024-02-10,USD,46,73258.03,7495.06,,198,13369.09,55735,Transferred from EMEA office in Q2.
+900,900,Jennifer Taylor,jennifer.taylor900@example.com,Support,Japan,2018-06-14,USD,33,81723.44,8216.01,59,359,7415.11,34598,"Remote employee, works PST hours."
+705,705,Patricia Moore,patricia.moore705@example.com,Engineering,Australia,2021-02-11,USD,62,,9518.18,49,444,6903.97,22838,On leave until further notice.
+225,225,Robert Wilson,robert.wilson225@example.com,Engineering,Japan,2022-10-02,USD,41,53942.45,5141.04,,6,1747.67,31473,Transferred from EMEA office in Q2.
+230,230,Richard Williams,richard.williams230@example.com,HR,France,2024-05-11,USD,,59550.07,5931.1,,288,4668.64,49834,"Excellent performer, candidate for team lead role next cycle."
+804,804,Patricia Jones,patricia.jones804@example.com,Sales,India,2021-08-28,USD,61,80272.87,7680.48,,142,3823.65,65455,   
+756,756,Elizabeth Miller,elizabeth.miller756@example.com,Finance,Germany,2023-01-08,USD,39,63576.33,6581.29,,404,10293.91,73413,Promoted last quarter after strong review cycle.
+281,281,Barbara Smith,barbara.smith281@example.com,Marketing,Australia,2019-01-22,USD,22,57062.05,5598.1,62,159,10425.23,87158,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+159,159,Jessica Moore,jessica.moore159@example.com,Operations,Germany,2024-04-22,USD,60,69332.25,6874.09,85,185,14093.63,UNKNOWN,-
+562,562,James Miller,james.miller562@example.com,Sales,Brazil,2024-07-10,USD,63,99941.83,9998.87,,251,-6654.92,66670,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+252,252,James Johnson,james.johnson252@example.com,HR,Japan,2023-07-06,USD,48,70620.57,6867.11,46,424,5339.17,72847,"Excellent performer, candidate for team lead role next cycle."
+856,856,Robert Davis,robert.davis856@example.com,Operations,Australia,2020-06-19,USD,47,58328.48,5988.3,,128,6538.65,95594,"Excellent performer, candidate for team lead role next cycle."
+454,454,Karen Jones,karen.jones454@example.com,Operations,Japan,2024-07-25,USD,46,54520.95,5468.39,53,295,13592.67,55229,Promoted last quarter after strong review cycle.
+841,841,Richard Lopez,richard.lopez841@example.com,Engineering,UK,2020-02-18,USD,58,65978.61,6839.06,59,204,-2386.54,24532,"Excellent performer, candidate for team lead role next cycle."
+332,332,David Miller,david.miller332@example.com,Sales,UK,2019-06-20,USD,29,71917.36,7082.05,,58,-2020.95,73113,Transferred from EMEA office in Q2.
+85,85,Sarah Lopez,sarah.lopez85@example.com,Engineering,Brazil,2020-04-04,USD,51,73686.22,7443.84,41,25,6369.64,26505,"Excellent performer, candidate for team lead role next cycle."
+584,584,Robert Hernandez,robert.hernandez584@example.com,Marketing,Brazil,2024-03-14,USD,25,41336.51,4090.57,49,462,6367.01,85308,Promoted last quarter after strong review cycle.
+629,629,Jennifer Hernandez,jennifer.hernandez629@example.com,Operations,Australia,2019-03-07,USD,23,70235.18,7162.84,,425,1562.81,24544,N/A
+301,301,Jennifer Jackson,jennifer.jackson301@example.com,Sales,UK,2018-07-22,USD,60,54613.48,5352.3,66,311,16713.18,45860,On leave until further notice.
+798,798,Joseph Thomas,joseph.thomas798@example.com,Operations,Canada,2024-06-20,USD,28,84044.15,8465.98,,53,5458.35,52317,On leave until further notice.
+395,395,Thomas Davis,thomas.davis395@example.com,Sales,Canada,2020-07-11,USD,65,70774.75,7037.72,67,187,925.15,87840,Promoted last quarter after strong review cycle.
+137,137,   ,user137@example.com,Finance,Australia,2018-06-08,USD,51,76769.92,7829.11,,25,3030.89,90658,On leave until further notice.
+407,407,Karen Davis,karen.davis407@example.com,Sales,USA,2020-02-23,USD,52,84317.08,8720.5,81,191,8192.39,72108,   
+989,989,David Hernandez,david.hernandez989@example.com,Engineering,UK,2024-04-06,USD,,83107.47,8324.83,,240,5219.26,37502,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+978,978,Barbara Hernandez,barbara.hernandez978@example.com,Sales,France,2020-10-24,USD,23,77884.15,7970.83,91,249,13850.49,16295,-
+349,349,Joseph Anderson,joseph.anderson349@example.com,Finance,USA,2021-02-09,USD,26,45419.94,4779.03,,359,5876.45,56281,-
+150,150,Robert Lopez,robert.lopez150@example.com,HR,France,2023-08-07,USD,34,56646.23,5739.45,57,70,-614.51,24316,"Excellent performer, candidate for team lead role next cycle."
+808,808,Linda Brown,linda.brown808@example.com,Engineering,USA,2022-05-08,USD,26,68039.4,6646.65,84,366,3712.23,63026,On leave until further notice.
+415,415,Mary Garcia,mary.garcia415@example.com,Marketing,Mexico,2024-11-28,USD,31,69397.38,7034.91,43,214,380.17,68491,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+874,874,Mary Miller,mary.miller874@example.com,HR,Australia,2020-10-20,USD,,76787.41,7811.54,,140,8832.24,73784,Transferred from EMEA office in Q2.
+974,974,Jennifer Hernandez,jennifer.hernandez974@example.com,Support,Japan,2023-10-16,USD,24,69411.33,6979.9,85,249,-2802.43,42747,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+96,96,Robert Taylor,robert.taylor96@example.com,Sales,Brazil,2021-08-11,USD,32,58855.49,5666.53,76,305,14323.07,21135,Promoted last quarter after strong review cycle.
+992,992,Mary Moore,mary.moore992@example.com,HR,Mexico,2023-09-06,USD,32,62454.2,6395.17,,214,9358.63,18693,
+78,78,Michael Martin,michael.martin78@example.com,Marketing,UK,2023-02-21,USD,63,54293.38,5771.17,,186,8457.9,27224,
+962,962,David Moore,david.moore962@example.com,Finance,Australia,2024-02-26,USD,25,38629.63,3633.18,,408,8202.91,33944,"Remote employee, works PST hours."
+751,751,Linda Williams,linda.williams751@example.com,Engineering,Mexico,2024-07-05,USD,33,56906.37,5711.39,100,153,-7586.56,68192,Promoted last quarter after strong review cycle.
+183,183,Richard Williams,richard.williams183@example.com,Marketing,UK,2022-04-19,USD,46,56720.57,5448.37,87,71,8079.09,20279,-
+733,733,Linda Martinez,linda.martinez733@example.com,Engineering,UK,2020-03-09,USD,25,57897.57,5671.69,74,59,12391.69,89319,N/A
+930,930,Susan Garcia,susan.garcia930@example.com,Sales,Brazil,2023-09-27,USD,28,83169.08,8235.85,46,335,5726.41,63015,Promoted last quarter after strong review cycle.
+947,947,Thomas Moore,thomas.moore947@example.com,Finance,Brazil,2019-07-16,USD,51,57292.8,6172.21,,447,7898.62,79817,N/A
+574,574,James Wilson,james.wilson574@example.com,Finance,India,2022-02-09,USD,63,49147.44,4718.27,100,330,9506.48,55451,Transferred from EMEA office in Q2.
+658,658,Robert Rodriguez,robert.rodriguez658@example.com,Support,Mexico,2020-01-03,USD,35,,7572.54,46,364,12242.92,80278,"Excellent performer, candidate for team lead role next cycle."
+519,519,Jennifer Smith,jennifer.smith519@example.com,Support,Japan,2023-02-13,USD,-50,42691.97,4226.56,,202,-3673.83,23332,   
+318,318,Thomas Brown,thomas.brown318@example.com,Marketing,France,2022-02-10,USD,50,45103.55,4237.18,,80,15080.16,REDACTED,"Remote employee, works PST hours."
+596,596,Barbara Williams,barbara.williams596@example.com,Operations,USA,2021-08-19,USD,41,49236.86,4530.37,70,427,-1897.98,89391,   
+195,195,Robert Brown,robert.brown195@example.com,Operations,Germany,2023-11-12,USD,32,62277.55,6179.72,83,331,-5799.76,66420,
+115,115,Susan Williams,susan.williams115@example.com,Sales,Japan,2020-01-14,USD,,53448.21,5462.06,45,191,6116.41,22987,N/A
+17,17,Linda Miller,linda.miller17@example.com,Sales,Australia,2021-03-14,USD,33,62971.15,6446.32,68,413,11513.0,16630,-
+331,331,Thomas Rodriguez,thomas.rodriguez331@example.com,HR,Germany,2022-07-12,USD,44,47851.14,4804.03,72,451,8092.52,20104,-
+848,848,Barbara Martin,barbara.martin848@example.com,Support,Germany,2020-03-20,USD,47,71766.14,7075.34,,128,5545.39,REDACTED,"Remote employee, works PST hours."
+910,910,Jessica Martin,jessica.martin910@example.com,Support,Japan,2021-03-16,USD,63,86012.78,8602.62,,14,-9520.72,90336,   
+371,371,Mary Moore,mary.moore371@example.com,Engineering,UK,2018-05-09,USD,30,59755.56,5660.91,,77,10574.49,N/A,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+870,870,Thomas Taylor,thomas.taylor870@example.com,HR,Brazil,2020-03-13,USD,57,66358.07,6644.77,,422,11657.56,54124,"Excellent performer, candidate for team lead role next cycle."
+346,346,David Gonzalez,david.gonzalez346@example.com,Marketing,Brazil,2021-10-07,USD,-55,81884.86,8498.95,75,145,6202.75,83284,"Excellent performer, candidate for team lead role next cycle."
+360,360,Charles Jackson,charles.jackson360@example.com,Support,Australia,2019-05-12,USD,42,85810.04,8473.69,96,40,-3193.51,59947,"Excellent performer, candidate for team lead role next cycle."
+807,807,Mary Gonzalez,mary.gonzalez807@example.com,Support,Brazil,2019-05-07,USD,47,70360.89,7180.03,73,221,6980.04,42629,
+272,272,Joseph Rodriguez,joseph.rodriguez272@example.com,Sales,Japan,2020-11-17,USD,61,53350.8,5260.89,82,494,7238.19,59051,-
+951,951,John Martinez,john.martinez951@example.com,Engineering,USA,2019-10-15,USD,51,65634.64,6835.28,90,90,14284.99,24569,"Excellent performer, candidate for team lead role next cycle."
+788,788,Michael Lopez,michael.lopez788@example.com,Engineering,Germany,2018-06-05,USD,36,65597.96,6825.36,,140,11142.75,73120,"Remote employee, works PST hours."
+191,191,John Martinez,john.martinez191@example.com,Marketing,Mexico,2023-04-16,USD,42,71639.28,7345.02,,-376,1848.31,85481,"Remote employee, works PST hours."
+710,710,Elizabeth Wilson,elizabeth.wilson710@example.com,Operations,India,2024-02-21,USD,27,46341.71,4765.48,,294,7747.02,17525,
+510,510,Thomas Moore,thomas.moore510@example.com,Support,Australia,2023-02-14,USD,51,74533.35,7539.37,,8,2994.75,72851,N/A
+637,637,Robert Martinez,robert.martinez637@example.com,Operations,Australia,2022-09-21,USD,27,72662.19,6820.67,,36,-1420.21,53746,"Remote employee, works PST hours."
+321,321,Susan Taylor,susan.taylor321@example.com,Sales,UK,2019-04-20,USD,38,68252.19,6944.08,94,27,16044.93,81939,Transferred from EMEA office in Q2.
+416,416,Jennifer Brown,jennifer.brown416@example.com,Sales,Germany,2018-10-25,USD,38,87681.18,9002.1,91,2,5719.32,89689,Transferred from EMEA office in Q2.
+655,655,Richard Martinez,richard.martinez655@example.com,HR,USA,2022-01-02,USD,46,68700.99,6412.97,55,102,12029.7,11908,N/A
+93,93,Susan Lopez,susan.lopez93@example.com,Operations,Brazil,2024-12-02,USD,40,53724.07,5262.58,53,79,1847.19,24184,N/A
+809,809,Richard Brown,richard.brown809@example.com,Sales,France,2021-04-06,USD,35,57882.61,5923.05,86,1,12852.18,91542,Transferred from EMEA office in Q2.
+314,314,Barbara Taylor,barbara.taylor314@example.com,Operations,Australia,2021-08-02,USD,40,89047.39,9009.71,100,49,1879.41,31940,-
+325,325,Joseph Lopez,joseph.lopez325@example.com,Operations,France,2021-09-04,USD,33,61214.61,6055.93,,423,11342.58,44502,
+234,234,Mary Wilson,mary.wilson234@example.com,Support,UK,2019-05-09,USD,42,53594.77,5538.12,60,162,1417.87,69343,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+552,552,Richard Miller,richard.miller552@example.com,Support,Brazil,2023-07-24,USD,,65561.43,6552.64,,170,8577.28,40781,Transferred from EMEA office in Q2.
+632,632,John Hernandez,john.hernandez632@example.com,Sales,USA,2023-05-28,USD,30,45110.09,4823.99,53,372,-11893.57,20670,Transferred from EMEA office in Q2.
+740,740,Sarah Hernandez,sarah.hernandez740@example.com,Operations,Canada,2019-03-16,USD,58,57362.69,6023.06,,245,-4203.64,30252,"Remote employee, works PST hours."
+342,342,Barbara Gonzalez,barbara.gonzalez342@example.com,Support,UK,2024-11-04,USD,36,61118.21,5819.06,,109,9083.96,76629,On leave until further notice.
+92,92,Robert Williams,robert.williams92@example.com,Operations,Canada,2018-07-04,USD,,52492.03,5345.7,75,287,-4441.12,53207,
+512,512,John Miller,john.miller512@example.com,Sales,Canada,2021-12-25,USD,29,81705.04,8475.42,42,100,11480.84,24131,Promoted last quarter after strong review cycle.
+177,177,Mary Smith,mary.smith177@example.com,HR,UK,2024-11-08,USD,26,64459.51,6419.82,63,30,-3755.09,90808,Transferred from EMEA office in Q2.
+357,357,Patricia Rodriguez,patricia.rodriguez357@example.com,Operations,Germany,2022-07-28,USD,46,73947.23,7733.16,70,412,13354.58,27625,-
+948,948,Joseph Garcia,joseph.garcia948@example.com,Support,Canada,2021-10-21,USD,48,76116.4,7814.5,79,114,3675.41,28162,"Excellent performer, candidate for team lead role next cycle."
+939,939,David Martinez,david.martinez939@example.com,Finance,Australia,2022-04-23,USD,25,53053.98,5466.21,67,140,4726.91,46287,-
+664,664,Robert Thomas,robert.thomas664@example.com,Engineering,Germany,2018-11-05,USD,35,73955.87,7482.63,90,477,8506.46,36787,"Remote employee, works PST hours."
+561,561,Michael Johnson,michael.johnson561@example.com,Operations,France,2020-01-24,USD,26,45518.09,4472.51,,130,14055.46,62286,
+572,572,James Anderson,james.anderson572@example.com,Finance,Germany,2019-05-19,USD,47,84105.63,8434.44,85,221,5316.39,64484,Transferred from EMEA office in Q2.
+215,215,David Williams,david.williams215@example.com,Support,India,2020-02-12,USD,64,72424.95,7174.12,59,371,3174.79,95915,
+942,942,Sarah Gonzalez,sarah.gonzalez942@example.com,HR,Australia,2018-06-11,USD,42,68836.85,6760.27,87,255,12131.23,37608,-
+270,270,James Gonzalez,james.gonzalez270@example.com,Engineering,UK,2024-10-25,USD,35,93236.94,9503.7,57,333,-4032.27,63674,-
+965,965,Joseph Williams,joseph.williams965@example.com,HR,Germany,2018-09-19,USD,35,54672.12,5369.4,,220,7501.26,68017,"Remote employee, works PST hours."
+716,716,Patricia Wilson,patricia.wilson716@example.com,HR,Germany,2018-09-17,USD,31,58872.15,5512.88,,393,14407.9,96066,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+470,470,Elizabeth Brown,elizabeth.brown470@example.com,HR,Mexico,2019-10-03,USD,28,,5946.09,44,411,12071.28,36560,On leave until further notice.
+333,333,Jessica Miller,jessica.miller333@example.com,Finance,UK,2023-07-01,USD,37,83866.78,8456.59,,322,-11783.26,29249,Promoted last quarter after strong review cycle.
+980,980,Robert Moore,robert.moore980@example.com,Operations,Canada,2022-03-26,USD,54,69834.65,7032.22,79,332,2180.39,35020,
+457,457,Susan Martin,susan.martin457@example.com,Support,France,2020-05-09,USD,28,64332.91,6698.09,83,383,5615.3,35549,-
+284,284,Sarah Martin,sarah.martin284@example.com,Engineering,Mexico,2018-11-04,USD,63,39202.71,3952.66,,227,2843.83,59840,
+904,904,Jessica Miller,jessica.miller904@example.com,Sales,USA,2024-04-07,USD,27,45101.28,4759.8,,243,265.74,10032,N/A
+361,361,Elizabeth Anderson,elizabeth.anderson361@example.com,Support,UK,2024-03-21,USD,43,46792.44,4809.12,98,36,11452.65,51088,N/A
+353,353,Jessica Lopez,jessica.lopez353@example.com,Finance,India,2021-10-28,USD,39,28000,2833.31,57,203,6829.87,17097,-
+700,700,Mary Williams,mary.williams700@example.com,Engineering,Australia,2020-06-18,USD,32,73560.02,6929.21,,153,13963.43,16051,-
+368,368,Karen Davis,karen.davis368@example.com,Operations,USA,2022-06-07,USD,,65291.77,6687.46,,366,-785.58,94671,On leave until further notice.
+260,260,Mary Taylor,mary.taylor260@example.com,Finance,Australia,2024-10-22,USD,61,53451.48,5638.49,100,85,20616.83,37772,"Remote employee, works PST hours."
+468,468,Mary Hernandez,mary.hernandez468@example.com,Engineering,India,2024-12-02,USD,47,58981.21,6165.43,69,481,14813.91,98877,-
+30,30,Barbara Taylor,barbara.taylor30@example.com,HR,Australia,2020-01-04,USD,38,77535.72,7975.99,,55,23472.83,88193,On leave until further notice.
+423,423,Linda Martinez,linda.martinez423@example.com,Sales,USA,2018-01-15,USD,62,,6896.93,,315,13271.27,53750,N/A
+300,300,Patricia Anderson,patricia.anderson300@example.com,HR,Mexico,2022-03-16,USD,22,82550.79,8193.11,93,299,4521.28,73298,-
+102,102,Robert Taylor,robert.taylor102@example.com,Support,Canada,2022-09-07,USD,44,77693.91,7470.33,49,120,21228.07,23474,   
+816,816,Richard Jackson,richard.jackson816@example.com,HR,France,2020-04-02,USD,59,94347.59,9252.81,67,407,4076.95,69641,"Excellent performer, candidate for team lead role next cycle."
+646,646,Jessica Williams,jessica.williams646@example.com,HR,Germany,2019-04-10,USD,49,71062.56,7228.61,,294,-5768.05,50673,"Excellent performer, candidate for team lead role next cycle."
+25,25,David Taylor,david.taylor25@example.com,HR,France,2024-01-03,USD,62,54292.38,5503.6,,394,20214.45,31178,Transferred from EMEA office in Q2.
+186,186,David Jones,david.jones186@example.com,HR,UK,2023-07-11,USD,45,75828.55,7598.86,,184,5506.72,45358,
+581,581,Joseph Taylor,joseph.taylor581@example.com,HR,Canada,2019-11-12,USD,43,68235.24,6730.59,,496,-6821.48,42154,Transferred from EMEA office in Q2.
+222,222,Barbara Moore,barbara.moore222@example.com,Support,UK,2024-08-25,USD,26,86967.49,8771.13,,20,5313.14,17925,On leave until further notice.
+27,27,Elizabeth Lopez,elizabeth.lopez27@example.com,Operations,USA,2020-04-22,USD,37,58013.1,5639.33,95,208,18131.4,41029,   
+686,686,Linda Rodriguez,linda.rodriguez686@example.com,Engineering,France,2018-02-03,USD,43,43345.75,4306.74,47,293,-13789.91,58200,   
+829,829,Patricia Wilson,patricia.wilson829@example.com,Sales,USA,2019-03-27,USD,64,66050.65,6844.06,52,243,-1563.83,23109,"Excellent performer, candidate for team lead role next cycle."
+875,875,Linda Garcia,linda.garcia875@example.com,Marketing,France,2022-02-08,USD,64,63794.44,6467.84,72,386,10274.02,15209,-
+409,409,Joseph Martin,joseph.martin409@example.com,HR,India,2024-08-08,USD,49,61375.45,6170.45,64,368,764.75,84964,"Excellent performer, candidate for team lead role next cycle."
+39,39,Thomas Thomas,thomas.thomas39@example.com,Support,Germany,2020-08-03,USD,40,66320.08,6812.09,45,70,9588.12,30028,"Remote employee, works PST hours."
+501,501,Richard Lopez,richard.lopez501@example.com,Engineering,France,2020-06-10,USD,50,69521.72,6891.35,68,379,19420.06,47831,   
+588,588,James Smith,james.smith588@example.com,Operations,Australia,2022-05-08,USD,41,59179.39,5831.29,,30,-18311.4,58887,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+472,472,John Wilson,john.wilson472@example.com,Sales,India,2022-03-15,USD,37,57512.54,5802.74,,433,3961.75,92863,"Excellent performer, candidate for team lead role next cycle."
+451,451,Mary Martin,mary.martin451@example.com,Support,France,2023-10-09,USD,25,51446.2,4953.86,82,149,9048.6,47593,Transferred from EMEA office in Q2.
+663,663,William Hernandez,william.hernandez663@example.com,Sales,Germany,2022-01-22,USD,37,72356.45,6942.88,,446,-182.54,67981,Promoted last quarter after strong review cycle.
+356,356,Barbara Garcia,barbara.garcia356@example.com,HR,Brazil,2019-07-23,USD,45,491286.33,48994.74,76,67,11068.74,85483,"Remote employee, works PST hours."
+41,41,Richard Thomas,richard.thomas41@example.com,Engineering,India,2020-07-28,USD,48,41267.78,4049.29,97,112,-1369.93,73654,Promoted last quarter after strong review cycle.
+990,990,Barbara Martin,barbara.martin990@example.com,HR,UK,2021-03-06,USD,55,59685.79,6289.99,51,186,2151.72,24338,   
+736,736,Joseph Davis,joseph.davis736@example.com,Marketing,France,2019-10-21,USD,,49492.61,5030.4,63,75,9817.42,72784,
+404,404,John Jackson,john.jackson404@example.com,Finance,Germany,2024-03-10,USD,55,54929.8,5671.73,89,74,434.78,96013,"Excellent performer, candidate for team lead role next cycle."
+828,828,Richard Johnson,richard.johnson828@example.com,Engineering,France,2021-08-06,USD,,67031.07,6840.21,83,224,-3438.31,96266,"Excellent performer, candidate for team lead role next cycle."
+619,619,Joseph Brown,joseph.brown619@example.com,Support,Japan,2022-02-03,USD,25,77648.22,7667.52,84,33,5583.02,67923,Promoted last quarter after strong review cycle.
+847,847,James Davis,james.davis847@example.com,HR,Australia,2022-01-26,USD,22,72955.32,7187.11,,29,8531.62,15730,N/A
+887,887,Barbara Moore,barbara.moore887@example.com,Engineering,USA,2022-04-12,USD,56,67790.59,6889.87,95,367,6862.15,59005,N/A
+595,595,Elizabeth Thomas,elizabeth.thomas595@example.com,Engineering,UK,2019-10-14,USD,25,76804.49,7614.47,,93,8899.73,26033,-
+370,370,Michael Williams,michael.williams370@example.com,Sales,UK,2020-02-21,USD,51,89139.5,8796.2,52,164,701.85,12542,   
+245,245,Barbara Jackson,barbara.jackson245@example.com,Engineering,India,2022-10-05,USD,58,92066.84,9085.32,71,277,1631.7,21830,Promoted last quarter after strong review cycle.
+983,983,Sarah Anderson,sarah.anderson983@example.com,Support,Germany,2024-10-12,USD,58,79839.11,8265.82,,92,12958.78,15171,   
+98,98,Patricia Martinez,patricia.martinez98@example.com,Support,Mexico,2021-09-22,USD,41,82557.82,8448.26,40,104,7258.73,49507,"Remote employee, works PST hours."
+590,590,Karen Davis,karen.davis590@example.com,Marketing,France,2020-11-26,USD,58,45205.87,4372.32,55,53,-6189.75,52971,-
+101,101,Jennifer Martin,jennifer.martin101@example.com,HR,India,2018-07-28,USD,28,65839.61,6850.39,65,445,2306.01,53655,   
+659,659,Jennifer Rodriguez,jennifer.rodriguez659@example.com,Engineering,Mexico,2020-11-23,USD,46,47411.38,4259.37,61,89,-5952.81,51676,Transferred from EMEA office in Q2.
+605,605,Linda Moore,linda.moore605@example.com,Support,UK,2020-10-14,USD,50,83424.62,8485.48,,495,11243.85,32044,"Remote employee, works PST hours."
+111,111,Robert Martinez,robert.martinez111@example.com,Operations,Canada,2022-09-27,USD,55,78212.89,7863.87,48,305,1597.81,91885,   
+617,617,Linda Wilson,linda.wilson617@example.com,Engineering,Germany,2019-03-11,USD,41,84400.02,8547.8,,221,8824.43,92090,N/A
+44,44,Robert Thomas,robert.thomas44@example.com,Engineering,Australia,2018-06-08,USD,63,56687.74,6125.06,,15,13395.82,42411,"Remote employee, works PST hours."
+392,392,James Gonzalez,james.gonzalez392@example.com,Engineering,France,2022-01-11,USD,56,61773.56,6014.02,49,25,2176.92,98294,On leave until further notice.
+684,684,James Garcia,james.garcia684@example.com,Marketing,Brazil,2024-05-08,USD,38,57007.8,5452.8,82,69,-11999.14,80063,Transferred from EMEA office in Q2.
+532,532,Barbara Williams,barbara.williams532@example.com,Support,France,2022-05-14,USD,64,57516.82,5622.23,79,263,3672.33,69405,-
+794,794,Michael Taylor,michael.taylor794@example.com,Sales,Canada,2022-05-23,USD,60,70520.3,7394.56,76,457,190.55,94707,On leave until further notice.
+385,385,Thomas Davis,thomas.davis385@example.com,Finance,UK,2022-12-18,USD,48,64374.68,6096.55,83,234,2519.77,23644,   
+580,580,Karen Martin,karen.martin580@example.com,Operations,Canada,2024-09-02,USD,54,71313.51,7353.73,98,185,11936.6,30582,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+622,622,Charles Miller,charles.miller622@example.com,Engineering,Canada,2018-10-23,USD,26,61926.28,5872.69,48,326,-3450.96,76702,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+575,575,Susan Smith,susan.smith575@example.com,Sales,France,2023-04-16,USD,,48476.98,4937.96,83,173,18820.66,96108,Transferred from EMEA office in Q2.
+500,500,Thomas Gonzalez,thomas.gonzalez500@example.com,Sales,Japan,2020-10-20,USD,54,79635.72,8373.55,49,366,-1090.7,66051,N/A
+932,932,Karen Anderson,karen.anderson932@example.com,Finance,India,2024-08-23,USD,43,70299.67,7327.93,,91,-12736.21,65583,-
+107,107,Mary Davis,mary.davis107@example.com,Support,Japan,2021-09-17,USD,61,72860.22,7448.32,,209,6846.3,16863,N/A
+273,273,Karen Martin,karen.martin273@example.com,Marketing,France,2023-02-16,USD,26,58773.36,6015.17,,141,4117.76,95389,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+682,682,Richard Martinez,richard.martinez682@example.com,Finance,Germany,2023-03-28,USD,55,51652.83,5415.11,42,65,-4839.19,75264,
+445,445,Jennifer Thomas,jennifer.thomas445@example.com,Sales,Germany,2022-07-27,USD,45,417905.91,41692.82,82,64,7051.96,12058,   
+906,906,Elizabeth Taylor,elizabeth.taylor906@example.com,Marketing,Australia,2018-10-27,USD,35,81078.12,8571.4,85,73,-341.93,67310,-
+227,227,Thomas Williams,thomas.williams227@example.com,Marketing,Mexico,2023-02-16,USD,51,59945.48,5989.98,50,188,12581.2,85223,
+831,831,Charles Gonzalez,charles.gonzalez831@example.com,Engineering,Mexico,2020-01-21,USD,63,81341.08,7961.17,,464,2320.2,70076,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+849,849,Jessica Lopez,jessica.lopez849@example.com,Operations,Germany,2021-12-10,USD,45,67355.13,6572.06,73,457,3639.22,75987,
+913,913,Robert Miller,robert.miller913@example.com,Operations,Australia,2019-12-09,USD,27,67115.89,6764.94,84,258,-4565.11,10422,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+498,498,Charles Anderson,charles.anderson498@example.com,Marketing,Canada,2023-08-02,USD,30,95614.16,9517.83,,316,1412.52,38883,Transferred from EMEA office in Q2.
+731,731,Sarah Taylor,sarah.taylor731@example.com,Engineering,UK,2021-09-13,USD,57,67786.07,6579.61,,94,15418.2,87609,Promoted last quarter after strong review cycle.
+104,104,William Hernandez,william.hernandez104@example.com,Sales,Japan,2018-08-15,USD,62,54140.73,5361.85,,259,11061.47,19724,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+14,14,Robert Hernandez,robert.hernandez14@example.com,Engineering,Mexico,2022-04-19,USD,36,55305.12,5843.94,,34,5566.83,14117,N/A
+86,86,Michael Williams,michael.williams86@example.com,Operations,Australia,2019-10-07,USD,36,54090.39,5355.49,40,141,8980.86,28964,   
+366,366,Charles Wilson,charles.wilson366@example.com,Finance,Australia,2020-06-16,USD,56,56138.76,5626.28,,211,8429.69,44053,   
+819,819,Mary Rodriguez,mary.rodriguez819@example.com,Sales,India,2020-09-22,USD,57,68574.43,6927.61,,375,8486.54,20579,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+683,683,Elizabeth Moore,elizabeth.moore683@example.com,Operations,Japan,2019-08-04,USD,52,59189.46,5792.27,,385,16657.65,23824,On leave until further notice.
+908,908,Karen Moore,karen.moore908@example.com,Sales,Brazil,2020-03-24,USD,22,51293.88,5192.57,,300,12136.98,50683,N/A
+337,337,Karen Brown,karen.brown337@example.com,Sales,Japan,2022-10-02,USD,56,57501.19,5748.03,48,461,-6938.78,98940,On leave until further notice.
+521,521,David Gonzalez,david.gonzalez521@example.com,Marketing,Japan,2023-10-13,USD,53,56551.5,5647.06,47,128,-782.81,27643,Promoted last quarter after strong review cycle.
+656,656,Michael Williams,michael.williams656@example.com,Sales,Canada,2024-11-06,USD,32,73526.68,7583.3,60,287,7618.27,92154,"Remote employee, works PST hours."
+933,933,Richard Williams,richard.williams933@example.com,Sales,USA,2020-12-19,USD,38,73876.57,7734.14,69,222,11207.58,25931,Transferred from EMEA office in Q2.
+886,886,Jennifer Moore,jennifer.moore886@example.com,Sales,Canada,2022-10-11,USD,30,69621.52,6930.44,91,194,4016.7,21829,N/A
+751,751,Linda Williams,linda.williams751@example.com,Engineering,Mexico,2024-07-05,USD,33,56906.37,5711.39,100,153,-7586.56,68192,Promoted last quarter after strong review cycle.
+742,742,James Davis,james.davis742@example.com,HR,Brazil,2019-06-21,USD,40,54830.51,5545.09,96,366,21253.06,UNKNOWN,Transferred from EMEA office in Q2.
+287,287,Susan Martinez,susan.martinez287@example.com,Sales,USA,2022-08-07,USD,52,64461.2,6459.07,98,56,11070.81,29548,
+789,789,Robert Lopez,robert.lopez789@example.com,Support,Australia,2023-05-15,USD,53,31607.21,3349.88,56,88,9978.15,46842,On leave until further notice.
+108,108,Robert Hernandez,robert.hernandez108@example.com,Engineering,Australia,2023-07-10,USD,38,42656.91,4217.65,95,76,-6537.26,53694,
+654,654,Joseph Lopez,joseph.lopez654@example.com,Sales,Germany,2023-01-22,USD,56,63016.8,6366.86,91,267,17080.05,94018,
+59,59,Linda Martinez,linda.martinez59@example.com,Support,France,2023-08-03,USD,65,66222.51,6778.19,77,338,6764.86,25043,-
+943,943,Jennifer Gonzalez,jennifer.gonzalez943@example.com,Marketing,Brazil,2018-11-28,USD,,85757.69,8518.86,62,42,11104.46,58390,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+443,443,Susan Lopez,susan.lopez443@example.com,Engineering,Mexico,2018-10-17,USD,47,81895.66,7869.62,,461,2480.31,83404,N/A
+719,719,David Brown,david.brown719@example.com,HR,Japan,2022-08-26,USD,65,62044.14,6031.56,96,204,-13140.48,60967,   
+507,507,Barbara Garcia,barbara.garcia507@example.com,Engineering,France,2020-07-21,USD,44,76878.0,7737.85,44,263,8889.86,22387,"Excellent performer, candidate for team lead role next cycle."
+681,681,Barbara Johnson,barbara.johnson681@example.com,Operations,India,2023-08-08,USD,60,40523.14,4084.12,62,219,22681.5,72406,
+248,248,Elizabeth Hernandez,elizabeth.hernandez248@example.com,Sales,UK,2023-07-26,USD,62,59628.3,6243.51,,495,2167.05,83659,"Excellent performer, candidate for team lead role next cycle."
+977,977,Elizabeth Smith,elizabeth.smith977@example.com,Sales,Canada,2024-12-23,USD,42,78691.48,7818.84,87,452,6544.46,39842,Transferred from EMEA office in Q2.
+614,614,John Williams,john.williams614@example.com,Sales,France,2022-04-17,USD,39,47362.95,4843.87,84,347,16248.42,79853,"Excellent performer, candidate for team lead role next cycle."
+618,618,David Davis,david.davis618@example.com,Engineering,Japan,2019-06-27,USD,25,46222.75,4727.65,,37,-3723.35,88638,"Excellent performer, candidate for team lead role next cycle."
+750,750,Barbara Johnson,barbara.johnson750@example.com,Support,Canada,2023-10-03,USD,52,57143.39,5925.48,,187,-8794.48,28517,
+91,91,Sarah Miller,sarah.miller91@example.com,HR,Japan,2019-07-11,USD,51,45487.53,4740.96,,160,1060.93,30006,Transferred from EMEA office in Q2.
+877,877,Elizabeth Brown,elizabeth.brown877@example.com,Support,Canada,2021-07-16,USD,38,71954.75,7251.79,,342,10561.39,20363,"Remote employee, works PST hours."
+536,536,Jessica Moore,jessica.moore536@example.com,HR,Brazil,2023-01-07,USD,32,75519.63,7545.05,57,337,6925.88,82182,   
+231,231,Linda Anderson,linda.anderson231@example.com,Marketing,Mexico,2021-04-24,USD,56,65740.35,6424.37,,209,14878.78,93354,Promoted last quarter after strong review cycle.
+299,299,David Martin,david.martin299@example.com,Sales,Germany,2018-07-07,USD,,69403.99,6824.35,,387,-10708.06,98098,"Excellent performer, candidate for team lead role next cycle."
+777,777,Patricia Anderson,patricia.anderson777@example.com,Finance,Mexico,2024-01-22,USD,40,71173.51,7006.57,75,195,16853.98,26310,N/A
+499,499,Barbara Williams,barbara.williams499@example.com,Marketing,USA,2022-11-07,USD,59,39206.69,3863.02,52,11,18469.77,98744,
+814,814,David Taylor,david.taylor814@example.com,Support,USA,2019-07-28,USD,36,43337.5,4274.15,55,295,1276.36,66455,N/A
+709,709,Linda Martin,linda.martin709@example.com,HR,Japan,2019-08-12,USD,51,52950.3,5292.78,100,367,15783.73,50001,
+727,727,Barbara Davis,barbara.davis727@example.com,Support,France,2019-10-13,USD,27,71021.74,7033.33,47,21,-10099.06,95767,"Remote employee, works PST hours."
+173,173,Joseph Moore,joseph.moore173@example.com,Support,India,2020-05-12,USD,-54,77449.6,7594.51,86,240,5513.14,36624,N/A
+893,893,Joseph Davis,joseph.davis893@example.com,Finance,USA,2021-04-15,USD,45,,5801.11,,73,12994.45,22502,-
+437,437,David Lopez,david.lopez437@example.com,HR,UK,2023-11-11,USD,,61440.3,6158.38,62,245,248.16,55693,"Excellent performer, candidate for team lead role next cycle."
+478,478,Jessica Taylor,jessica.taylor478@example.com,Engineering,Canada,2019-12-15,USD,59,71027.92,6919.98,97,166,994.17,40154,
+642,642,Susan Gonzalez,susan.gonzalez642@example.com,Operations,Australia,2020-06-19,USD,23,53201.29,5273.5,,500,4156.68,53286,"Excellent performer, candidate for team lead role next cycle."
+116,116,John Jones,john.jones116@example.com,Engineering,France,2024-08-23,USD,30,77972.93,7809.79,97,40,-3988.87,12490,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+262,262,Richard Moore,richard.moore262@example.com,Marketing,France,2022-08-28,USD,22,62131.12,6276.71,66,57,-5881.79,64321,   
+391,391,Elizabeth Johnson,elizabeth.johnson391@example.com,Support,Mexico,2021-02-25,USD,,76935.9,7608.52,67,213,8671.55,39716,"Excellent performer, candidate for team lead role next cycle."
+42,42,Richard Hernandez,richard.hernandez42@example.com,Support,Brazil,2023-03-27,USD,51,65884.92,7080.24,98,201,-5887.53,87580,"Excellent performer, candidate for team lead role next cycle."
+279,279,Charles Anderson,charles.anderson279@example.com,Sales,India,2024-12-06,USD,27,43882.59,4410.27,,324,13198.54,37444,   
+350,350,Sarah Smith,sarah.smith350@example.com,Support,France,2019-05-03,USD,47,77962.68,7625.13,,476,-8168.03,33394,Transferred from EMEA office in Q2.
+738,738,Michael Williams,michael.williams738@example.com,Sales,Canada,2021-04-15,USD,63,73014.13,7391.75,86,384,4319.77,11545,"Excellent performer, candidate for team lead role next cycle."
+773,773,Charles Brown,charles.brown773@example.com,Engineering,Germany,2023-04-14,USD,56,68102.94,6542.38,,107,25416.65,85607,Promoted last quarter after strong review cycle.
+901,901,Patricia Moore,patricia.moore901@example.com,HR,India,2018-01-20,USD,51,60377.05,5996.12,96,115,4241.7,UNKNOWN,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+158,158,Elizabeth Brown,elizabeth.brown158@example.com,Support,France,2020-10-08,USD,36,73685.57,7588.53,78,191,2584.59,64505,-
+466,466,Michael Garcia,michael.garcia466@example.com,Finance,USA,2021-11-07,USD,41,54107.35,5268.68,62,249,-11062.07,21123,Transferred from EMEA office in Q2.
+954,954,Barbara Gonzalez,barbara.gonzalez954@example.com,Support,Australia,2023-11-15,USD,49,60349.11,6056.71,88,422,1360.99,REDACTED,
+761,761,Michael Martin,michael.martin761@example.com,Finance,Canada,2019-10-21,USD,53,67130.36,6732.97,59,280,14622.88,21425,Transferred from EMEA office in Q2.
+555,555,Mary Jones,mary.jones555@example.com,HR,France,2023-06-14,USD,40,74604.55,7370.8,99,135,-3510.28,31624,N/A
+128,128,David Rodriguez,david.rodriguez128@example.com,Support,Japan,2019-10-10,USD,53,81672.75,8200.54,,88,9111.02,68341,
+842,842,Jessica Rodriguez,jessica.rodriguez842@example.com,Support,USA,2018-06-14,USD,38,52214.36,5349.49,,104,20938.05,81707,N/A
+306,306,Michael Moore,michael.moore306@example.com,Engineering,India,2024-08-04,USD,61,57287.74,5950.36,87,331,-4675.37,83566,On leave until further notice.
+449,449,David Anderson,david.anderson449@example.com,Finance,Canada,2022-10-03,USD,37,40688.62,4125.54,44,350,-4552.04,50959,"Excellent performer, candidate for team lead role next cycle."
+677,677,Mary Rodriguez,mary.rodriguez677@example.com,Operations,USA,2023-10-26,USD,24,79961.4,8135.11,,308,-15301.47,44843,Transferred from EMEA office in Q2.
+238,238,Patricia Anderson,patricia.anderson238@example.com,Engineering,UK,2018-01-02,USD,36,49868.15,5240.66,80,480,15910.39,94500,
+483,483,Linda Hernandez,linda.hernandez483@example.com,HR,Mexico,2019-10-05,USD,,77520.26,7627.92,,240,4017.89,65797,-
+613,613,James Miller,james.miller613@example.com,Operations,Brazil,2018-05-19,USD,54,46010.37,4610.57,76,344,744.55,18566,"Excellent performer, candidate for team lead role next cycle."
+644,644,Jennifer Brown,jennifer.brown644@example.com,Support,Australia,2019-01-27,USD,,59927.86,5864.54,,493,5367.64,60579,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+791,791,Karen Brown,karen.brown791@example.com,Finance,Brazil,2021-04-19,USD,44,50086.58,5210.12,,85,20482.21,43169,"Excellent performer, candidate for team lead role next cycle."
+106,106,Charles Miller,charles.miller106@example.com,Marketing,Mexico,2021-09-05,USD,25,69427.14,6595.16,85,43,9466.68,REDACTED,   
+537,537,Mary Thomas,mary.thomas537@example.com,Operations,USA,2018-02-11,USD,60,63385.64,6407.79,97,186,-2873.46,62021,   
+319,319,John Gonzalez,john.gonzalez319@example.com,Operations,Australia,2020-11-05,USD,41,50336.73,4635.92,86,331,-8658.63,82551,-
+534,534,Charles Johnson,charles.johnson534@example.com,Finance,Germany,2020-08-05,USD,37,347297.47,34907.78,,222,14862.91,63773,N/A
+121,121,Jessica Garcia,jessica.garcia121@example.com,Operations,UK,2018-12-25,USD,51,74794.77,7510.38,96,21,2238.89,62196,-
+653,653,Jessica Rodriguez,jessica.rodriguez653@example.com,Operations,UK,2019-01-20,USD,28,68409.36,6933.34,50,39,4430.51,45815,   
+12,12,Mary Davis,mary.davis12@example.com,Finance,Canada,2018-12-16,USD,26,98056.3,10049.98,,337,3639.3,72296,-
+336,336,Joseph Martin,joseph.martin336@example.com,Finance,Canada,2019-07-13,USD,30,55086.17,5613.01,72,350,8391.63,65023,   
+779,779,James Wilson,james.wilson779@example.com,Engineering,USA,2018-03-26,USD,45,74797.65,7276.1,60,171,9998.7,66363,"Remote employee, works PST hours."
+899,899,Barbara Jackson,barbara.jackson899@example.com,Support,UK,2019-05-17,USD,65,70841.43,7348.88,73,309,4930.54,53276,   
+892,892,Sarah Rodriguez,sarah.rodriguez892@example.com,HR,France,2023-09-17,USD,37,76125.85,7145.79,100,190,22009.66,81641,
+998,998,Michael Anderson,michael.anderson998@example.com,Finance,France,2022-08-04,USD,39,35853.14,3450.75,,456,-2969.67,34421,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+455,455,David Brown,david.brown455@example.com,Engineering,UK,2021-07-16,USD,41,28900.15,2962.33,54,194,1772.41,44422,   
+211,211,,user211@example.com,Finance,France,2023-07-13,USD,50,88739.85,9036.56,65,263,4984.7,58374,Transferred from EMEA office in Q2.
+956,956,William Martinez,william.martinez956@example.com,Support,Japan,2020-08-23,USD,38,54673.66,5222.99,49,267,532.18,47805,Promoted last quarter after strong review cycle.
+689,689,John Martin,john.martin689@example.com,Marketing,UK,2023-11-28,USD,24,54515.44,5351.47,47,140,17524.4,N/A,"Remote employee, works PST hours."
+600,600,James Rodriguez,james.rodriguez600@example.com,Operations,Germany,2019-12-27,USD,59,67571.79,6416.49,65,301,9980.84,15896,Transferred from EMEA office in Q2.
+758,758,William Wilson,william.wilson758@example.com,Support,Australia,2018-09-26,USD,31,28000,3152.71,95,436,7115.22,14903,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+744,744,William Martin,william.martin744@example.com,Sales,Brazil,2019-11-22,USD,41,67309.62,6614.46,57,469,354.11,75437,N/A
+127,127,Joseph Williams,joseph.williams127@example.com,Finance,UK,2022-06-13,USD,42,58292.89,5706.91,,376,8778.65,83619,
+412,412,John Anderson,john.anderson412@example.com,Operations,Japan,2018-12-17,USD,29,74677.65,7581.12,74,69,14599.64,61520,On leave until further notice.
+920,920,Richard Jackson,richard.jackson920@example.com,Engineering,India,2023-02-21,USD,,80351.97,8052.36,61,172,4262.69,94919,
+283,283,Michael Garcia,michael.garcia283@example.com,Operations,Brazil,2018-04-08,USD,30,65762.38,6617.09,47,187,1569.51,59177,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+961,961,Michael Lopez,michael.lopez961@example.com,HR,Japan,2022-11-01,USD,55,84786.57,8282.21,42,204,-8818.56,76508,
+73,73,Linda Williams,linda.williams73@example.com,HR,Canada,2024-11-23,USD,28,43346.23,4441.28,42,166,6905.95,59131,On leave until further notice.
+359,359,Patricia Anderson,patricia.anderson359@example.com,Support,India,2020-06-12,USD,57,39426.31,3813.81,,210,16636.25,89374,"Remote employee, works PST hours."
+855,855,Joseph Wilson,joseph.wilson855@example.com,Finance,Mexico,2024-09-09,USD,32,81314.63,8076.06,55,67,10432.56,99469,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+255,255,Michael Miller,michael.miller255@example.com,HR,Australia,2023-12-18,USD,38,58286.99,5686.48,,201,-8781.26,30131,Promoted last quarter after strong review cycle.
+199,199,Jennifer Davis,jennifer.davis199@example.com,Finance,UK,2022-03-11,USD,57,50052.59,5104.66,80,94,9556.01,61849,Promoted last quarter after strong review cycle.
+606,606,Sarah Wilson,sarah.wilson606@example.com,Finance,Japan,2018-01-27,USD,51,79587.99,8229.02,50,0,2305.25,17887,Transferred from EMEA office in Q2.
+912,912,James Hernandez,james.hernandez912@example.com,Operations,India,2023-03-19,USD,45,93914.93,8918.81,93,341,3051.93,97771,Promoted last quarter after strong review cycle.
+430,430,Michael Hernandez,michael.hernandez430@example.com,HR,Australia,2020-06-05,USD,28,67687.05,6975.25,48,105,-11962.01,14791,Transferred from EMEA office in Q2.
+662,662,Joseph Hernandez,joseph.hernandez662@example.com,Sales,France,2020-11-26,USD,24,80131.98,7466.77,58,384,2116.93,13105,"Remote employee, works PST hours."
+164,164,Thomas Jones,thomas.jones164@example.com,Support,Germany,2024-01-25,USD,23,72686.04,7489.6,67,272,3798.01,59712,"Remote employee, works PST hours."
+806,806,Patricia Moore,patricia.moore806@example.com,Engineering,India,2021-04-05,USD,47,67744.94,6536.34,,139,4868.88,58467,
+401,401,Joseph Moore,joseph.moore401@example.com,Support,USA,2018-04-17,USD,41,57481.58,5921.19,,177,1992.87,49626,"Remote employee, works PST hours."
+249,249,Barbara Davis,barbara.davis249@example.com,Support,Mexico,2024-03-13,USD,41,63742.11,6207.99,,0,23497.08,61327,"Excellent performer, candidate for team lead role next cycle."
+827,827,Jessica Martin,jessica.martin827@example.com,Support,Germany,2018-02-01,USD,31,58944.23,5832.77,,104,6422.03,76296,Transferred from EMEA office in Q2.
+783,783,Richard Smith,richard.smith783@example.com,Support,UK,2021-11-21,USD,44,73465.79,7614.58,,99,-853.35,59559,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+165,165,Linda Anderson,linda.anderson165@example.com,Marketing,UK,2020-04-24,USD,29,86589.19,8718.0,99,452,9551.16,18819,
+843,843,Mary Davis,mary.davis843@example.com,HR,Canada,2024-10-20,USD,24,61744.59,6237.6,87,313,20103.29,72753,   
+493,493,Linda Taylor,linda.taylor493@example.com,Support,India,2021-10-11,USD,63,56898.51,5548.68,84,271,9741.06,49856,"Excellent performer, candidate for team lead role next cycle."
+148,148,Karen Thomas,karen.thomas148@example.com,Sales,Germany,2020-09-10,USD,36,85450.86,9075.07,85,106,-3165.39,74094,N/A
+144,144,William Brown,william.brown144@example.com,HR,Mexico,2020-12-28,USD,62,58442.71,6068.0,90,497,6512.53,85821,"Excellent performer, candidate for team lead role next cycle."
+421,421,Thomas Wilson,thomas.wilson421@example.com,Finance,Germany,2023-04-20,USD,25,83763.46,8581.47,45,247,3232.17,47642,On leave until further notice.
+774,774,Barbara Lopez,barbara.lopez774@example.com,Engineering,France,2020-09-27,USD,29,53190.74,5228.47,66,180,-5993.0,56165,-
+61,61,Richard Rodriguez,richard.rodriguez61@example.com,Finance,Australia,2021-08-03,USD,60,80457.09,8098.43,,128,10692.53,98381,"Excellent performer, candidate for team lead role next cycle."
+69,69,Sarah Thomas,sarah.thomas69@example.com,Marketing,India,2022-09-13,USD,,92622.46,9096.93,55,292,-6680.63,63841,Promoted last quarter after strong review cycle.
+609,609,Linda Hernandez,linda.hernandez609@example.com,Marketing,Germany,2021-10-11,USD,23,71892.73,7134.15,78,243,6109.54,32745,On leave until further notice.
+628,628,Patricia Jones,patricia.jones628@example.com,Marketing,Japan,2019-11-19,USD,45,69456.56,6992.9,,89,5534.95,38697,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+991,991,James Thomas,james.thomas991@example.com,Sales,France,2021-11-12,USD,38,62401.41,6206.81,,14,6616.7,28919,On leave until further notice.
+214,214,James Brown,james.brown214@example.com,Operations,UK,2021-08-01,USD,49,60692.65,6159.43,,332,16675.79,49566,   
+320,320,John Brown,john.brown320@example.com,Engineering,USA,2022-10-13,USD,56,91218.75,9041.24,,379,4007.21,55069,"Remote employee, works PST hours."
+685,685,   ,user685@example.com,Operations,Germany,2022-10-03,USD,63,46795.13,5045.39,86,195,-2963.78,67273,"Remote employee, works PST hours."
+570,570,Richard Martinez,richard.martinez570@example.com,Engineering,UK,2019-01-07,USD,29,52405.65,5364.87,,13,-6300.67,37424,Transferred from EMEA office in Q2.
+726,726,Elizabeth Brown,elizabeth.brown726@example.com,Engineering,USA,2023-09-25,USD,30,98496.39,9689.01,89,301,16479.53,79319,"Excellent performer, candidate for team lead role next cycle."
+258,258,Joseph Anderson,joseph.anderson258@example.com,Marketing,Germany,2024-05-19,USD,25,71534.97,7333.25,,342,15045.61,55061,-
+77,77,James Gonzalez,james.gonzalez77@example.com,Marketing,USA,2022-11-25,USD,25,85993.85,8423.26,97,146,5931.68,56179,"Remote employee, works PST hours."
+1,1,Patricia Smith,patricia.smith1@example.com,Support,France,2019-04-05,USD,28,50929.23,4714.79,,216,8478.08,40495,-
+308,308,Karen Anderson,karen.anderson308@example.com,Operations,Germany,2023-12-23,USD,63,64220.45,6242.4,52,397,12873.1,35362,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+739,739,Patricia Gonzalez,patricia.gonzalez739@example.com,HR,USA,2018-01-25,USD,63,72323.91,7189.9,57,73,15028.86,11231,
+140,140,Patricia Wilson,patricia.wilson140@example.com,Sales,France,2023-06-25,USD,47,51052.42,4970.54,52,185,11039.63,82512,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+330,330,William Brown,william.brown330@example.com,Support,Australia,2023-05-27,USD,38,86687.26,8439.91,64,187,70.23,87028,
+480,480,Jennifer Gonzalez,jennifer.gonzalez480@example.com,Marketing,UK,2021-12-07,USD,62,59669.2,5866.93,,16,9922.73,84536,Promoted last quarter after strong review cycle.
+488,488,Richard Lopez,richard.lopez488@example.com,HR,Mexico,2018-06-12,USD,33,57428.48,5556.3,89,104,-5026.25,28141,N/A
+916,916,John Martinez,john.martinez916@example.com,Engineering,Brazil,2023-05-06,USD,39,60507.99,6161.45,,96,10379.43,45756,"Remote employee, works PST hours."
+432,432,Elizabeth Miller,elizabeth.miller432@example.com,Marketing,Germany,2019-05-09,USD,56,40310.78,3940.26,,76,12827.92,30643,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+535,535,Robert Miller,robert.miller535@example.com,Operations,Brazil,2020-05-21,USD,32,64176.34,6688.61,47,76,7143.58,50703,Transferred from EMEA office in Q2.
+923,923,Susan Wilson,susan.wilson923@example.com,Operations,France,2022-07-19,USD,23,69654.13,7068.89,,305,23685.15,36012,"Excellent performer, candidate for team lead role next cycle."
+400,400,Patricia Smith,patricia.smith400@example.com,Marketing,Brazil,2019-07-17,USD,28,46293.2,4818.87,45,95,-231.61,36066,-
+304,304,Sarah Thomas,sarah.thomas304@example.com,Finance,Mexico,2023-12-14,USD,65,52568.3,5251.69,,433,-10350.72,65363,Promoted last quarter after strong review cycle.
+411,411,   ,user411@example.com,Finance,USA,2019-05-15,USD,47,84331.08,8204.13,,85,-4742.61,17149,-
+51,51,James Taylor,james.taylor51@example.com,Sales,Canada,2019-12-14,USD,53,54540.14,5403.63,85,251,3586.3,48566,"Remote employee, works PST hours."
+286,286,Patricia Taylor,patricia.taylor286@example.com,Support,Mexico,2018-05-04,USD,28,85301.53,8256.09,93,267,5155.74,36433,N/A
+208,208,Joseph Brown,joseph.brown208@example.com,Operations,Germany,2019-12-19,USD,44,64929.19,6669.32,79,71,-3415.73,37082,"Remote employee, works PST hours."
+879,879,Susan Brown,susan.brown879@example.com,Support,Australia,2020-04-27,USD,57,48712.05,4523.56,,324,811.29,86853,On leave until further notice.
+435,435,Richard Garcia,richard.garcia435@example.com,Support,Mexico,2022-11-27,USD,50,55332.17,5417.67,85,388,288.14,71039,"Excellent performer, candidate for team lead role next cycle."
+625,625,Mary Davis,mary.davis625@example.com,Finance,Australia,2024-01-14,USD,44,68373.77,6963.33,90,35,-1461.92,71263,"Excellent performer, candidate for team lead role next cycle."
+554,554,Charles Garcia,charles.garcia554@example.com,Marketing,UK,2022-08-11,USD,51,93543.9,9472.47,49,133,10152.87,25314,N/A
+985,985,James Jones,james.jones985@example.com,HR,Canada,2024-07-01,USD,50,84814.93,8191.26,,25,-2628.55,36952,On leave until further notice.
+734,734,William Williams,william.williams734@example.com,Support,Australia,2020-12-05,USD,48,65121.91,6646.42,80,417,1012.75,11364,N/A
+770,770,Susan Hernandez,susan.hernandez770@example.com,Operations,France,2019-04-12,USD,48,59044.62,5658.43,84,223,6141.26,56490,"Excellent performer, candidate for team lead role next cycle."
+953,953,Susan Rodriguez,susan.rodriguez953@example.com,Support,Australia,2018-12-25,USD,60,53829.35,5185.63,,246,6318.41,62218,Promoted last quarter after strong review cycle.
+864,864,Robert Williams,robert.williams864@example.com,Sales,Mexico,2022-10-21,USD,57,54104.79,5385.42,,449,-4904.76,79174,Promoted last quarter after strong review cycle.
+232,232,William Smith,william.smith232@example.com,Operations,Brazil,2024-12-24,USD,41,67803.84,6975.52,,251,10972.33,17850,   
+634,634,David Jackson,david.jackson634@example.com,HR,Mexico,2023-01-07,USD,36,81449.1,8318.16,,111,-383.55,50107,On leave until further notice.
+880,880,Linda Miller,linda.miller880@example.com,Marketing,Japan,2019-08-27,USD,33,56917.35,5674.93,,448,-1485.34,21627,-
+650,650,Elizabeth Williams,elizabeth.williams650@example.com,Support,Germany,2021-07-25,USD,57,59206.23,6059.45,72,392,10295.99,52731,On leave until further notice.
+651,651,Joseph Garcia,joseph.garcia651@example.com,Marketing,Germany,2022-01-15,USD,23,85699.47,8706.65,64,175,4600.16,61992,Promoted last quarter after strong review cycle.
+170,170,Thomas Jones,thomas.jones170@example.com,HR,Germany,2020-04-11,USD,63,55156.46,5707.84,74,370,9168.07,34966,Promoted last quarter after strong review cycle.
+996,996,William Wilson,william.wilson996@example.com,Marketing,UK,2022-12-28,USD,24,55229.54,5518.3,90,101,-9346.68,33877,Promoted last quarter after strong review cycle.
+103,103,David Miller,david.miller103@example.com,Sales,Mexico,2019-11-03,USD,33,85113.14,8426.58,76,389,-5618.81,83989,"Excellent performer, candidate for team lead role next cycle."
+163,163,John Wilson,john.wilson163@example.com,Marketing,Brazil,2021-07-13,USD,27,55939.96,5325.42,81,440,2108.62,80419,On leave until further notice.
+384,384,David Taylor,david.taylor384@example.com,Engineering,Canada,2024-05-03,USD,35,47292.96,4816.94,74,197,4113.6,34832,"Remote employee, works PST hours."
+171,171,David Gonzalez,david.gonzalez171@example.com,Support,Mexico,2022-01-28,USD,26,74624.02,7775.88,75,111,-11008.96,53642,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+982,982,Richard Jackson,richard.jackson982@example.com,Marketing,USA,2022-07-01,USD,22,40866.82,4119.41,,114,13342.62,86595,N/A
+970,970,William Garcia,william.garcia970@example.com,Sales,Brazil,2024-03-28,USD,32,60468.39,5956.79,70,334,2015.52,88017,On leave until further notice.
+711,711,Elizabeth Moore,elizabeth.moore711@example.com,HR,USA,2021-11-17,USD,30,47101.9,4740.86,96,272,2375.91,90777,"Remote employee, works PST hours."
+236,236,Elizabeth Anderson,elizabeth.anderson236@example.com,Marketing,Canada,2018-03-26,USD,65,56320.63,5527.7,53,427,16777.29,52964,   
+553,553,Barbara Martin,barbara.martin553@example.com,Support,Mexico,2023-12-26,USD,24,82766.94,8284.68,65,343,-9458.82,83342,Promoted last quarter after strong review cycle.
+372,372,Jessica Lopez,jessica.lopez372@example.com,HR,USA,2020-02-27,USD,31,65969.79,6921.55,,240,9769.97,33803,"Remote employee, works PST hours."
+546,546,Patricia Garcia,patricia.garcia546@example.com,Sales,Australia,2023-11-25,USD,30,77184.46,7892.58,60,231,-4982.6,72700,   
+820,820,Linda Johnson,linda.johnson820@example.com,HR,India,2019-11-21,USD,46,83795.55,7917.97,,133,14766.44,49586,"Excellent performer, candidate for team lead role next cycle."
+49,49,Joseph Wilson,joseph.wilson49@example.com,Operations,Mexico,2020-06-28,USD,37,68102.59,6735.82,55,384,-5714.47,59674,N/A
+538,538,Linda Brown,linda.brown538@example.com,Finance,Australia,2018-09-22,USD,59,37465.37,4186.76,,452,-761.28,21829,"Remote employee, works PST hours."
+544,544,Jessica Wilson,jessica.wilson544@example.com,Operations,India,2023-07-27,USD,28,67187.26,6858.29,62,215,-6058.88,88920,-
+881,881,Michael Smith,michael.smith881@example.com,HR,Canada,2021-09-20,USD,35,63950.13,6340.51,79,194,1021.91,55705,Transferred from EMEA office in Q2.
+577,577,Jessica Jones,jessica.jones577@example.com,Sales,Germany,2019-10-16,USD,28,74689.39,7007.89,55,107,-23463.73,57026,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+156,156,Susan Taylor,susan.taylor156@example.com,Marketing,Canada,2021-11-04,USD,33,55691.1,5795.47,40,133,3953.44,60275,"Remote employee, works PST hours."
+799,799,Linda Garcia,linda.garcia799@example.com,Engineering,Germany,2023-06-27,USD,56,,9960.35,56,452,5844.43,49883,
+616,616,Thomas Johnson,thomas.johnson616@example.com,Support,Germany,2018-05-14,USD,56,77552.63,7735.96,,41,5256.97,84949,Promoted last quarter after strong review cycle.
+539,539,Karen Brown,karen.brown539@example.com,Operations,India,2020-10-24,USD,46,73510.43,7041.01,53,73,9348.94,45985,Transferred from EMEA office in Q2.
+363,363,Linda Rodriguez,linda.rodriguez363@example.com,Support,Canada,2019-03-13,USD,28,94086.01,9674.14,43,13,6278.4,20911,
+763,763,Jessica Rodriguez,jessica.rodriguez763@example.com,Operations,Japan,2023-03-04,USD,58,50781.25,5092.14,,209,16119.9,26906,Transferred from EMEA office in Q2.
+752,752,Elizabeth Brown,elizabeth.brown752@example.com,Sales,USA,2023-01-20,USD,33,,6917.8,83,485,4975.51,69545,-
+204,204,John Garcia,john.garcia204@example.com,Marketing,Japan,2022-01-28,USD,44,64987.95,6718.61,,196,2255.22,83607,-
+18,18,James Williams,james.williams18@example.com,Operations,Germany,2019-07-16,USD,52,50490.56,5094.78,,194,12890.64,10282,On leave until further notice.
+795,795,Susan Hernandez,susan.hernandez795@example.com,Operations,India,2019-04-02,USD,53,28000,2805.16,47,231,8384.35,N/A,"Remote employee, works PST hours."
+228,228,Linda Taylor,linda.taylor228@example.com,Engineering,USA,2024-01-08,USD,24,86583.69,8464.91,,476,6387.41,14635,-
+697,697,Jessica Rodriguez,jessica.rodriguez697@example.com,Support,Canada,2024-10-06,USD,46,43530.3,4381.56,76,64,7350.34,80452,   
+861,861,Joseph Brown,joseph.brown861@example.com,Finance,Canada,2019-04-11,USD,58,45727.72,4841.77,81,218,8160.41,52800,"Excellent performer, candidate for team lead role next cycle."
+146,146,Joseph Hernandez,joseph.hernandez146@example.com,HR,UK,2021-12-07,USD,48,54743.21,5199.33,94,376,4874.24,18163,   
+200,200,Karen Miller,karen.miller200@example.com,HR,Mexico,2021-07-01,USD,35,85222.28,8613.87,44,295,17853.22,23336,-
+524,524,Susan Brown,susan.brown524@example.com,HR,Japan,2020-07-15,USD,51,47584.24,4880.03,89,155,6118.84,31514,Transferred from EMEA office in Q2.
+907,907,Joseph Thomas,joseph.thomas907@example.com,Support,France,2023-02-18,USD,49,59579.76,5855.7,94,238,5958.23,65584,"Remote employee, works PST hours."
+964,964,Linda Davis,linda.davis964@example.com,Finance,Mexico,2021-08-04,USD,56,54571.51,5504.82,44,100,3246.13,72691,
+840,840,Robert Jones,robert.jones840@example.com,Operations,Australia,2020-02-04,USD,53,72876.43,7320.68,,114,15771.12,47997,"Flagged for follow-up re: expense report, see thread from last week regarding reimbursement delays."
+408,408,Jennifer Miller,jennifer.miller408@example.com,Sales,USA,2021-01-09,USD,48,78591.72,7910.37,,104,16757.36,18668,   
+187,187,John Williams,john.williams187@example.com,Sales,Brazil,2021-09-18,USD,54,62101.12,6235.31,45,305,-782.88,60493,Promoted last quarter after strong review cycle.
