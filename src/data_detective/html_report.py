@@ -96,23 +96,128 @@ def _render_correlation_heatmap(matrix: dict, empty_message="Not enough numeric 
     )
 
 
-def _render_histograms(histograms: dict, empty_message="No numeric columns to chart.") -> str:
-    if not histograms:
+def _render_explorer_histogram(hist: dict, empty_message="No histogram data for this column.") -> str:
+    if not hist:
         return f'<p class="empty">{empty_message}</p>'
 
-    blocks = []
-    for col, data in histograms.items():
-        counts = data.get("counts", [])
-        max_count = max(counts) if counts else 1
-        bars = "".join(
-            f'<div class="hist-bar" style="height:{max((c / max_count) * 100, 2):.1f}%"></div>'
-            for c in counts
-        )
-        blocks.append(
-            f'<div class="hist-block"><h4>{escape(str(col))}</h4><div class="hist-bars">{bars}</div></div>'
+    bin_edges = hist.get("bin_edges", [])
+    counts = hist.get("counts", [])
+    max_count = max(counts) if counts else 1
+
+    bars = []
+    for i, c in enumerate(counts):
+        height = max((c / max_count) * 100, 2)
+        edge = bin_edges[i] if i < len(bin_edges) else ""
+        next_edge = bin_edges[i + 1] if i + 1 < len(bin_edges) else ""
+        title = escape(f"{edge} to {next_edge}: {c} rows")
+        bars.append(
+            f'<div class="explorer-hist-bar-wrap" title="{title}">'
+            f'<div class="explorer-hist-count">{c}</div>'
+            f'<div class="hist-bar" style="height:{height:.1f}%"></div>'
+            f'<div class="explorer-hist-edge">{escape(str(edge))}</div>'
+            "</div>"
         )
 
-    return f'<div class="histograms">{"".join(blocks)}</div>'
+    return f'<div class="explorer-hist-bars">{"".join(bars)}</div>'
+
+
+def _render_explorer_stats(col: str, box: dict, report: dict) -> str:
+    if not box:
+        return ""
+
+    shape = report.get("distribution_shape", {}).get(col)
+    outliers_mad = report.get("outliers_mad", {}).get(col)
+    outliers_iqr = report.get("outliers_iqr", {}).get(col)
+    missing_pct = report.get("missing_percentage", {}).get(col)
+
+    stats = [
+        ("Min", box["min"]),
+        ("Q1", box["q1"]),
+        ("Median", box["median"]),
+        ("Q3", box["q3"]),
+        ("Max", box["max"]),
+        ("Outliers beyond whiskers", len(box["outliers"])),
+    ]
+    if outliers_mad is not None:
+        stats.append(("Outliers (MAD)", outliers_mad))
+    if outliers_iqr is not None:
+        stats.append(("Outliers (IQR)", outliers_iqr))
+    if shape:
+        stats.append(("Skewness", shape["skewness"]))
+        stats.append(("Kurtosis", shape["kurtosis"]))
+    if missing_pct is not None:
+        stats.append(("Missing", f"{missing_pct}%"))
+
+    chips = "".join(
+        f'<div class="stat-chip"><span class="stat-chip-value">{escape(str(value))}</span>'
+        f'<span class="stat-chip-label">{escape(str(label))}</span></div>'
+        for label, value in stats
+    )
+    return f'<div class="explorer-stats">{chips}</div>'
+
+
+def _render_column_explorer(report: dict) -> str:
+    """
+    Interactive per-column drill-down: a dropdown switches between hidden
+    panels (one per column) via a tiny inline script, so this works in a
+    standalone HTML file with no server. High-cardinality (ID-like) and
+    constant columns are excluded since a chart of them isn't meaningful.
+    """
+    histograms = report.get("histogram_data", {})
+    boxplots = report.get("boxplot_stats", {})
+    excluded = set(report.get("high_cardinality_columns", [])) | set(report.get("constant_columns", []))
+
+    columns = []
+    for col in list(histograms.keys()) + list(boxplots.keys()):
+        if col not in excluded and col not in columns:
+            columns.append(col)
+
+    note = (
+        '<p class="explorer-note">ID-like and constant columns are left out here since a chart of '
+        "them isn't meaningful. See the full technical report below for those.</p>"
+    )
+
+    if not columns:
+        if not histograms and not boxplots:
+            return note + '<p class="empty">No numeric columns to chart.</p>'
+        return note + (
+            '<p class="empty">No columns suitable for detailed charting: the remaining numeric '
+            "columns look like IDs or are constant.</p>"
+        )
+
+    options = "".join(f'<option value="{escape(col)}">{escape(col)}</option>' for col in columns)
+
+    panels = []
+    for i, col in enumerate(columns):
+        hidden_attr = "" if i == 0 else " hidden"
+        box = boxplots.get(col)
+        boxplot_html = _boxplot_svg(box) if box else '<p class="empty">No boxplot data.</p>'
+        panels.append(
+            f'<div class="explorer-panel"{hidden_attr} data-column="{escape(col)}">'
+            '<div class="grid-2">'
+            f'<div class="explorer-block"><h4>Histogram</h4>{_render_explorer_histogram(histograms.get(col))}</div>'
+            f'<div class="explorer-block"><h4>Boxplot</h4>{boxplot_html}</div>'
+            "</div>"
+            f"{_render_explorer_stats(col, box, report)}"
+            "</div>"
+        )
+
+    controls = (
+        '<div class="explorer-controls"><label for="column-select">Column</label>'
+        f'<select id="column-select" onchange="ddShowColumn(this.value)">{options}</select></div>'
+    )
+
+    script = (
+        "<script>\n"
+        "function ddShowColumn(col) {\n"
+        "    document.querySelectorAll('.explorer-panel').forEach(function (el) {\n"
+        "        el.hidden = el.getAttribute('data-column') !== col;\n"
+        "    });\n"
+        "}\n"
+        "</script>"
+    )
+
+    return note + controls + f'<div id="explorer-blocks">{"".join(panels)}</div>' + script
 
 
 def _boxplot_svg(box: dict) -> str:
@@ -143,17 +248,6 @@ def _boxplot_svg(box: dict) -> str:
         f'<svg class="box-plot-svg" viewBox="0 0 {width} {height}" preserveAspectRatio="none">'
         f"{whisker_line}{cap_low}{cap_high}{rect}{median}{outliers}</svg>"
     )
-
-
-def _render_boxplots(boxplots: dict, empty_message="No numeric columns to chart.") -> str:
-    if not boxplots:
-        return f'<p class="empty">{empty_message}</p>'
-
-    blocks = [
-        f'<div class="box-block"><h4>{escape(str(col))}</h4>{_boxplot_svg(box)}</div>'
-        for col, box in boxplots.items()
-    ]
-    return f'<div class="boxplots">{"".join(blocks)}</div>'
 
 
 def generate_html_report(report: dict, output_path="report.html"):
@@ -370,46 +464,110 @@ def generate_html_report(report: dict, output_path="report.html"):
         padding: 4px 0;
     }}
 
-    .histograms {{
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        max-height: 420px;
-        overflow-y: auto;
+    .explorer-note {{
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0 0 16px 0;
     }}
 
-    .hist-block h4 {{
-        margin: 0 0 6px 0;
+    .explorer-controls {{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }}
+
+    .explorer-controls label {{
+        font-size: 13px;
+        color: var(--muted);
+    }}
+
+    .explorer-controls select {{
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-size: 13px;
+        background: var(--card-bg);
+        color: var(--text);
+    }}
+
+    .explorer-block h4 {{
+        margin: 0 0 10px 0;
         font-size: 13px;
         font-weight: 600;
+        color: var(--muted);
     }}
 
-    .hist-bars {{
+    .explorer-hist-bars {{
         display: flex;
         align-items: flex-end;
-        gap: 2px;
-        height: 60px;
+        gap: 4px;
+        height: 110px;
+    }}
+
+    .explorer-hist-bar-wrap {{
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        height: 100%;
+        min-width: 0;
+    }}
+
+    .explorer-hist-count {{
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 2px;
     }}
 
     .hist-bar {{
-        flex: 1;
+        width: 100%;
         background: var(--accent);
         border-radius: 2px 2px 0 0;
         min-height: 2px;
     }}
 
-    .boxplots {{
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        max-height: 420px;
-        overflow-y: auto;
+    .explorer-hist-edge {{
+        font-size: 10px;
+        color: var(--muted);
+        margin-top: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
     }}
 
-    .box-block h4 {{
-        margin: 0 0 6px 0;
-        font-size: 13px;
-        font-weight: 600;
+    .explorer-stats {{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+    }}
+
+    .stat-chip {{
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 8px 12px;
+        text-align: center;
+        min-width: 76px;
+    }}
+
+    .stat-chip-value {{
+        display: block;
+        font-size: 15px;
+        font-weight: 700;
+    }}
+
+    .stat-chip-label {{
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
     }}
 
     .box-plot-svg {{
@@ -468,16 +626,9 @@ def generate_html_report(report: dict, output_path="report.html"):
         {_render_correlation_heatmap(report.get("correlation_matrix", {}))}
     </div>
 
-    <div class="grid-2">
-        <div class="box">
-            <h2>📊 Histograms</h2>
-            {_render_histograms(report.get("histogram_data", {}))}
-        </div>
-
-        <div class="box">
-            <h2>📦 Boxplots</h2>
-            {_render_boxplots(report.get("boxplot_stats", {}))}
-        </div>
+    <div class="box">
+        <h2>🔍 Column Explorer</h2>
+        {_render_column_explorer(report)}
     </div>
 
     <div class="grid-2">

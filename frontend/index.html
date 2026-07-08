@@ -68,14 +68,25 @@
       <div id="heatmap-wrap" class="heatmap-wrap"></div>
     </div>
 
-    <div class="grid-2">
-      <div class="card">
-        <h2>📊 Histograms</h2>
-        <div id="histograms" class="histograms"></div>
+    <div class="card">
+      <div class="card-header">
+        <h2>🔍 Column Explorer</h2>
+        <select id="column-select"></select>
       </div>
-      <div class="card">
-        <h2>📦 Boxplots</h2>
-        <div id="boxplots" class="boxplots"></div>
+      <p class="explorer-note">ID-like and constant columns are left out here since a chart of them isn't meaningful. See the full technical report below for those.</p>
+      <div id="explorer-empty" class="empty-msg" hidden></div>
+      <div id="explorer-content">
+        <div class="grid-2">
+          <div class="explorer-block">
+            <h4>Histogram</h4>
+            <div id="explorer-histogram"></div>
+          </div>
+          <div class="explorer-block">
+            <h4>Boxplot</h4>
+            <div id="explorer-boxplot"></div>
+          </div>
+        </div>
+        <div id="explorer-stats" class="explorer-stats"></div>
       </div>
     </div>
 

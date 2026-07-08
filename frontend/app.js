@@ -150,8 +150,7 @@
     renderInsights(report.insights || []);
     renderStatGrid(report);
     renderHeatmap(report.correlation_matrix || {});
-    renderHistograms(report.histogram_data || {});
-    renderBoxplots(report.boxplot_stats || {});
+    renderColumnExplorer(report);
     renderTechnicalTables(report);
   }
 
@@ -233,23 +232,119 @@
     wrap.innerHTML = html;
   }
 
-  function renderHistograms(histograms) {
-    const container = document.getElementById("histograms");
-    const cols = Object.keys(histograms);
-    if (!cols.length) {
-      container.innerHTML = '<p class="empty-msg">No numeric columns to chart.</p>';
+  function getExplorableColumns(report) {
+    const histCols = Object.keys(report.histogram_data || {});
+    const boxCols = Object.keys(report.boxplot_stats || {});
+    const allCols = [...new Set([...histCols, ...boxCols])];
+    const excluded = new Set([
+      ...(report.high_cardinality_columns || []),
+      ...(report.constant_columns || []),
+    ]);
+    return allCols.filter((c) => !excluded.has(c));
+  }
+
+  function renderColumnExplorer(report) {
+    const select = document.getElementById("column-select");
+    const emptyMsg = document.getElementById("explorer-empty");
+    const content = document.getElementById("explorer-content");
+    const columns = getExplorableColumns(report);
+
+    if (!columns.length) {
+      select.innerHTML = "";
+      select.hidden = true;
+      content.hidden = true;
+      emptyMsg.hidden = false;
+      const hasAnyNumericColumn =
+        Object.keys(report.histogram_data || {}).length || Object.keys(report.boxplot_stats || {}).length;
+      emptyMsg.textContent = hasAnyNumericColumn
+        ? "No columns suitable for detailed charting: the remaining numeric columns look like IDs or are constant."
+        : "No numeric columns to chart.";
       return;
     }
 
-    container.innerHTML = cols
-      .map((col) => {
-        const { counts } = histograms[col];
-        const max = Math.max(...counts, 1);
-        const bars = counts
-          .map((c) => `<div class="hist-bar" style="height:${Math.max((c / max) * 100, 2)}%"></div>`)
-          .join("");
-        return `<div class="hist-block"><h4>${escapeHtml(col)}</h4><div class="hist-bars">${bars}</div></div>`;
+    select.hidden = false;
+    content.hidden = false;
+    emptyMsg.hidden = true;
+    select.innerHTML = columns.map((c) => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+
+    const renderSelected = () => {
+      const col = select.value;
+      renderExplorerHistogram((report.histogram_data || {})[col]);
+      renderExplorerBoxplot((report.boxplot_stats || {})[col]);
+      renderExplorerStats(col, report);
+    };
+
+    select.onchange = renderSelected;
+    renderSelected();
+  }
+
+  function renderExplorerHistogram(hist) {
+    const el = document.getElementById("explorer-histogram");
+    if (!hist) {
+      el.innerHTML = '<p class="empty-msg">No histogram data for this column.</p>';
+      return;
+    }
+
+    const { bin_edges: binEdges, counts } = hist;
+    const max = Math.max(...counts, 1);
+    const bars = counts
+      .map((c, i) => {
+        const height = Math.max((c / max) * 100, 2);
+        const rangeLabel = `${binEdges[i]} to ${binEdges[i + 1]}`;
+        return `<div class="explorer-hist-bar-wrap" title="${escapeHtml(rangeLabel)}: ${c} rows">
+          <div class="explorer-hist-count">${c}</div>
+          <div class="hist-bar" style="height:${height}%"></div>
+          <div class="explorer-hist-edge">${binEdges[i]}</div>
+        </div>`;
       })
+      .join("");
+    el.innerHTML = `<div class="explorer-hist-bars">${bars}</div>`;
+  }
+
+  function renderExplorerBoxplot(box) {
+    const el = document.getElementById("explorer-boxplot");
+    if (!box) {
+      el.innerHTML = '<p class="empty-msg">No boxplot data for this column.</p>';
+      return;
+    }
+    el.innerHTML = boxplotSvg(box);
+  }
+
+  function renderExplorerStats(col, report) {
+    const el = document.getElementById("explorer-stats");
+    const box = (report.boxplot_stats || {})[col];
+    if (!box) {
+      el.innerHTML = "";
+      return;
+    }
+
+    const shape = (report.distribution_shape || {})[col];
+    const outlierCountMad = (report.outliers_mad || {})[col];
+    const outlierCountIqr = (report.outliers_iqr || {})[col];
+    const missingPct = (report.missing_percentage || {})[col];
+
+    const stats = [
+      { label: "Min", value: box.min },
+      { label: "Q1", value: box.q1 },
+      { label: "Median", value: box.median },
+      { label: "Q3", value: box.q3 },
+      { label: "Max", value: box.max },
+      { label: "Outliers beyond whiskers", value: box.outliers.length },
+    ];
+
+    if (typeof outlierCountMad === "number") stats.push({ label: "Outliers (MAD)", value: outlierCountMad });
+    if (typeof outlierCountIqr === "number") stats.push({ label: "Outliers (IQR)", value: outlierCountIqr });
+    if (shape) {
+      stats.push({ label: "Skewness", value: shape.skewness });
+      stats.push({ label: "Kurtosis", value: shape.kurtosis });
+    }
+    if (typeof missingPct === "number") stats.push({ label: "Missing", value: `${missingPct}%` });
+
+    el.innerHTML = stats
+      .map(
+        (s) =>
+          `<div class="stat-chip"><span class="stat-chip-value">${s.value}</span><span class="stat-chip-label">${s.label}</span></div>`
+      )
       .join("");
   }
 
@@ -279,19 +374,6 @@
       .join("");
 
     return `<svg class="box-plot-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">${whiskerLine}${capLow}${capHigh}${rect}${median}${outliers}</svg>`;
-  }
-
-  function renderBoxplots(boxplots) {
-    const container = document.getElementById("boxplots");
-    const cols = Object.keys(boxplots);
-    if (!cols.length) {
-      container.innerHTML = '<p class="empty-msg">No numeric columns to chart.</p>';
-      return;
-    }
-
-    container.innerHTML = cols
-      .map((col) => `<div class="box-block"><h4>${escapeHtml(col)}</h4>${boxplotSvg(boxplots[col])}</div>`)
-      .join("");
   }
 
   function renderTechnicalTables(report) {
