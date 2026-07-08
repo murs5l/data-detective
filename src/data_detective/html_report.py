@@ -65,6 +65,56 @@ def _render_insights(insights: list) -> str:
     return f'<ul class="insights-list">{items}</ul>'
 
 
+def _color_for_correlation(value: float) -> str:
+    """Blue for positive correlation, pink/red for negative, scaled by strength."""
+    v = max(-1.0, min(1.0, value))
+    if v >= 0:
+        intensity = round(255 - v * 140)
+        return f"rgb({intensity - 60}, {intensity - 20}, 255)"
+    intensity = round(255 + v * 140)
+    return f"rgb(255, {intensity - 60}, {intensity - 20})"
+
+
+def _render_correlation_heatmap(matrix: dict, empty_message="Not enough numeric columns for a heatmap.") -> str:
+    cols = list(matrix.keys())
+    if len(cols) < 2:
+        return f'<p class="empty">{empty_message}</p>'
+
+    header_cells = "".join(f"<th>{escape(str(c))}</th>" for c in cols)
+    body_rows = []
+    for row_key in cols:
+        cells = []
+        for col_key in cols:
+            value = matrix[row_key].get(col_key, 0)
+            color = _color_for_correlation(value)
+            cells.append(f'<td><div class="heatmap-cell" style="background:{color}">{value:.2f}</div></td>')
+        body_rows.append(f"<tr><th>{escape(str(row_key))}</th>{''.join(cells)}</tr>")
+
+    return (
+        '<div class="heatmap-wrap"><table class="heatmap-table"><thead>'
+        f"<tr><th></th>{header_cells}</tr></thead><tbody>{''.join(body_rows)}</tbody></table></div>"
+    )
+
+
+def _render_histograms(histograms: dict, empty_message="No numeric columns to chart.") -> str:
+    if not histograms:
+        return f'<p class="empty">{empty_message}</p>'
+
+    blocks = []
+    for col, data in histograms.items():
+        counts = data.get("counts", [])
+        max_count = max(counts) if counts else 1
+        bars = "".join(
+            f'<div class="hist-bar" style="height:{max((c / max_count) * 100, 2):.1f}%"></div>'
+            for c in counts
+        )
+        blocks.append(
+            f'<div class="hist-block"><h4>{escape(str(col))}</h4><div class="hist-bars">{bars}</div></div>'
+        )
+
+    return f'<div class="histograms">{"".join(blocks)}</div>'
+
+
 def generate_html_report(report: dict, output_path="report.html"):
     shape = report.get("shape", {})
     rows = shape.get("rows", "—")
@@ -245,6 +295,63 @@ def generate_html_report(report: dict, output_path="report.html"):
     @media (max-width: 640px) {{
         .grid-2 {{ grid-template-columns: 1fr; }}
     }}
+
+    .heatmap-wrap {{
+        overflow-x: auto;
+    }}
+
+    .heatmap-table {{
+        border-collapse: collapse;
+        font-size: 12px;
+    }}
+
+    .heatmap-table th,
+    .heatmap-table td {{
+        padding: 6px 8px;
+        text-align: center;
+        white-space: nowrap;
+    }}
+
+    .heatmap-table th {{
+        color: var(--muted);
+        font-weight: 500;
+    }}
+
+    .heatmap-cell {{
+        border-radius: 6px;
+        font-weight: 600;
+        color: #fff;
+        min-width: 46px;
+        padding: 4px 0;
+    }}
+
+    .histograms {{
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        max-height: 420px;
+        overflow-y: auto;
+    }}
+
+    .hist-block h4 {{
+        margin: 0 0 6px 0;
+        font-size: 13px;
+        font-weight: 600;
+    }}
+
+    .hist-bars {{
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 60px;
+    }}
+
+    .hist-bar {{
+        flex: 1;
+        background: var(--accent);
+        border-radius: 2px 2px 0 0;
+        min-height: 2px;
+    }}
 </style>
 </head>
 <body>
@@ -267,6 +374,18 @@ def generate_html_report(report: dict, output_path="report.html"):
         <div class="stat-card">
             <div class="value">{duplicates}</div>
             <div class="label">Duplicate rows</div>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="box">
+            <h2>🔗 Correlation Heatmap</h2>
+            {_render_correlation_heatmap(report.get("correlation_matrix", {}))}
+        </div>
+
+        <div class="box">
+            <h2>📊 Distributions</h2>
+            {_render_histograms(report.get("histogram_data", {}))}
         </div>
     </div>
 
