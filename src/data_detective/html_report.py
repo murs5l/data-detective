@@ -59,7 +59,7 @@ def _render_nested_table(d: dict, empty_message="No data.") -> str:
 
 def _render_insights(insights: list) -> str:
     if not insights:
-        return '<p class="empty">No notable insights — data looks clean. ✅</p>'
+        return '<p class="empty">No notable insights. Data looks clean. ✅</p>'
 
     items = "".join(f'<li class="insight">{escape(item)}</li>' for item in insights)
     return f'<ul class="insights-list">{items}</ul>'
@@ -115,10 +115,51 @@ def _render_histograms(histograms: dict, empty_message="No numeric columns to ch
     return f'<div class="histograms">{"".join(blocks)}</div>'
 
 
+def _boxplot_svg(box: dict) -> str:
+    width, height, padding = 300, 46, 14
+    values = [box["min"], box["max"], box["whisker_low"], box["whisker_high"], *box["outliers"]]
+    domain_min, domain_max = min(values), max(values)
+    span = (domain_max - domain_min) or 1
+
+    def scale(v):
+        return padding + ((v - domain_min) / span) * (width - 2 * padding)
+
+    mid_y = height / 2
+    box_top = mid_y - 13
+    box_height = 26
+
+    whisker_line = f'<line class="box-whisker" x1="{scale(box["whisker_low"])}" y1="{mid_y}" x2="{scale(box["whisker_high"])}" y2="{mid_y}" />'
+    cap_low = f'<line class="box-whisker" x1="{scale(box["whisker_low"])}" y1="{mid_y - 6}" x2="{scale(box["whisker_low"])}" y2="{mid_y + 6}" />'
+    cap_high = f'<line class="box-whisker" x1="{scale(box["whisker_high"])}" y1="{mid_y - 6}" x2="{scale(box["whisker_high"])}" y2="{mid_y + 6}" />'
+    box_x = scale(box["q1"])
+    box_width = max(scale(box["q3"]) - scale(box["q1"]), 1)
+    rect = f'<rect class="box-rect" x="{box_x}" y="{box_top}" width="{box_width}" height="{box_height}" rx="3" />'
+    median = f'<line class="box-median" x1="{scale(box["median"])}" y1="{box_top}" x2="{scale(box["median"])}" y2="{box_top + box_height}" />'
+    outliers = "".join(
+        f'<circle class="box-outlier" cx="{scale(v)}" cy="{mid_y}" r="3" />' for v in box["outliers"]
+    )
+
+    return (
+        f'<svg class="box-plot-svg" viewBox="0 0 {width} {height}" preserveAspectRatio="none">'
+        f"{whisker_line}{cap_low}{cap_high}{rect}{median}{outliers}</svg>"
+    )
+
+
+def _render_boxplots(boxplots: dict, empty_message="No numeric columns to chart.") -> str:
+    if not boxplots:
+        return f'<p class="empty">{empty_message}</p>'
+
+    blocks = [
+        f'<div class="box-block"><h4>{escape(str(col))}</h4>{_boxplot_svg(box)}</div>'
+        for col, box in boxplots.items()
+    ]
+    return f'<div class="boxplots">{"".join(blocks)}</div>'
+
+
 def generate_html_report(report: dict, output_path="report.html"):
     shape = report.get("shape", {})
-    rows = shape.get("rows", "—")
-    cols = shape.get("columns", "—")
+    rows = shape.get("rows", "N/A")
+    cols = shape.get("columns", "N/A")
     duplicates = report.get("duplicates", 0)
 
     html = f"""<!DOCTYPE html>
@@ -206,6 +247,10 @@ def generate_html_report(report: dict, output_path="report.html"):
         border-radius: 14px;
         padding: 24px;
         margin-bottom: 20px;
+        /* Grid items default to min-width: auto, which lets wide content
+           (e.g. the correlation heatmap table) force the whole grid, and
+           the page, to overflow horizontally instead of scrolling here. */
+        min-width: 0;
     }}
 
     .box h2 {{
@@ -352,6 +397,47 @@ def generate_html_report(report: dict, output_path="report.html"):
         border-radius: 2px 2px 0 0;
         min-height: 2px;
     }}
+
+    .boxplots {{
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        max-height: 420px;
+        overflow-y: auto;
+    }}
+
+    .box-block h4 {{
+        margin: 0 0 6px 0;
+        font-size: 13px;
+        font-weight: 600;
+    }}
+
+    .box-plot-svg {{
+        width: 100%;
+        height: 46px;
+        display: block;
+    }}
+
+    .box-whisker {{
+        stroke: var(--muted);
+        stroke-width: 1.5;
+    }}
+
+    .box-rect {{
+        fill: #f0f6ff;
+        stroke: var(--accent);
+        stroke-width: 1.5;
+    }}
+
+    .box-median {{
+        stroke: var(--accent);
+        stroke-width: 2;
+    }}
+
+    .box-outlier {{
+        fill: var(--danger);
+        opacity: 0.7;
+    }}
 </style>
 </head>
 <body>
@@ -377,15 +463,20 @@ def generate_html_report(report: dict, output_path="report.html"):
         </div>
     </div>
 
+    <div class="box">
+        <h2>🔗 Correlation Heatmap</h2>
+        {_render_correlation_heatmap(report.get("correlation_matrix", {}))}
+    </div>
+
     <div class="grid-2">
         <div class="box">
-            <h2>🔗 Correlation Heatmap</h2>
-            {_render_correlation_heatmap(report.get("correlation_matrix", {}))}
+            <h2>📊 Histograms</h2>
+            {_render_histograms(report.get("histogram_data", {}))}
         </div>
 
         <div class="box">
-            <h2>📊 Distributions</h2>
-            {_render_histograms(report.get("histogram_data", {}))}
+            <h2>📦 Boxplots</h2>
+            {_render_boxplots(report.get("boxplot_stats", {}))}
         </div>
     </div>
 

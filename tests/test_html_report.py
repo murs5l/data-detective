@@ -30,8 +30,18 @@ def test_html_report_includes_histograms(tmp_path, report):
     generate_html_report(report, output_path=str(output_path))
     html = output_path.read_text(encoding="utf-8")
 
-    assert "Distributions" in html
+    assert "Histograms" in html
     assert "hist-bar" in html
+
+
+def test_html_report_includes_boxplots(tmp_path, report):
+    output_path = tmp_path / "report.html"
+    generate_html_report(report, output_path=str(output_path))
+    html = output_path.read_text(encoding="utf-8")
+
+    assert "Boxplots" in html
+    assert "box-plot-svg" in html
+    assert "box-rect" in html
 
 
 def test_html_report_handles_no_numeric_columns(tmp_path):

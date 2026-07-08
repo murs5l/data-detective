@@ -151,6 +151,7 @@
     renderStatGrid(report);
     renderHeatmap(report.correlation_matrix || {});
     renderHistograms(report.histogram_data || {});
+    renderBoxplots(report.boxplot_stats || {});
     renderTechnicalTables(report);
   }
 
@@ -160,7 +161,7 @@
     if (!insights.length) {
       const li = document.createElement("li");
       li.className = "insight insight-empty";
-      li.textContent = "✅ No notable issues found — this data looks clean.";
+      li.textContent = "✅ No notable issues found. This data looks clean.";
       list.appendChild(li);
       return;
     }
@@ -178,11 +179,11 @@
     const totalMemory = Object.values(report.memory_usage_kb || {}).reduce((a, b) => a + b, 0);
 
     const stats = [
-      { label: "Rows", value: shape.rows ?? "—" },
-      { label: "Columns", value: shape.columns ?? "—" },
+      { label: "Rows", value: shape.rows ?? "N/A" },
+      { label: "Columns", value: shape.columns ?? "N/A" },
       { label: "Duplicate rows", value: report.duplicates ?? 0 },
       { label: "Memory (KB)", value: totalMemory ? totalMemory.toFixed(1) : "0" },
-      { label: "Processing time", value: `${report.processing_ms ?? "—"} ms` },
+      { label: "Processing time", value: `${report.processing_ms ?? "N/A"} ms` },
     ];
 
     if (report.quick_scan) {
@@ -249,6 +250,47 @@
           .join("");
         return `<div class="hist-block"><h4>${escapeHtml(col)}</h4><div class="hist-bars">${bars}</div></div>`;
       })
+      .join("");
+  }
+
+  function boxplotSvg(box) {
+    const width = 300;
+    const height = 46;
+    const padding = 14;
+    const domainMin = Math.min(box.min, box.whisker_low, ...box.outliers);
+    const domainMax = Math.max(box.max, box.whisker_high, ...box.outliers);
+    const span = domainMax - domainMin || 1;
+
+    const scale = (v) => padding + ((v - domainMin) / span) * (width - 2 * padding);
+
+    const midY = height / 2;
+    const boxTop = midY - 13;
+    const boxHeight = 26;
+
+    const whiskerLine = `<line class="box-whisker" x1="${scale(box.whisker_low)}" y1="${midY}" x2="${scale(box.whisker_high)}" y2="${midY}" />`;
+    const capLow = `<line class="box-whisker" x1="${scale(box.whisker_low)}" y1="${midY - 6}" x2="${scale(box.whisker_low)}" y2="${midY + 6}" />`;
+    const capHigh = `<line class="box-whisker" x1="${scale(box.whisker_high)}" y1="${midY - 6}" x2="${scale(box.whisker_high)}" y2="${midY + 6}" />`;
+    const boxX = scale(box.q1);
+    const boxWidth = Math.max(scale(box.q3) - scale(box.q1), 1);
+    const rect = `<rect class="box-rect" x="${boxX}" y="${boxTop}" width="${boxWidth}" height="${boxHeight}" rx="3" />`;
+    const median = `<line class="box-median" x1="${scale(box.median)}" y1="${boxTop}" x2="${scale(box.median)}" y2="${boxTop + boxHeight}" />`;
+    const outliers = box.outliers
+      .map((v) => `<circle class="box-outlier" cx="${scale(v)}" cy="${midY}" r="3" />`)
+      .join("");
+
+    return `<svg class="box-plot-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">${whiskerLine}${capLow}${capHigh}${rect}${median}${outliers}</svg>`;
+  }
+
+  function renderBoxplots(boxplots) {
+    const container = document.getElementById("boxplots");
+    const cols = Object.keys(boxplots);
+    if (!cols.length) {
+      container.innerHTML = '<p class="empty-msg">No numeric columns to chart.</p>';
+      return;
+    }
+
+    container.innerHTML = cols
+      .map((col) => `<div class="box-block"><h4>${escapeHtml(col)}</h4>${boxplotSvg(boxplots[col])}</div>`)
       .join("");
   }
 

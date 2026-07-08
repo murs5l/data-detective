@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Data Detective — Instant CSV Intelligence</title>
+<title>Data Detective: Instant CSV Intelligence</title>
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -26,7 +26,7 @@
     <div id="dropzone" class="dropzone">
       <div class="dropzone-icon">📄</div>
       <p class="dropzone-title">Drag &amp; drop a CSV file here</p>
-      <p class="dropzone-sub">or click to browse — processed in memory, never stored</p>
+      <p class="dropzone-sub">or click to browse (processed in memory, never stored)</p>
       <input id="file-input" type="file" accept=".csv,text/csv" hidden />
     </div>
 
@@ -63,14 +63,19 @@
 
     <div class="stat-grid" id="stat-grid"></div>
 
+    <div class="card">
+      <h2>🔗 Correlation Heatmap</h2>
+      <div id="heatmap-wrap" class="heatmap-wrap"></div>
+    </div>
+
     <div class="grid-2">
       <div class="card">
-        <h2>🔗 Correlation Heatmap</h2>
-        <div id="heatmap-wrap" class="heatmap-wrap"></div>
+        <h2>📊 Histograms</h2>
+        <div id="histograms" class="histograms"></div>
       </div>
       <div class="card">
-        <h2>📊 Distributions</h2>
-        <div id="histograms" class="histograms"></div>
+        <h2>📦 Boxplots</h2>
+        <div id="boxplots" class="boxplots"></div>
       </div>
     </div>
 

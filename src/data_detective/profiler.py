@@ -111,7 +111,7 @@ class DataProfiler:
 
     def distribution_shape(self):
         """
-        Skewness and kurtosis for numeric columns — flags columns where
+        Skewness and kurtosis for numeric columns, flagging columns where
         the mean/IQR-based stats alone would be misleading.
         """
         shape = {}
@@ -191,6 +191,41 @@ class DataProfiler:
             }
         return histograms
 
+    def boxplot_stats(self, max_outlier_points=50):
+        """
+        Five-number summary (min/Q1/median/Q3/max) plus IQR-based whiskers
+        and outlier points per numeric column, for boxplot visualization.
+        Whiskers match the "iqr" method used by detect_outliers().
+        """
+        stats = {}
+        for col in self._numeric_df.columns:
+            series = self._numeric_df[col].dropna()
+            if series.empty:
+                continue
+
+            q1, q3 = series.quantile([0.25, 0.75])
+            iqr = q3 - q1
+            lower_fence = q1 - 1.5 * iqr
+            upper_fence = q3 + 1.5 * iqr
+
+            in_range = series[(series >= lower_fence) & (series <= upper_fence)]
+            outliers = series[(series < lower_fence) | (series > upper_fence)]
+
+            whisker_low = in_range.min() if not in_range.empty else series.min()
+            whisker_high = in_range.max() if not in_range.empty else series.max()
+
+            stats[col] = {
+                "min": round(float(series.min()), 3),
+                "q1": round(float(q1), 3),
+                "median": round(float(series.median()), 3),
+                "q3": round(float(q3), 3),
+                "max": round(float(series.max()), 3),
+                "whisker_low": round(float(whisker_low), 3),
+                "whisker_high": round(float(whisker_high), 3),
+                "outliers": [round(float(v), 3) for v in outliers.head(max_outlier_points).tolist()],
+            }
+        return stats
+
     def detect_date_like_columns(self, sample_size=20):
         """
         Flags object/string columns whose values look like dates,
@@ -213,7 +248,7 @@ class DataProfiler:
         return candidates
 
     def memory_usage(self):
-        """Per-column memory footprint in KB — useful before profiling huge files."""
+        """Per-column memory footprint in KB, useful before profiling huge files."""
         usage = self.df.memory_usage(deep=True)
         return {
             col: round(usage[col] / 1024, 2)
@@ -223,7 +258,7 @@ class DataProfiler:
     def detect_mixed_type_columns(self):
         """
         Flags object columns holding more than one Python type
-        (e.g. a column with both strings and ints) — a common
+        (e.g. a column with both strings and ints), a common
         source of silent bugs downstream.
         """
         mixed = []
@@ -235,7 +270,7 @@ class DataProfiler:
 
     def text_column_stats(self):
         """
-        Length stats for string columns — surfaces empty/whitespace-only
+        Length stats for string columns, surfacing empty/whitespace-only
         values and unusually long/short entries.
         """
         stats = {}
@@ -341,6 +376,7 @@ class DataProfiler:
             "correlated_columns": self.detect_correlated_columns(),
             "correlation_matrix": self.correlation_matrix(),
             "histogram_data": self.histogram_data(),
+            "boxplot_stats": self.boxplot_stats(),
             "date_like_columns": self.detect_date_like_columns(),
             "mixed_type_columns": self.detect_mixed_type_columns(),
             "text_column_stats": self.text_column_stats(),

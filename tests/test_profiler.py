@@ -109,7 +109,8 @@ def test_run_full_profile_keys(sample_df):
         "duplicates", "unique_counts", "constant_columns",
         "high_cardinality_columns", "outliers_iqr", "outliers_mad",
         "distribution_shape", "duplicate_columns", "correlated_columns",
-        "date_like_columns", "mixed_type_columns", "text_column_stats",
+        "histogram_data", "boxplot_stats", "date_like_columns",
+        "mixed_type_columns", "text_column_stats",
         "memory_usage_kb", "negative_in_nonnegative_columns", "insights",
     }
     assert expected_keys.issubset(report.keys())
@@ -144,3 +145,32 @@ def test_histogram_data_skips_constant_column():
     df = pd.DataFrame({"constant": [5, 5, 5, 5]})
     profiler = DataProfiler(df)
     assert profiler.histogram_data() == {}
+
+
+def test_boxplot_stats_basic():
+    df = pd.DataFrame({"a": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]})
+    profiler = DataProfiler(df)
+    stats = profiler.boxplot_stats()
+
+    assert "a" in stats
+    box = stats["a"]
+    assert box["min"] == 1
+    assert box["max"] == 10
+    assert box["median"] == pytest.approx(5.5)
+    assert box["q1"] < box["median"] < box["q3"]
+    assert box["outliers"] == []
+
+
+def test_boxplot_stats_flags_outliers():
+    df = pd.DataFrame({"a": [10, 12, 11, 13, 12, 11, 10, 1000]})
+    profiler = DataProfiler(df)
+    stats = profiler.boxplot_stats()
+
+    assert 1000 in stats["a"]["outliers"]
+    assert stats["a"]["whisker_high"] < 1000
+
+
+def test_boxplot_stats_ignores_non_numeric_columns():
+    df = pd.DataFrame({"c": ["x", "y", "z"]})
+    profiler = DataProfiler(df)
+    assert profiler.boxplot_stats() == {}

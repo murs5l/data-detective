@@ -25,6 +25,7 @@ def test_analyze_success():
     assert body["filename"] == "sample.csv"
     assert "processing_ms" in body
     assert "insights" in body
+    assert "boxplot_stats" in body
 
 
 def test_analyze_rejects_non_csv_extension():
