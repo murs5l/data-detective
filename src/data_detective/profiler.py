@@ -9,6 +9,15 @@ class DataProfiler:
     Adds statistical intelligence + anomaly detection.
     """
 
+    HIGH_CARDINALITY_THRESHOLD = 0.9
+    CORRELATION_THRESHOLD = 0.9
+    MAD_Z_CONSTANT = 0.6745
+    IQR_MULTIPLIER = 1.5
+    MAD_OUTLIER_THRESHOLD = 3.5
+    DATETIME_SUCCESS_RATIO = 0.8
+    SKEWNESS_THRESHOLD = 2.0
+    NONNEGATIVE_KEYWORDS = ("count", "age", "price", "quantity", "amount", "qty", "total")
+
     def __init__(self, df: pd.DataFrame):
         self.df = df
 
@@ -66,13 +75,23 @@ class DataProfiler:
     def detect_constant_columns(self):
         return self._nunique[self._nunique <= 1].index.tolist()
 
-    def detect_high_cardinality(self, threshold=0.9, min_unique=10):
+    def detect_high_cardinality(self, threshold=None, min_unique=10):
+        if threshold is None:
+            threshold = self.HIGH_CARDINALITY_THRESHOLD
         if len(self.df) == 0:
             return []
 
         ratio = self._nunique / len(self.df)
         mask = (ratio >= threshold) & (self._nunique >= min_unique)
         return self._nunique[mask].index.tolist()
+
+    def _calculate_iqr_bounds(self, series):
+        """Returns (q1, q3, lower_fence, upper_fence) for a numeric series."""
+        q1, q3 = series.quantile([0.25, 0.75])
+        iqr = q3 - q1
+        lower_fence = q1 - self.IQR_MULTIPLIER * iqr
+        upper_fence = q3 + self.IQR_MULTIPLIER * iqr
+        return q1, q3, lower_fence, upper_fence
 
     def detect_outliers(self, method="iqr"):
         """
@@ -96,13 +115,10 @@ class DataProfiler:
                 if mad == 0:
                     outliers[col] = 0
                     continue
-                modified_z = 0.6745 * (series - median) / mad
-                count = (modified_z.abs() > 3.5).sum()
+                modified_z = self.MAD_Z_CONSTANT * (series - median) / mad
+                count = (modified_z.abs() > self.MAD_OUTLIER_THRESHOLD).sum()
             else:
-                q1, q3 = self._quantiles[col]
-                iqr = q3 - q1
-                lower = q1 - 1.5 * iqr
-                upper = q3 + 1.5 * iqr
+                _, _, lower, upper = self._calculate_iqr_bounds(series)
                 count = ((series < lower) | (series > upper)).sum()
 
             outliers[col] = int(count)
@@ -141,10 +157,12 @@ class DataProfiler:
 
         return duplicates
 
-    def detect_correlated_columns(self, threshold=0.9):
+    def detect_correlated_columns(self, threshold=None):
         """
         Finds pairs of numeric columns with correlation above threshold.
         """
+        if threshold is None:
+            threshold = self.CORRELATION_THRESHOLD
         if self._numeric_df.shape[1] < 2:
             return []
 
@@ -203,10 +221,7 @@ class DataProfiler:
             if series.empty:
                 continue
 
-            q1, q3 = series.quantile([0.25, 0.75])
-            iqr = q3 - q1
-            lower_fence = q1 - 1.5 * iqr
-            upper_fence = q3 + 1.5 * iqr
+            q1, q3, lower_fence, upper_fence = self._calculate_iqr_bounds(series)
 
             in_range = series[(series >= lower_fence) & (series <= upper_fence)]
             outliers = series[(series < lower_fence) | (series > upper_fence)]
@@ -242,7 +257,7 @@ class DataProfiler:
             parsed = pd.to_datetime(sample, errors="coerce", format="mixed")
             success_ratio = parsed.notna().mean()
 
-            if success_ratio >= 0.8:
+            if success_ratio >= self.DATETIME_SUCCESS_RATIO:
                 candidates.append(col)
 
         return candidates
@@ -293,10 +308,9 @@ class DataProfiler:
         Flags numeric columns whose name suggests they should never be
         negative (count, age, price, quantity, etc.) but contain negatives.
         """
-        suspicious_keywords = ("count", "age", "price", "quantity", "amount", "qty", "total")
         flagged = []
         for col in self._numeric_df.columns:
-            if any(kw in col.lower() for kw in suspicious_keywords):
+            if any(kw in col.lower() for kw in self.NONNEGATIVE_KEYWORDS):
                 if (self._numeric_df[col].dropna() < 0).any():
                     flagged.append(col)
         return flagged
@@ -354,7 +368,7 @@ class DataProfiler:
 
         # Skewed distributions
         for col, shape in self.distribution_shape().items():
-            if abs(shape["skewness"]) > 2:
+            if abs(shape["skewness"]) > self.SKEWNESS_THRESHOLD:
                 insights.append(f"📐 Column '{col}' is heavily skewed (skew={shape['skewness']}).")
 
         return insights

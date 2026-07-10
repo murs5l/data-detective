@@ -76,20 +76,12 @@ def _load_dataframe(tmp_path: str):
         raise HTTPException(status_code=400, detail=f"Could not parse CSV: {e}") from e
 
 
-@app.get("/api/health")
-def health():
-    return {"status": "ok", "version": app.version}
+async def _run_analysis(file: UploadFile, contents: bytes, outlier_method: str):
+    """Validates, loads, and profiles a CSV.
 
-
-@app.post("/api/analyze")
-async def analyze(file: UploadFile = File(...), outlier_method: str = "mad"):
-    """Runs the full profiling engine over an uploaded CSV and returns JSON.
-
-    The file is processed entirely in memory / a short-lived temp file and
-    is never persisted after the request completes.
+    Returns tuple of (df, report, processing_ms, quick_scan).
     """
     _validate_outlier_method(outlier_method)
-    contents = await file.read()
     _validate_upload(file, contents)
 
     started = time.perf_counter()
@@ -107,8 +99,27 @@ async def analyze(file: UploadFile = File(...), outlier_method: str = "mad"):
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Profiling failed: {e}") from e
 
+    processing_ms = round((time.perf_counter() - started) * 1000, 1)
+    return df, report, processing_ms, quick
+
+
+@app.get("/api/health")
+def health():
+    return {"status": "ok", "version": app.version}
+
+
+@app.post("/api/analyze")
+async def analyze(file: UploadFile = File(...), outlier_method: str = "mad"):
+    """Runs the full profiling engine over an uploaded CSV and returns JSON.
+
+    The file is processed entirely in memory / a short-lived temp file and
+    is never persisted after the request completes.
+    """
+    contents = await file.read()
+    _, report, processing_ms, quick = await _run_analysis(file, contents, outlier_method)
+
     report["filename"] = file.filename
-    report["processing_ms"] = round((time.perf_counter() - started) * 1000, 1)
+    report["processing_ms"] = processing_ms
     if quick:
         report["quick_scan"] = quick
 
@@ -118,16 +129,8 @@ async def analyze(file: UploadFile = File(...), outlier_method: str = "mad"):
 @app.post("/api/analyze/html", response_class=HTMLResponse)
 async def analyze_html(file: UploadFile = File(...), outlier_method: str = "mad"):
     """Same profiling pipeline as /api/analyze, rendered as a standalone HTML report."""
-    _validate_outlier_method(outlier_method)
     contents = await file.read()
-    _validate_upload(file, contents)
-
-    with tempfile.NamedTemporaryFile(suffix=".csv") as tmp:
-        tmp.write(contents)
-        tmp.flush()
-        df = _load_dataframe(tmp.name)
-        profiler = DataProfiler(df)
-        report = profiler.run_full_profile(outlier_method=outlier_method)
+    _, report, _, _ = await _run_analysis(file, contents, outlier_method)
 
     with tempfile.TemporaryDirectory() as out_dir:
         out_path = str(Path(out_dir) / "report.html")

@@ -17,6 +17,11 @@
   let selectedFile = null;
   let lastReport = null;
 
+  function showSections(show, hide) {
+    show.forEach((el) => (el.hidden = false));
+    hide.forEach((el) => (el.hidden = true));
+  }
+
   // ---------- file selection ----------
 
   dropzone.addEventListener("click", () => fileInput.click());
@@ -56,8 +61,7 @@
   analyzeBtn.addEventListener("click", async () => {
     if (!selectedFile) return;
     hideError();
-    uploadSection.hidden = true;
-    loadingSection.hidden = false;
+    showSections([loadingSection], [uploadSection]);
 
     const formData = new FormData();
     formData.append("file", selectedFile);
@@ -76,11 +80,9 @@
 
       lastReport = body;
       renderReport(body);
-      loadingSection.hidden = true;
-      resultsSection.hidden = false;
+      showSections([resultsSection], [loadingSection]);
     } catch (err) {
-      loadingSection.hidden = true;
-      uploadSection.hidden = false;
+      showSections([uploadSection], [loadingSection]);
       showError(err.message || "Something went wrong while analyzing the file.");
     }
   });
@@ -91,8 +93,7 @@
     fileInput.value = "";
     selectedFilename.textContent = "";
     analyzeBtn.disabled = true;
-    resultsSection.hidden = true;
-    uploadSection.hidden = false;
+    showSections([uploadSection], [resultsSection]);
   });
 
   function showError(message) {
@@ -251,9 +252,7 @@
 
     if (!columns.length) {
       select.innerHTML = "";
-      select.hidden = true;
-      content.hidden = true;
-      emptyMsg.hidden = false;
+      showSections([emptyMsg], [select, content]);
       const hasAnyNumericColumn =
         Object.keys(report.histogram_data || {}).length || Object.keys(report.boxplot_stats || {}).length;
       emptyMsg.textContent = hasAnyNumericColumn
@@ -262,9 +261,7 @@
       return;
     }
 
-    select.hidden = false;
-    content.hidden = false;
-    emptyMsg.hidden = true;
+    showSections([select, content], [emptyMsg]);
     select.innerHTML = columns.map((c) => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
 
     const renderSelected = () => {
