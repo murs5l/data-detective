@@ -2,96 +2,216 @@
 
 [![Tests](https://github.com/murs5l/data-detective/actions/workflows/tests.yml/badge.svg)](https://github.com/murs5l/data-detective/actions/workflows/tests.yml)
 
-Point Data Detective at a CSV and get an automated data-quality intelligence
-report back: shape, missing values, duplicates, outliers, high-cardinality
-(likely ID) columns, correlated/duplicate columns, skew, and plain-English
-insights, delivered as a CLI, a JSON/HTML report, or a full web app you can
-run with one command.
+**Automated data quality profiling in seconds.** Point Data Detective at a CSV and get back an intelligent report: shape, data types, missing values, duplicates, outliers, correlations, distribution skew, ID-like columns, and actionable insights. Choose your interface: fast CLI for scripts and CI, browser-based web app for exploration, or REST API for integration.
 
-Two ways to use it:
+### Why Data Detective?
 
-- **CLI**: a local, pip-installable tool for scripting and CI pipelines.
-- **Web app**: drag-and-drop a CSV in the browser, backed by a FastAPI
-  service, with a live correlation heatmap and histograms.
+- **Fast**: profiles 1000+ rows in under a second
+- **Thorough**: detects 20+ data quality issues (outliers, duplicates, high cardinality, mixed types, skew, etc.)
+- **Private**: your data never leaves your machine; everything runs locally
+- **Flexible**: use as a CLI tool, web app, Python library, or REST API
+- **Lightweight**: no external ML services or cloud dependencies
 
-Your data is never uploaded to a third party and never persisted to disk.
-Everything runs on infrastructure you control (your own machine, or your own
-server via Docker).
+### Two ways to use it
+
+1. **CLI**: `data-detective analyze myfile.csv --html` for scripts and CI pipelines.
+2. **Web app**: `docker compose up` for interactive exploration with live charts.
+
+Both interfaces use the same profiling engine and produce identical reports.
 
 ---
 
-## Web app (backend + frontend)
+## Quick start
 
-The fastest way to try Data Detective:
+### Web app (interactive, no command line needed)
 
-```bash
-docker compose up --build
-```
-
-Then open **http://localhost:8000** and drop in a CSV.
-
-Under the hood:
-
-- `backend/`: a FastAPI service that wraps the same profiling engine as the
-  CLI (`POST /api/analyze` for JSON, `POST /api/analyze/html` for a
-  standalone HTML report). Uploads are validated (extension, size, empty
-  file) and processed entirely in memory / a short-lived temp file, so
-  nothing is written to persistent storage.
-- `frontend/`: a dependency-free HTML/CSS/JS single-page app. Insights lead,
-  and technical tables (missing %, outliers, correlation pairs, etc.) are
-  tucked behind a "Full technical report" toggle so the page reads clearly
-  for non-technical users while still giving data engineers the full detail.
-- `tools/fastscan/`: a small Go CLI that streams a CSV once to report
-  row/column counts and delimiter in milliseconds. The backend calls it
-  (if present) for an instant "quick scan" stat alongside the full pandas
-  profile. If it's missing (e.g. a plain `pip install` without Go), the app
-  works identically without it.
-
-To run the backend directly without Docker:
-
-```bash
-pip install -e ".[api]"
-uvicorn backend.app.main:app --reload
-```
-
-## CLI
+The easiest way to explore a CSV:
 
 ```bash
 git clone https://github.com/murs5l/data-detective.git
 cd data-detective
-pip install -e .
+docker compose up --build
 ```
+
+Then open **http://localhost:8000**, drag and drop a CSV, and explore. The report includes:
+- Data shape and types
+- Missing value heatmap
+- Column Explorer: drill down into any numeric column to see histogram, boxplot, and 5-number summary
+- Outlier detection (IQR and MAD methods)
+- Correlation heatmap for numeric column pairs
+- Insights highlighted in plain English
+
+The browser-based UI is designed for non-technical and technical users alike: actionable insights appear first, and granular technical details are tucked behind a "Full technical report" toggle.
+
+**Running without Docker:** if you have Python and FastAPI installed:
+```bash
+pip install -e ".[api]"
+uvicorn backend.app.main:app --reload
+```
+Then visit `http://localhost:8000`.
+
+### CLI (scripting and CI/CD)
+
+Install locally for use in scripts and automated pipelines:
 
 ```bash
-data-detective analyze path/to/file.csv
+pip install data-detective
+data-detective analyze myfile.csv
 ```
 
-| Flag               | Description                                    |
-|--------------------|-------------------------------------------------|
-| `--json`           | Print the full report as JSON                    |
-| `--html`           | Generate `report.html` in the CWD                |
-| `--output-json`    | Write JSON report to a given file path            |
-| `--output-html`    | Write HTML report to a given file path            |
-| `--outlier-method` | `iqr` or `mad` (default) outlier detection        |
-| `--quiet`          | Suppress non-error progress messages              |
+See [CLI docs](#cli) below for all flags and output formats.
+
+## CLI reference
+
+### Installation
 
 ```bash
-data-detective analyze sample.csv --html
+pip install data-detective
 ```
+
+### Basic usage
+
+```bash
+# Print a text summary to stdout
+data-detective analyze myfile.csv
+
+# Generate an interactive HTML report
+data-detective analyze myfile.csv --html
+
+# Output JSON for programmatic use
+data-detective analyze myfile.csv --json | jq '.insights'
+
+# Write to specific files
+data-detective analyze myfile.csv --output-html reports/q1_data.html
+```
+
+### Options
+
+| Flag               | Description                                      | Example |
+|--------------------|-------------------------------------------------|---------|
+| `--json`           | Print full report as JSON to stdout              | `data-detective analyze data.csv --json` |
+| `--html`           | Generate `report.html` in current directory      | `data-detective analyze data.csv --html` |
+| `--output-json`    | Write JSON report to a specific file path         | `--output-json reports/profile.json` |
+| `--output-html`    | Write HTML report to a specific file path         | `--output-html reports/profile.html` |
+| `--outlier-method` | Choose outlier detection: `iqr` or `mad` (default) | `--outlier-method iqr` |
+| `--quiet`          | Suppress non-error progress messages              | `--quiet` |
+
+### Examples
+
+**CI/CD pipeline**: fail if data quality issues exceed a threshold
+```bash
+data-detective analyze incoming.csv --json | jq '.outliers_mad | length' | xargs -I {} bash -c 'exit {}'
+```
+
+**Batch processing**: profile all CSVs in a directory
+```bash
+for f in data/*.csv; do
+  data-detective analyze "$f" --output-html "reports/$(basename $f .csv).html"
+done
+```
+
+**Data validation**: check for specific issues before ETL
+```bash
+data-detective analyze input.csv --quiet --json | jq '.high_cardinality_columns'
+```
+
+## REST API (for integration)
+
+When running the web app or backend API server, you can integrate Data Detective into your own applications.
+
+### Endpoints
+
+**POST /api/analyze** – Analyze a CSV file, return JSON report
+```bash
+curl -F "file=@data.csv" "http://localhost:8000/api/analyze?outlier_method=mad"
+```
+
+Response: JSON object with all profiling data (see example below).
+
+**POST /api/analyze/html** – Analyze a CSV file, return standalone HTML report
+```bash
+curl -F "file=@data.csv" "http://localhost:8000/api/analyze/html" > report.html
+```
+
+Response: A self-contained HTML file (no external dependencies).
+
+**GET /api/health** – Health check
+```bash
+curl http://localhost:8000/api/health
+```
+
+Response: `{"status": "ok", "version": "0.3.0"}`
+
+### Python example
+
+```python
+import requests
+
+with open("mydata.csv", "rb") as f:
+    response = requests.post(
+        "http://localhost:8000/api/analyze",
+        files={"file": f},
+        params={"outlier_method": "mad"}
+    )
+
+report = response.json()
+print(f"Shape: {report['shape']}")
+print(f"Insights: {report['insights']}")
+print(f"Outliers detected: {report['outliers_mad']}")
+```
+
+### JavaScript example
+
+```javascript
+const formData = new FormData();
+formData.append("file", csvFile); // File object from input[type=file]
+
+const response = await fetch("/api/analyze?outlier_method=mad", {
+  method: "POST",
+  body: formData
+});
+
+const report = await response.json();
+console.log(report.insights);
+```
+
+Full API documentation is available at `/docs` (Swagger UI) when the backend is running.
 
 ## What it detects
 
-- Shape, column types, missing values (count + %)
-- Duplicate rows and duplicate columns
-- Constant (no-variation) columns
-- High-cardinality columns (likely IDs)
-- Outliers (IQR or MAD method) on numeric columns
-- Highly correlated numeric column pairs + full correlation matrix
-- Histogram bins per numeric column
-- Columns that look like dates but aren't parsed as such
-- Mixed-type columns and unexpected negative values (e.g. a negative `age`)
-- Text column length stats (blank/whitespace-only values, min/max length)
-- Skewed distributions and per-column memory footprint
+Data Detective automatically flags 20+ data quality issues:
+
+**Structure & Completeness**
+- Shape (rows × columns) and column data types
+- Missing values (count and percentage per column)
+- Duplicate rows
+- Duplicate columns (identical data, different names)
+- Constant columns (no variation; e.g., all 1s)
+
+**Statistical Issues**
+- Outliers: IQR method (classic box-and-whisker) or MAD (robust for skewed data)
+- Highly correlated numeric pairs
+- Skewed distributions (heavy left/right tails)
+- Kurtosis (fat tails or sharp peaks)
+
+**Data Type & Value Issues**
+- High-cardinality columns (likely IDs or keys)
+- Mixed-type columns (e.g., numbers and strings in the same column)
+- Unexpected negative values (e.g., negative `age`, `price`, `quantity`)
+- Date-like values not parsed as datetime
+
+**Text Columns**
+- Length statistics (min, max, average)
+- Blank or whitespace-only values
+
+**Aggregates**
+- Full numeric correlation matrix
+- Histograms with bin edges and counts for numeric columns
+- Five-number summary (min, Q1, median, Q3, max) per numeric column
+- Per-column memory footprint (KB)
+
+**Output**
+- Plain-English actionable insights highlighting the most important issues
 
 ## Development
 

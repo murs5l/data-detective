@@ -11,8 +11,11 @@ class DataProfiler:
 
     HIGH_CARDINALITY_THRESHOLD = 0.9
     CORRELATION_THRESHOLD = 0.9
+    # 0.75 quantile of the standard normal distribution; scales MAD so it's
+    # comparable to standard deviation for normally distributed data.
     MAD_Z_CONSTANT = 0.6745
     IQR_MULTIPLIER = 1.5
+    # Iglewicz & Hoaglin's conventional cutoff for the modified z-score.
     MAD_OUTLIER_THRESHOLD = 3.5
     DATETIME_SUCCESS_RATIO = 0.8
     SKEWNESS_THRESHOLD = 2.0

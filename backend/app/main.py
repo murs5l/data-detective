@@ -3,7 +3,7 @@ import tempfile
 import time
 from pathlib import Path
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -20,8 +20,23 @@ VALID_OUTLIER_METHODS = ("mad", "iqr")
 
 app = FastAPI(
     title="Data Detective API",
-    description="Upload a CSV, get an automated data-quality intelligence report.",
+    description=(
+        "Upload a CSV, get an automated data-quality intelligence report back: "
+        "shape, missing values, duplicates, outliers, correlations, skew, and "
+        "plain-English insights. Files are processed in memory / a short-lived "
+        "temp file and are never persisted to disk."
+    ),
     version="0.3.0",
+)
+
+_OUTLIER_METHOD_QUERY = Query(
+    "mad",
+    description=(
+        "Outlier detection method. 'mad' (median absolute deviation) is robust "
+        "to skewed data and is the default; 'iqr' is the classic box-and-whisker "
+        "1.5x-IQR fence method."
+    ),
+    enum=list(VALID_OUTLIER_METHODS),
 )
 
 app.add_middleware(
@@ -103,17 +118,40 @@ async def _run_analysis(file: UploadFile, contents: bytes, outlier_method: str):
     return df, report, processing_ms, quick
 
 
-@app.get("/api/health")
+@app.get(
+    "/api/health",
+    tags=["meta"],
+    summary="Health check",
+    response_description="Service status and version.",
+)
 def health():
+    """Liveness probe for load balancers / container orchestrators."""
     return {"status": "ok", "version": app.version}
 
 
-@app.post("/api/analyze")
-async def analyze(file: UploadFile = File(...), outlier_method: str = "mad"):
+@app.post(
+    "/api/analyze",
+    tags=["analysis"],
+    summary="Profile a CSV, return JSON",
+    response_description="Full profiling report as JSON.",
+    responses={
+        400: {"description": "Invalid file (wrong extension, empty, malformed CSV, or bad outlier_method)."},
+        413: {"description": "File exceeds the upload size limit."},
+        500: {"description": "Profiling engine raised an unexpected error."},
+    },
+)
+async def analyze(
+    file: UploadFile = File(..., description="A .csv file, up to 25 MB."),
+    outlier_method: str = _OUTLIER_METHOD_QUERY,
+):
     """Runs the full profiling engine over an uploaded CSV and returns JSON.
 
     The file is processed entirely in memory / a short-lived temp file and
-    is never persisted after the request completes.
+    is never persisted after the request completes. The response includes
+    every key documented in `DataProfiler.run_full_profile()` (shape,
+    missing values, outliers, correlations, histograms, insights, etc.),
+    plus `filename`, `processing_ms`, and an optional `quick_scan` block
+    from the Go fastscan pre-check when the binary is present.
     """
     contents = await file.read()
     _, report, processing_ms, quick = await _run_analysis(file, contents, outlier_method)
@@ -126,8 +164,22 @@ async def analyze(file: UploadFile = File(...), outlier_method: str = "mad"):
     return JSONResponse(_sanitize_json(report))
 
 
-@app.post("/api/analyze/html", response_class=HTMLResponse)
-async def analyze_html(file: UploadFile = File(...), outlier_method: str = "mad"):
+@app.post(
+    "/api/analyze/html",
+    tags=["analysis"],
+    response_class=HTMLResponse,
+    summary="Profile a CSV, return a standalone HTML report",
+    response_description="Self-contained HTML report (no external CSS/JS dependencies).",
+    responses={
+        400: {"description": "Invalid file (wrong extension, empty, malformed CSV, or bad outlier_method)."},
+        413: {"description": "File exceeds the upload size limit."},
+        500: {"description": "Profiling engine raised an unexpected error."},
+    },
+)
+async def analyze_html(
+    file: UploadFile = File(..., description="A .csv file, up to 25 MB."),
+    outlier_method: str = _OUTLIER_METHOD_QUERY,
+):
     """Same profiling pipeline as /api/analyze, rendered as a standalone HTML report."""
     contents = await file.read()
     _, report, _, _ = await _run_analysis(file, contents, outlier_method)
