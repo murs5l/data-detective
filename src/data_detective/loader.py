@@ -17,18 +17,31 @@ def _downcast_numeric_dtypes(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+# Tried in order. "utf-8-sig" covers both plain UTF-8 and UTF-8-with-BOM
+# (common from Excel's "CSV UTF-8" export, which otherwise leaves a stray
+# ﻿ prefixed onto the first column name). "latin-1" never raises
+# UnicodeDecodeError (every byte value is a valid codepoint), so it's the
+# catch-all for legacy/Windows-exported files with accented characters.
+_ENCODINGS_TO_TRY = ("utf-8-sig", "latin-1")
+
+
 def load_csv(file_path: str, optimize_memory: bool = True) -> pd.DataFrame:
     """
     Centralized data loader (future: support parquet, json, sql).
     """
-    try:
-        df = pd.read_csv(file_path)
-    except FileNotFoundError as e:
-        raise DataLoadError(f"File not found: {file_path}") from e
-    except pd.errors.EmptyDataError as e:
-        raise EmptyDataError(f"File is empty: {file_path}") from e
-    except Exception as e:
-        raise DataLoadError(f"Failed to load data: {e}") from e
+    df = None
+    for encoding in _ENCODINGS_TO_TRY:
+        try:
+            df = pd.read_csv(file_path, encoding=encoding)
+            break
+        except UnicodeDecodeError:
+            continue
+        except FileNotFoundError as e:
+            raise DataLoadError(f"File not found: {file_path}") from e
+        except pd.errors.EmptyDataError as e:
+            raise EmptyDataError(f"File is empty: {file_path}") from e
+        except Exception as e:
+            raise DataLoadError(f"Failed to load data: {e}") from e
 
     if df.empty:
         raise EmptyDataError(f"File is empty: {file_path}")

@@ -8,8 +8,12 @@ version = "0.3.0"
 description = "Automated data-quality profiling: CLI, web app, and REST API for CSV intelligence reports."
 requires-python = ">=3.8"
 dependencies = [
-	"pandas>=2.0",
-	"numpy>=1.24",
+	# Upper bounds are intentional: CI has verified compatibility up to
+	# pandas 3.x (Python 3.11/3.12 already resolve to it), but the next
+	# major bump should be a deliberate version-bump PR, not a silent
+	# `pip install` picking up unverified breaking changes.
+	"pandas>=2.0,<4.0",
+	"numpy>=1.24,<3.0",
 ]
 
 [project.optional-dependencies]

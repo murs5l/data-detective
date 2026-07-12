@@ -3,7 +3,7 @@ import json
 import sys
 from pathlib import Path
 
-from data_detective.exceptions import DataLoadError, EmptyDataError
+from data_detective.exceptions import DataLoadError
 from data_detective.html_report import generate_html_report
 from data_detective.loader import load_csv
 from data_detective.profiler import DataProfiler
@@ -95,11 +95,11 @@ def main():
 
     try:
         return args.func(args)
-    except EmptyDataError as e:
-        print(f"❌ {e}", file=sys.stderr)
-        return 1
     except DataLoadError as e:
         print(f"❌ {e}", file=sys.stderr)
+        return 1
+    except Exception as e:
+        print(f"❌ Unexpected error: {e}", file=sys.stderr)
         return 1
 
 

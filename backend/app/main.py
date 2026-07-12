@@ -39,6 +39,8 @@ _OUTLIER_METHOD_QUERY = Query(
     enum=list(VALID_OUTLIER_METHODS),
 )
 
+# Wildcard origin is safe here: there's no auth, no cookies, and no
+# session state to leak via CSRF, just a stateless file-in/report-out API.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
