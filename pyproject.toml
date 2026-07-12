@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "data-detective"
-version = "0.2.0"
-description = "Smart Data Profiling CLI Tool"
+version = "0.3.0"
+description = "Automated data-quality profiling: CLI, web app, and REST API for CSV intelligence reports."
 requires-python = ">=3.8"
 dependencies = [
 	"pandas>=2.0",
@@ -29,3 +29,7 @@ include = ["data_detective*"]
 
 [project.scripts]
 data-detective = "data_detective.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/murs5l/data-detective"
+Issues = "https://github.com/murs5l/data-detective/issues"

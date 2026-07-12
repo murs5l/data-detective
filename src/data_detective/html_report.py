@@ -1,5 +1,5 @@
-from pathlib import Path
 from html import escape
+from pathlib import Path
 
 
 def _render_kv_table(d: dict, empty_message="No data.") -> str:
@@ -30,7 +30,10 @@ def _render_pairs(pairs: list, empty_message="None found.") -> str:
     for pair in pairs:
         if len(pair) == 3:
             a, b, score = pair
-            lis.append(f"<li><strong>{escape(str(a))}</strong> ↔ <strong>{escape(str(b))}</strong> (score: {score})</li>")
+            lis.append(
+                f"<li><strong>{escape(str(a))}</strong> ↔ <strong>{escape(str(b))}</strong> "
+                f"(score: {score})</li>"
+            )
         else:
             a, b = pair
             lis.append(f"<li><strong>{escape(str(a))}</strong> ↔ <strong>{escape(str(b))}</strong></li>")
@@ -229,17 +232,23 @@ def _boxplot_svg(box: dict) -> str:
     def scale(v):
         return padding + ((v - domain_min) / span) * (width - 2 * padding)
 
+    def svg_line(css_class, x1, y1, x2, y2):
+        return f'<line class="{css_class}" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" />'
+
     mid_y = height / 2
     box_top = mid_y - 13
     box_height = 26
+    whisker_low_x = scale(box["whisker_low"])
+    whisker_high_x = scale(box["whisker_high"])
 
-    whisker_line = f'<line class="box-whisker" x1="{scale(box["whisker_low"])}" y1="{mid_y}" x2="{scale(box["whisker_high"])}" y2="{mid_y}" />'
-    cap_low = f'<line class="box-whisker" x1="{scale(box["whisker_low"])}" y1="{mid_y - 6}" x2="{scale(box["whisker_low"])}" y2="{mid_y + 6}" />'
-    cap_high = f'<line class="box-whisker" x1="{scale(box["whisker_high"])}" y1="{mid_y - 6}" x2="{scale(box["whisker_high"])}" y2="{mid_y + 6}" />'
+    whisker_line = svg_line("box-whisker", whisker_low_x, mid_y, whisker_high_x, mid_y)
+    cap_low = svg_line("box-whisker", whisker_low_x, mid_y - 6, whisker_low_x, mid_y + 6)
+    cap_high = svg_line("box-whisker", whisker_high_x, mid_y - 6, whisker_high_x, mid_y + 6)
     box_x = scale(box["q1"])
     box_width = max(scale(box["q3"]) - scale(box["q1"]), 1)
     rect = f'<rect class="box-rect" x="{box_x}" y="{box_top}" width="{box_width}" height="{box_height}" rx="3" />'
-    median = f'<line class="box-median" x1="{scale(box["median"])}" y1="{box_top}" x2="{scale(box["median"])}" y2="{box_top + box_height}" />'
+    median_x = scale(box["median"])
+    median = svg_line("box-median", median_x, box_top, median_x, box_top + box_height)
     outliers = "".join(
         f'<circle class="box-outlier" cx="{scale(v)}" cy="{mid_y}" r="3" />' for v in box["outliers"]
     )

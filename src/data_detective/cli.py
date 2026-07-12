@@ -1,6 +1,6 @@
-import sys
-import json
 import argparse
+import json
+import sys
 from pathlib import Path
 
 from data_detective.exceptions import DataLoadError, EmptyDataError
