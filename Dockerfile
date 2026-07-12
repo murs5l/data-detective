@@ -1,5 +1,5 @@
 # --- Stage 1: build the Go fastscan speed layer ---
-FROM golang:1.22-alpine AS fastscan-build
+FROM golang:1.26-alpine AS fastscan-build
 WORKDIR /src
 COPY tools/fastscan/ .
 RUN go build -o /out/fastscan .
