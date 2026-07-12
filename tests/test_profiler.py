@@ -42,6 +42,49 @@ def test_high_cardinality_empty_df():
     assert profiler.detect_high_cardinality() == []
 
 
+def test_high_cardinality_excludes_continuous_numeric_measures():
+    # TotalPay-style columns are unique per-row because they're continuous
+    # measurements, not because they're identifiers. They shouldn't be
+    # flagged as "looks like an ID".
+    df = pd.DataFrame({
+        "TotalPay": [round(50000 + i * 731.42, 2) for i in range(50)],
+        "TotalPayBenefits": [round(55000 + i * 812.11, 2) for i in range(50)],
+    })
+    profiler = DataProfiler(df)
+    flagged = profiler.detect_high_cardinality()
+    assert "TotalPay" not in flagged
+    assert "TotalPayBenefits" not in flagged
+
+
+def test_high_cardinality_flags_id_like_name():
+    df = pd.DataFrame({"employee_id": list(range(1000, 1050))})
+    profiler = DataProfiler(df)
+    assert "employee_id" in profiler.detect_high_cardinality()
+
+
+def test_high_cardinality_flags_sequential_integer_without_id_name():
+    # A gapless run of integers (1..N) is the classic shape of an
+    # auto-increment key or row index, even without "id" in the name.
+    df = pd.DataFrame({"row_number": list(range(1, 51))})
+    profiler = DataProfiler(df)
+    assert "row_number" in profiler.detect_high_cardinality()
+
+
+def test_high_cardinality_still_flags_unique_text_column():
+    df = pd.DataFrame({"email": [f"user{i}@example.com" for i in range(50)]})
+    profiler = DataProfiler(df)
+    assert "email" in profiler.detect_high_cardinality()
+
+
+def test_high_cardinality_excludes_continuous_measures_from_insights():
+    df = pd.DataFrame({
+        "TotalPay": [round(50000 + i * 731.42, 2) for i in range(50)],
+    })
+    profiler = DataProfiler(df)
+    insights = profiler.generate_insights()
+    assert not any("TotalPay" in i and "ID" in i for i in insights)
+
+
 def test_detect_outliers(sample_df):
     profiler = DataProfiler(sample_df)
     outliers = profiler.detect_outliers(method="iqr")

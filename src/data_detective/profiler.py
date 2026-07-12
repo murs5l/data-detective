@@ -1,6 +1,8 @@
-import pandas as pd
-import numpy as np
+import re
 from functools import cached_property
+
+import numpy as np
+import pandas as pd
 
 
 class DataProfiler:
@@ -20,6 +22,9 @@ class DataProfiler:
     DATETIME_SUCCESS_RATIO = 0.8
     SKEWNESS_THRESHOLD = 2.0
     NONNEGATIVE_KEYWORDS = ("count", "age", "price", "quantity", "amount", "qty", "total")
+    ID_NAME_WORDS = frozenset({
+        "id", "uuid", "guid", "key", "code", "number", "num", "no", "index", "idx", "ref",
+    })
 
     def __init__(self, df: pd.DataFrame):
         self.df = df
@@ -78,7 +83,33 @@ class DataProfiler:
     def detect_constant_columns(self):
         return self._nunique[self._nunique <= 1].index.tolist()
 
+    def _name_looks_like_identifier(self, col):
+        """True if the column name itself suggests an ID/key (e.g. 'employee_id')."""
+        spaced = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", col)
+        words = [w.lower() for w in re.split(r"[^a-zA-Z0-9]+", spaced) if w]
+        return any(w in self.ID_NAME_WORDS for w in words)
+
+    def _is_sequential_integer_column(self, col):
+        """True if a numeric column is a gapless run of integers (e.g. 1..N), the
+        classic shape of an auto-increment key or row index."""
+        series = self.df[col].dropna()
+        if series.empty or (series % 1 != 0).any():
+            return False
+        value_range = series.max() - series.min() + 1
+        return series.nunique() == len(series) == value_range
+
     def detect_high_cardinality(self, threshold=None, min_unique=10):
+        """
+        Flags columns that are likely identifiers rather than measurements.
+        High uniqueness alone isn't enough: a continuous numeric column (e.g.
+        salary, price) is often just as unique per-row as a real ID, so we
+        only flag it when the name itself looks ID-like (e.g. 'employee_id')
+        or, for numeric columns, when the values form a gapless integer run
+        (e.g. 1..N), the signature of an auto-increment key or row index.
+        Non-numeric columns (strings/objects) keep the uniqueness-only check,
+        since near-unique text (emails, UUIDs) is a strong identifier signal
+        on its own.
+        """
         if threshold is None:
             threshold = self.HIGH_CARDINALITY_THRESHOLD
         if len(self.df) == 0:
@@ -86,7 +117,14 @@ class DataProfiler:
 
         ratio = self._nunique / len(self.df)
         mask = (ratio >= threshold) & (self._nunique >= min_unique)
-        return self._nunique[mask].index.tolist()
+        candidates = self._nunique[mask].index.tolist()
+
+        return [
+            col for col in candidates
+            if self._name_looks_like_identifier(col)
+            or col not in self._numeric_df.columns
+            or self._is_sequential_integer_column(col)
+        ]
 
     def _calculate_iqr_bounds(self, series):
         """Returns (q1, q3, lower_fence, upper_fence) for a numeric series."""
@@ -344,7 +382,9 @@ class DataProfiler:
         outliers = self.detect_outliers(method=outlier_method)
         for col, count in outliers.items():
             if count > 0:
-                insights.append(f"📊 Column '{col}' has {count} potential outlier(s) ({outlier_method.upper()} method).")
+                insights.append(
+                    f"📊 Column '{col}' has {count} potential outlier(s) ({outlier_method.upper()} method)."
+                )
 
         # Duplicate columns
         dup_cols = self.detect_duplicate_columns()
