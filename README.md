@@ -71,6 +71,24 @@ See [CLI docs](#cli) below for all flags and output formats.
 pip install data-detective-toolkit
 ```
 
+> **macOS tip:** if `data-detective` comes back as `command not found` right after
+> installing, pip likely fell back to a `--user` install (common on macOS's system
+> Python, since its site-packages isn't writeable) and the resulting `bin/` folder
+> isn't on your `PATH`. Two fixes:
+>
+> - **Recommended:** install with [pipx](https://pipx.pypa.io) instead, which
+>   installs CLI tools in an isolated environment and wires up `PATH` for you:
+>   ```bash
+>   brew install pipx   # or: python3 -m pip install --user pipx
+>   pipx ensurepath     # then restart your terminal
+>   pipx install data-detective-toolkit
+>   ```
+> - **Or** find where pip actually put it and add that to your `PATH`:
+>   ```bash
+>   python3 -m site --user-base   # e.g. /Users/you/Library/Python/3.9
+>   # add "$(python3 -m site --user-base)/bin" to PATH in ~/.zshrc, then restart your terminal
+>   ```
+
 ### Basic usage
 
 ```bash
