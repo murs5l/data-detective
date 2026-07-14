@@ -77,17 +77,22 @@ pip install data-detective-toolkit
 > isn't on your `PATH`. Two fixes:
 >
 > - **Recommended:** install with [pipx](https://pipx.pypa.io) instead, which
->   installs CLI tools in an isolated environment and wires up `PATH` for you:
+>   installs CLI tools in an isolated environment and wires up `PATH` for you.
+>   Run each line separately, then restart your terminal before the last step:
 >   ```bash
->   brew install pipx   # or: python3 -m pip install --user pipx
->   pipx ensurepath     # then restart your terminal
+>   brew install pipx
+>   pipx ensurepath
+>   ```
+>   ```bash
 >   pipx install data-detective-toolkit
 >   ```
+>   (No Homebrew? Use `python3 -m pip install --user pipx` instead of the first line.)
 > - **Or** find where pip actually put it and add that to your `PATH`:
 >   ```bash
->   python3 -m site --user-base   # e.g. /Users/you/Library/Python/3.9
->   # add "$(python3 -m site --user-base)/bin" to PATH in ~/.zshrc, then restart your terminal
+>   python3 -m site --user-base
 >   ```
+>   This prints something like `/Users/you/Library/Python/3.9`. Add `<that path>/bin`
+>   to `PATH` in `~/.zshrc`, then restart your terminal.
 
 ### Basic usage
 
