@@ -35,8 +35,11 @@ jobs:
   publish-pypi:
     runs-on: ubuntu-latest
     needs: build-python
-    # Only runs if a PyPI API token has been configured as a repo secret.
-    # See CONTRIBUTING.md / repo Settings > Secrets and variables > Actions.
+    # Publishes via PyPI Trusted Publishing (OIDC) - no API token/secret.
+    # Gated on the PUBLISH_TO_PYPI repo variable so forks/dry-runs don't
+    # attempt to publish. Requires a PyPI trusted publisher configured for
+    # this repo + the "pypi" environment, and the repo variable set to
+    # 'true' (repo Settings > Secrets and variables > Actions > Variables).
     if: ${{ vars.PUBLISH_TO_PYPI == 'true' }}
     environment: pypi
     permissions:

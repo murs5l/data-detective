@@ -55,9 +55,11 @@ Then visit `http://localhost:8000`.
 Install locally for use in scripts and automated pipelines:
 
 ```bash
-pip install data-detective
+pip install data-detective-toolkit
 data-detective analyze myfile.csv
 ```
+
+> The PyPI package is `data-detective-toolkit`; the installed command is `data-detective`.
 
 See [CLI docs](#cli) below for all flags and output formats.
 
@@ -66,7 +68,7 @@ See [CLI docs](#cli) below for all flags and output formats.
 ### Installation
 
 ```bash
-pip install data-detective
+pip install data-detective-toolkit
 ```
 
 ### Basic usage

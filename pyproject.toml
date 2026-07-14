@@ -1,12 +1,23 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "data-detective"
-version = "0.3.0"
+name = "data-detective-toolkit"
+version = "0.3.1"
 description = "Automated data-quality profiling: CLI, web app, and REST API for CSV intelligence reports."
-requires-python = ">=3.8"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+keywords = ["data-quality", "profiling", "csv", "data-profiling", "eda", "outlier-detection"]
+classifiers = [
+	"Development Status :: 4 - Beta",
+	"Intended Audience :: Developers",
+	"Intended Audience :: Science/Research",
+	"Programming Language :: Python :: 3",
+	"Topic :: Scientific/Engineering :: Information Analysis",
+	"Topic :: Utilities",
+]
 dependencies = [
 	# Upper bounds are intentional: CI has verified compatibility up to
 	# pandas 3.x (Python 3.11/3.12 already resolve to it), but the next
