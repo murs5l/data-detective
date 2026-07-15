@@ -36,7 +36,11 @@ api = [
 ]
 
 [tool.mypy]
-python_version = "3.9"
+# No explicit python_version pin: the typecheck CI job runs on 3.12 (the
+# same version lint/backend-tests use), and mypy has since dropped support
+# for targeting 3.9 as a check version even though the package still
+# supports running on 3.9. Let mypy infer the version from the interpreter
+# actually running it instead of hardcoding a now-invalid target.
 warn_unused_ignores = true
 warn_redundant_casts = true
 check_untyped_defs = true
