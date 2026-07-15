@@ -605,6 +605,35 @@ def generate_html_report(report: dict, output_path="report.html"):
         fill: var(--danger);
         opacity: 0.7;
     }}
+
+    .details-card summary {{
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 17px;
+        list-style: none;
+    }}
+
+    .details-card summary::-webkit-details-marker {{
+        display: none;
+    }}
+
+    .details-card[open] summary {{
+        margin-bottom: 16px;
+    }}
+
+    .tech-grid {{
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+    }}
+
+    .tech-box h3 {{
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+        margin: 0 0 8px 0;
+    }}
 </style>
 </head>
 <body>
@@ -614,6 +643,11 @@ def generate_html_report(report: dict, output_path="report.html"):
         <h1>🕵️ Data Detective Report</h1>
         <p>Automated data profiling summary</p>
     </header>
+
+    <div class="box">
+        <h2>🧠 Insights</h2>
+        {_render_insights(report.get("insights", []))}
+    </div>
 
     <div class="stat-grid">
         <div class="stat-card">
@@ -640,87 +674,81 @@ def generate_html_report(report: dict, output_path="report.html"):
         {_render_column_explorer(report)}
     </div>
 
-    <div class="grid-2">
-        <div class="box">
-            <h2>📉 Missing Values (%)</h2>
-            {_render_kv_table(report.get("missing_percentage", {}), "No missing values.")}
+    <details class="box details-card">
+        <summary>🔬 Full technical report</summary>
+
+        <div class="tech-grid">
+            <div class="tech-box">
+                <h3>Column types</h3>
+                {_render_kv_table(report.get("column_types", {}), "No data.")}
+            </div>
+
+            <div class="tech-box">
+                <h3>Missing values (%)</h3>
+                {_render_kv_table(report.get("missing_percentage", {}), "No missing values.")}
+            </div>
+
+            <div class="tech-box">
+                <h3>Outliers (IQR)</h3>
+                {_render_kv_table(report.get("outliers_iqr", {}), "No outliers detected.")}
+            </div>
+
+            <div class="tech-box">
+                <h3>Outliers (MAD)</h3>
+                {_render_kv_table(report.get("outliers_mad", {}), "No outliers detected.")}
+            </div>
+
+            <div class="tech-box">
+                <h3>Distribution shape</h3>
+                {_render_nested_table(report.get("distribution_shape", {}), "No numeric columns.")}
+            </div>
+
+            <div class="tech-box">
+                <h3>High-cardinality columns</h3>
+                {_render_list(report.get("high_cardinality_columns", []), "None found.")}
+            </div>
+
+            <div class="tech-box">
+                <h3>Constant columns</h3>
+                {_render_list(report.get("constant_columns", []), "None found.")}
+            </div>
+
+            <div class="tech-box">
+                <h3>Duplicate columns</h3>
+                {_render_pairs(report.get("duplicate_columns", []), "None found.")}
+            </div>
+
+            <div class="tech-box">
+                <h3>Correlated pairs</h3>
+                {_render_pairs(report.get("correlated_columns", []), "None found.")}
+            </div>
+
+            <div class="tech-box">
+                <h3>Mixed-type columns</h3>
+                {_render_list(report.get("mixed_type_columns", []), "None found.")}
+            </div>
+
+            <div class="tech-box">
+                <h3>Negative values (unexpected)</h3>
+                {_render_list(report.get("negative_in_nonnegative_columns", []), "None found.")}
+            </div>
+
+            <div class="tech-box">
+                <h3>Memory usage (KB)</h3>
+                {_render_kv_table(report.get("memory_usage_kb", {}), "No data.")}
+            </div>
+
+            <div class="tech-box">
+                <h3>Text column stats</h3>
+                {_render_nested_table(report.get("text_column_stats", {}), "No text columns.")}
+            </div>
+
+            <div class="tech-box">
+                <h3>Date-like columns</h3>
+                {_render_list(report.get("date_like_columns", []), "None found.")}
+            </div>
         </div>
-
-        <div class="box">
-            <h2>📊 Outliers (IQR)</h2>
-            {_render_kv_table(report.get("outliers_iqr", {}), "No outliers detected.")}
-        </div>
-    </div>
-
-    <div class="grid-2">
-        <div class="box">
-            <h2>📊 Outliers (MAD)</h2>
-            {_render_kv_table(report.get("outliers_mad", {}), "No outliers detected.")}
-        </div>
-
-        <div class="box">
-            <h2>🧠 Distribution Shape</h2>
-            {_render_nested_table(report.get("distribution_shape", {}), "No numeric columns.")}
-        </div>
-    </div>
-
-    <div class="grid-2">
-        <div class="box">
-            <h2>🆔 High Cardinality Columns</h2>
-            {_render_list(report.get("high_cardinality_columns", []), "None found.")}
-        </div>
-
-        <div class="box">
-            <h2>⚠️ Constant Columns</h2>
-            {_render_list(report.get("constant_columns", []), "None found.")}
-        </div>
-    </div>
-
-    <div class="grid-2">
-        <div class="box">
-            <h2>🧬 Duplicate Columns</h2>
-            {_render_pairs(report.get("duplicate_columns", []), "None found.")}
-        </div>
-
-        <div class="box">
-            <h2>🔗 Correlated Columns</h2>
-            {_render_pairs(report.get("correlated_columns", []), "None found.")}
-        </div>
-    </div>
-
-    <div class="grid-2">
-        <div class="box">
-            <h2>🧩 Mixed Type Columns</h2>
-            {_render_list(report.get("mixed_type_columns", []), "None found.")}
-        </div>
-
-        <div class="box">
-            <h2>➖ Negative Values</h2>
-            {_render_list(report.get("negative_in_nonnegative_columns", []), "None found.")}
-        </div>
-    </div>
-
-    <div class="grid-2">
-        <div class="box">
-            <h2>💾 Memory Usage (KB)</h2>
-            {_render_kv_table(report.get("memory_usage_kb", {}), "No data.")}
-        </div>
-
-        <div class="box">
-            <h2>📝 Text Column Stats</h2>
-            {_render_nested_table(report.get("text_column_stats", {}), "No text columns.")}
-        </div>
-    </div>
-
-    <div class="box">
-        <h2>📅 Date-like Columns</h2>
-        {_render_list(report.get("date_like_columns", []), "None found.")}
-    </div>
-
-    <div class="box">
-        <h2>🧠 Insights</h2>
-        {_render_insights(report.get("insights", []))}
-    </div>
+    </details>
 
 </div>
 </body>

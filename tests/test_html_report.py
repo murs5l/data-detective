@@ -56,6 +56,23 @@ def test_html_report_explorer_excludes_id_like_and_constant_columns(tmp_path):
     assert "left out here" in html
 
 
+def test_html_report_insights_lead_and_technical_detail_is_collapsed(tmp_path, report):
+    output_path = tmp_path / "report.html"
+    generate_html_report(report, output_path=str(output_path))
+    html = output_path.read_text(encoding="utf-8")
+
+    # Insights must render before the raw technical tables, not after, so a
+    # reader sees plain-English findings before a wall of numbers.
+    insights_pos = html.index(">🧠 Insights<")
+    tech_report_pos = html.index("Full technical report")
+    assert insights_pos < tech_report_pos
+
+    # The technical tables must be tucked behind a native <details> toggle,
+    # not always fully expanded.
+    assert "<details" in html
+    assert 'class="box details-card"' in html
+
+
 def test_html_report_handles_no_numeric_columns(tmp_path):
     df = pd.DataFrame({"c": ["x", "y", "z"]})
     report = DataProfiler(df).run_full_profile()
