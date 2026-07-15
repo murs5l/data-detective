@@ -4,6 +4,8 @@
 
 **Automated data quality profiling in seconds.** Point Data Detective at a CSV and get back an intelligent report: shape, data types, missing values, duplicates, outliers, correlations, distribution skew, ID-like columns, and actionable insights. Choose your interface: fast CLI for scripts and CI, browser-based web app for exploration, or REST API for integration.
 
+![Data Detective walkthrough: uploading a CSV, insights appearing, the correlation heatmap, and the Column Explorer](docs/demo.gif)
+
 ### Why Data Detective?
 
 - **Fast**: profiles 1000+ rows in under a second
@@ -42,6 +44,13 @@ Then open **http://localhost:8000**, drag and drop a CSV, and explore. The repor
 - Insights highlighted in plain English
 
 The browser-based UI is designed for non-technical and technical users alike: actionable insights appear first, and granular technical details are tucked behind a "Full technical report" toggle.
+
+<table>
+<tr>
+<td width="50%"><img src="docs/insights.png" alt="Insights list, color-coded by severity" /><br /><sub>Insights lead the report, color-coded by severity.</sub></td>
+<td width="50%"><img src="docs/column-explorer.png" alt="Column Explorer showing a histogram and boxplot for one column" /><br /><sub>Column Explorer: drill into one column at a time.</sub></td>
+</tr>
+</table>
 
 **Running without Docker:** if you have Python and FastAPI installed:
 ```bash
