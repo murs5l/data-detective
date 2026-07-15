@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pandas as pd
 
 from data_detective.exceptions import DataLoadError, EmptyDataError
@@ -29,7 +31,7 @@ def load_csv(file_path: str, optimize_memory: bool = True) -> pd.DataFrame:
     """
     Centralized data loader (future: support parquet, json, sql).
     """
-    df = None
+    df: pd.DataFrame | None = None
     for encoding in _ENCODINGS_TO_TRY:
         try:
             df = pd.read_csv(file_path, encoding=encoding)
@@ -42,6 +44,12 @@ def load_csv(file_path: str, optimize_memory: bool = True) -> pd.DataFrame:
             raise EmptyDataError(f"File is empty: {file_path}") from e
         except Exception as e:
             raise DataLoadError(f"Failed to load data: {e}") from e
+
+    if df is None:
+        # Unreachable today: "latin-1" never raises UnicodeDecodeError, so
+        # the loop always breaks or raises first. Guards against a future
+        # edit to _ENCODINGS_TO_TRY silently dropping that guarantee.
+        raise DataLoadError(f"Failed to decode file with any of {_ENCODINGS_TO_TRY}: {file_path}")
 
     if df.empty:
         raise EmptyDataError(f"File is empty: {file_path}")

@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import re
 from functools import cached_property
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -26,7 +29,7 @@ class DataProfiler:
         "id", "uuid", "guid", "key", "code", "number", "num", "no", "index", "idx", "ref",
     })
 
-    def __init__(self, df: pd.DataFrame):
+    def __init__(self, df: pd.DataFrame) -> None:
         self.df = df
 
     # -------------------------
@@ -34,19 +37,19 @@ class DataProfiler:
     # -------------------------
 
     @cached_property
-    def _numeric_df(self):
+    def _numeric_df(self) -> pd.DataFrame:
         return self.df.select_dtypes(include=[np.number])
 
     @cached_property
-    def _nunique(self):
+    def _nunique(self) -> pd.Series:
         return self.df.nunique()
 
     @cached_property
-    def _null_counts(self):
+    def _null_counts(self) -> pd.Series:
         return self.df.isnull().sum()
 
     @cached_property
-    def _quantiles(self):
+    def _quantiles(self) -> pd.DataFrame:
         """Q1/Q3 for all numeric columns computed once."""
         if self._numeric_df.empty:
             return pd.DataFrame()
@@ -56,40 +59,40 @@ class DataProfiler:
     # BASIC STRUCTURE
     # -------------------------
 
-    def shape(self):
+    def shape(self) -> dict[str, int]:
         return {"rows": self.df.shape[0], "columns": self.df.shape[1]}
 
-    def column_types(self):
+    def column_types(self) -> dict[str, str]:
         return self.df.dtypes.astype(str).to_dict()
 
-    def missing_values(self):
+    def missing_values(self) -> dict[str, int]:
         return self._null_counts.to_dict()
 
-    def missing_percentage(self):
+    def missing_percentage(self) -> dict[str, float]:
         if len(self.df) == 0:
             return {}
         return (self._null_counts / len(self.df) * 100).round(2).to_dict()
 
-    def duplicate_rows(self):
+    def duplicate_rows(self) -> int:
         return int(self.df.duplicated().sum())
 
-    def unique_counts(self):
+    def unique_counts(self) -> dict[str, int]:
         return self._nunique.to_dict()
 
     # -------------------------
     # INTELLIGENCE LAYER
     # -------------------------
 
-    def detect_constant_columns(self):
+    def detect_constant_columns(self) -> list[str]:
         return self._nunique[self._nunique <= 1].index.tolist()
 
-    def _name_looks_like_identifier(self, col):
+    def _name_looks_like_identifier(self, col: str) -> bool:
         """True if the column name itself suggests an ID/key (e.g. 'employee_id')."""
         spaced = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", col)
         words = [w.lower() for w in re.split(r"[^a-zA-Z0-9]+", spaced) if w]
         return any(w in self.ID_NAME_WORDS for w in words)
 
-    def _is_sequential_integer_column(self, col):
+    def _is_sequential_integer_column(self, col: str) -> bool:
         """True if a numeric column is a gapless run of integers (e.g. 1..N), the
         classic shape of an auto-increment key or row index."""
         series = self.df[col].dropna()
@@ -98,7 +101,7 @@ class DataProfiler:
         value_range = series.max() - series.min() + 1
         return series.nunique() == len(series) == value_range
 
-    def detect_high_cardinality(self, threshold=None, min_unique=10):
+    def detect_high_cardinality(self, threshold: float | None = None, min_unique: int = 10) -> list[str]:
         """
         Flags columns that are likely identifiers rather than measurements.
         High uniqueness alone isn't enough: a continuous numeric column (e.g.
@@ -126,7 +129,7 @@ class DataProfiler:
             or self._is_sequential_integer_column(col)
         ]
 
-    def _calculate_iqr_bounds(self, series):
+    def _calculate_iqr_bounds(self, series: pd.Series) -> tuple[float, float, float, float]:
         """Returns (q1, q3, lower_fence, upper_fence) for a numeric series."""
         q1, q3 = series.quantile([0.25, 0.75])
         iqr = q3 - q1
@@ -134,12 +137,12 @@ class DataProfiler:
         upper_fence = q3 + self.IQR_MULTIPLIER * iqr
         return q1, q3, lower_fence, upper_fence
 
-    def detect_outliers(self, method="iqr"):
+    def detect_outliers(self, method: str = "iqr") -> dict[str, int]:
         """
         method: "iqr" (default) or "mad" (robust z-score, better for skewed data)
         Returns count per column.
         """
-        outliers = {}
+        outliers: dict[str, int] = {}
 
         if self._numeric_df.empty:
             return outliers
@@ -166,12 +169,12 @@ class DataProfiler:
 
         return outliers
 
-    def distribution_shape(self):
+    def distribution_shape(self) -> dict[str, dict[str, float]]:
         """
         Skewness and kurtosis for numeric columns, flagging columns where
         the mean/IQR-based stats alone would be misleading.
         """
-        shape = {}
+        shape: dict[str, dict[str, float]] = {}
         for col in self._numeric_df.columns:
             series = self._numeric_df[col].dropna()
             if len(series) < 3:
@@ -182,12 +185,12 @@ class DataProfiler:
             }
         return shape
 
-    def detect_duplicate_columns(self):
+    def detect_duplicate_columns(self) -> list[tuple[str, str]]:
         """
         Finds pairs of columns that are exactly identical.
         Returns a list of (col_a, col_b) tuples.
         """
-        duplicates = []
+        duplicates: list[tuple[str, str]] = []
         cols = list(self.df.columns)
 
         for i in range(len(cols)):
@@ -198,7 +201,7 @@ class DataProfiler:
 
         return duplicates
 
-    def detect_correlated_columns(self, threshold=None):
+    def detect_correlated_columns(self, threshold: float | None = None) -> list[tuple[str, str, float]]:
         """
         Finds pairs of numeric columns with correlation above threshold.
         """
@@ -208,7 +211,7 @@ class DataProfiler:
             return []
 
         corr_matrix = self._numeric_df.corr().abs()
-        pairs = []
+        pairs: list[tuple[str, str, float]] = []
         cols = corr_matrix.columns
 
         for i in range(len(cols)):
@@ -219,7 +222,7 @@ class DataProfiler:
 
         return pairs
 
-    def correlation_matrix(self):
+    def correlation_matrix(self) -> dict[str, dict[str, float]]:
         """
         Full pairwise correlation matrix for numeric columns, as a
         nested dict: {col_a: {col_b: correlation_value, ...}, ...}.
@@ -233,12 +236,12 @@ class DataProfiler:
         corr = corr.fillna(0)
         return {col: corr[col].to_dict() for col in corr.columns}
 
-    def histogram_data(self, bins=10):
+    def histogram_data(self, bins: int = 10) -> dict[str, dict[str, list]]:
         """
         Histogram bin edges + counts for each numeric column.
         Returns: {col: {"bin_edges": [...], "counts": [...]}, ...}
         """
-        histograms = {}
+        histograms: dict[str, dict[str, list]] = {}
         for col in self._numeric_df.columns:
             series = self._numeric_df[col].dropna()
             if series.empty or series.nunique() <= 1:
@@ -250,13 +253,13 @@ class DataProfiler:
             }
         return histograms
 
-    def boxplot_stats(self, max_outlier_points=50):
+    def boxplot_stats(self, max_outlier_points: int = 50) -> dict[str, dict[str, Any]]:
         """
         Five-number summary (min/Q1/median/Q3/max) plus IQR-based whiskers
         and outlier points per numeric column, for boxplot visualization.
         Whiskers match the "iqr" method used by detect_outliers().
         """
-        stats = {}
+        stats: dict[str, dict[str, Any]] = {}
         for col in self._numeric_df.columns:
             series = self._numeric_df[col].dropna()
             if series.empty:
@@ -282,12 +285,12 @@ class DataProfiler:
             }
         return stats
 
-    def detect_date_like_columns(self, sample_size=20):
+    def detect_date_like_columns(self, sample_size: int = 20) -> list[str]:
         """
         Flags object/string columns whose values look like dates,
         so they can be considered for parsing as datetime.
         """
-        candidates = []
+        candidates: list[str] = []
         object_cols = self.df.select_dtypes(include=["object", "string"]).columns
 
         for col in object_cols:
@@ -303,7 +306,7 @@ class DataProfiler:
 
         return candidates
 
-    def memory_usage(self):
+    def memory_usage(self) -> dict[str, float]:
         """Per-column memory footprint in KB, useful before profiling huge files."""
         usage = self.df.memory_usage(deep=True)
         return {
@@ -311,25 +314,25 @@ class DataProfiler:
             for col in self.df.columns
         }
 
-    def detect_mixed_type_columns(self):
+    def detect_mixed_type_columns(self) -> list[str]:
         """
         Flags object columns holding more than one Python type
         (e.g. a column with both strings and ints), a common
         source of silent bugs downstream.
         """
-        mixed = []
+        mixed: list[str] = []
         for col in self.df.select_dtypes(include=["object", "string"]).columns:
             types_seen = self.df[col].dropna().map(type).nunique()
             if types_seen > 1:
                 mixed.append(col)
         return mixed
 
-    def text_column_stats(self):
+    def text_column_stats(self) -> dict[str, dict[str, float]]:
         """
         Length stats for string columns, surfacing empty/whitespace-only
         values and unusually long/short entries.
         """
-        stats = {}
+        stats: dict[str, dict[str, float]] = {}
         for col in self.df.select_dtypes(include=["object", "string"]).columns:
             series = self.df[col].dropna().astype(str)
             if series.empty:
@@ -344,23 +347,23 @@ class DataProfiler:
             }
         return stats
 
-    def detect_negative_in_nonnegative_columns(self):
+    def detect_negative_in_nonnegative_columns(self) -> list[str]:
         """
         Flags numeric columns whose name suggests they should never be
         negative (count, age, price, quantity, etc.) but contain negatives.
         """
-        flagged = []
+        flagged: list[str] = []
         for col in self._numeric_df.columns:
             if any(kw in col.lower() for kw in self.NONNEGATIVE_KEYWORDS):
                 if (self._numeric_df[col].dropna() < 0).any():
                     flagged.append(col)
         return flagged
 
-    def generate_insights(self, outlier_method="mad"):
+    def generate_insights(self, outlier_method: str = "mad") -> list[str]:
         """
         Human-readable detective conclusions.
         """
-        insights = []
+        insights: list[str] = []
 
         # Missing data insight
         missing_pct = self.missing_percentage()
@@ -416,7 +419,7 @@ class DataProfiler:
 
         return insights
 
-    def run_full_profile(self, outlier_method="mad"):
+    def run_full_profile(self, outlier_method: str = "mad") -> dict[str, Any]:
         return {
             "shape": self.shape(),
             "column_types": self.column_types(),

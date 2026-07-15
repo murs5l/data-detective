@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 import json
 import sys
@@ -13,7 +15,7 @@ from data_detective.report import print_report
 # -----------------------------
 # COMMAND HANDLER
 # -----------------------------
-def run_analyze(args):
+def run_analyze(args: argparse.Namespace) -> int:
     if not args.quiet:
         print("🔥 Data Detective starting...\n")
 
@@ -36,7 +38,7 @@ def run_analyze(args):
             print(payload)
 
     if emit_html or emit_json:
-        return
+        return 0
 
     if not args.json and not args.html:
         print_report(report)
@@ -47,7 +49,7 @@ def run_analyze(args):
 # -----------------------------
 # CLI SETUP
 # -----------------------------
-def build_parser():
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="data-detective",
         description="🕵️ Data Detective - Smart Data Profiling Tool"
@@ -85,7 +87,7 @@ def build_parser():
 # -----------------------------
 # MAIN ENTRY POINT
 # -----------------------------
-def main():
+def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
 
