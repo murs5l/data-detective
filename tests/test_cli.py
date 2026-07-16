@@ -58,6 +58,16 @@ def test_analyze_output_html_writes_given_path(sample_csv, tmp_path):
     assert out_path.exists()
 
 
+def test_version_flag_prints_version_and_exits_zero(capsys):
+    parser = build_parser()
+    with pytest.raises(SystemExit) as exc_info:
+        parser.parse_args(["--version"])
+
+    assert exc_info.value.code == 0
+    out = capsys.readouterr().out
+    assert "data-detective" in out
+
+
 def test_analyze_outlier_method_choice_rejected_by_argparse(sample_csv):
     parser = build_parser()
     with pytest.raises(SystemExit):

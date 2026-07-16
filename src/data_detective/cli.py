@@ -3,6 +3,8 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as _package_version
 from pathlib import Path
 
 from data_detective.exceptions import DataLoadError
@@ -10,6 +12,13 @@ from data_detective.html_report import generate_html_report
 from data_detective.loader import load_csv
 from data_detective.profiler import DataProfiler
 from data_detective.report import print_report
+
+try:
+    __version__ = _package_version("data-detective-toolkit")
+except PackageNotFoundError:
+    # Running from source without an install (e.g. `python -m data_detective.cli`
+    # in a checkout that was never pip installed).
+    __version__ = "unknown"
 
 
 # -----------------------------
@@ -53,6 +62,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="data-detective",
         description="🕵️ Data Detective - Smart Data Profiling Tool"
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
     )
 
     subparsers = parser.add_subparsers(dest="command")
