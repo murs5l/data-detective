@@ -74,3 +74,12 @@ def test_analyze_html_success():
     response = client.post("/api/analyze/html", files=_csv_upload(csv_content))
     assert response.status_code == 200
     assert "Data Detective Report" in response.text
+
+
+def test_analyze_markdown_success():
+    csv_content = b"a,b\n1,2\n3,4\n"
+    response = client.post("/api/analyze/markdown", files=_csv_upload(csv_content))
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/markdown")
+    assert "# 🕵️ Data Detective Report" in response.text
+    assert "Data Health Score:" in response.text

@@ -7,12 +7,13 @@ from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 
 from data_detective.exceptions import DataDetectiveError
 from data_detective.html_report import generate_html_report
 from data_detective.loader import load_csv
+from data_detective.markdown_report import render_markdown_report
 from data_detective.profiler import DataProfiler
 
 from .quick_scan import quick_scan
@@ -199,6 +200,32 @@ async def analyze_html(
         html = Path(out_path).read_text(encoding="utf-8")
 
     return HTMLResponse(html)
+
+
+@app.post(
+    "/api/analyze/markdown",
+    tags=["analysis"],
+    response_class=PlainTextResponse,
+    summary="Profile a CSV, return a Markdown report",
+    response_description="Markdown report, suitable for pasting into a PR comment or CI summary.",
+    responses={
+        400: {"description": "Invalid file (wrong extension, empty, malformed CSV, or bad outlier_method)."},
+        413: {"description": "File exceeds the upload size limit."},
+        500: {"description": "Profiling engine raised an unexpected error."},
+    },
+)
+async def analyze_markdown(
+    file: UploadFile = File(..., description="A .csv file, up to 25 MB."),
+    outlier_method: str = _OUTLIER_METHOD_QUERY,
+):
+    """Same profiling pipeline as /api/analyze, rendered as Markdown: health
+    score and insights lead, technical detail is tucked into a collapsible
+    <details> block that GitHub renders natively in PR comments and issues.
+    """
+    contents = await file.read()
+    _, report, _, _ = await _run_analysis(file, contents, outlier_method)
+
+    return PlainTextResponse(render_markdown_report(report), media_type="text/markdown")
 
 
 # Serve the static frontend (if present) for anything not matched by the

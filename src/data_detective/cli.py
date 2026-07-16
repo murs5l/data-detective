@@ -10,6 +10,7 @@ from pathlib import Path
 from data_detective.exceptions import DataLoadError
 from data_detective.html_report import generate_html_report
 from data_detective.loader import load_csv
+from data_detective.markdown_report import generate_markdown_report
 from data_detective.profiler import DataProfiler
 from data_detective.report import print_report
 
@@ -33,11 +34,16 @@ def run_analyze(args: argparse.Namespace) -> int:
     report = profiler.run_full_profile(outlier_method=args.outlier_method)
 
     emit_html = args.html or bool(args.output_html)
+    emit_markdown = args.markdown or bool(args.output_markdown)
     emit_json = args.json or bool(args.output_json)
 
     if emit_html:
         output_html_path = args.output_html or "report.html"
         generate_html_report(report, output_path=output_html_path)
+
+    if emit_markdown:
+        output_markdown_path = args.output_markdown or "report.md"
+        generate_markdown_report(report, output_path=output_markdown_path)
 
     if emit_json:
         payload = json.dumps(report, indent=2)
@@ -46,10 +52,10 @@ def run_analyze(args: argparse.Namespace) -> int:
         elif args.json:
             print(payload)
 
-    if emit_html or emit_json:
+    if emit_html or emit_markdown or emit_json:
         return 0
 
-    if not args.json and not args.html:
+    if not args.json and not args.html and not args.markdown:
         print_report(report)
 
     return 0
@@ -79,8 +85,12 @@ def build_parser() -> argparse.ArgumentParser:
     analyze_parser.add_argument("file", help="Path to CSV file")
     analyze_parser.add_argument("--json", action="store_true", help="Output JSON report")
     analyze_parser.add_argument("--html", action="store_true", help="Generate HTML report")
+    analyze_parser.add_argument(
+        "--markdown", action="store_true", help="Generate Markdown report (for PR/CI comments)"
+    )
     analyze_parser.add_argument("--output-json", help="Write JSON report to the given file path")
     analyze_parser.add_argument("--output-html", help="Write HTML report to the given file path")
+    analyze_parser.add_argument("--output-markdown", help="Write Markdown report to the given file path")
     analyze_parser.add_argument(
         "--outlier-method",
         choices=["iqr", "mad"],

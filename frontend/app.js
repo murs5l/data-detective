@@ -13,6 +13,7 @@
 
   const downloadJsonBtn = document.getElementById("download-json");
   const downloadHtmlBtn = document.getElementById("download-html");
+  const downloadMarkdownBtn = document.getElementById("download-markdown");
 
   let selectedFile = null;
   let lastReport = null;
@@ -126,6 +127,21 @@
     if (!response.ok) return;
     const blob = await response.blob();
     triggerDownload(blob, "data-detective-report.html");
+  });
+
+  downloadMarkdownBtn.addEventListener("click", async () => {
+    if (!selectedFile) return;
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+    const method = outlierSelect.value;
+
+    const response = await fetch(`/api/analyze/markdown?outlier_method=${encodeURIComponent(method)}`, {
+      method: "POST",
+      body: formData,
+    });
+    if (!response.ok) return;
+    const blob = await response.blob();
+    triggerDownload(blob, "data-detective-report.md");
   });
 
   function triggerDownload(blob, filename) {

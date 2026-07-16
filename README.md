@@ -131,8 +131,10 @@ data-detective analyze myfile.csv --output-html reports/q1_data.html
 |--------------------|-------------------------------------------------|---------|
 | `--json`           | Print full report as JSON to stdout              | `data-detective analyze data.csv --json` |
 | `--html`           | Generate `report.html` in current directory      | `data-detective analyze data.csv --html` |
+| `--markdown`       | Generate `report.md` in current directory        | `data-detective analyze data.csv --markdown` |
 | `--output-json`    | Write JSON report to a specific file path         | `--output-json reports/profile.json` |
 | `--output-html`    | Write HTML report to a specific file path         | `--output-html reports/profile.html` |
+| `--output-markdown`| Write Markdown report to a specific file path     | `--output-markdown reports/profile.md` |
 | `--outlier-method` | Choose outlier detection: `iqr` or `mad` (default) | `--outlier-method iqr` |
 | `--quiet`          | Suppress non-error progress messages              | `--quiet` |
 
@@ -155,6 +157,14 @@ done
 data-detective analyze input.csv --quiet --json | jq '.high_cardinality_columns'
 ```
 
+**Post a data-quality summary as a PR comment** (GitHub Actions, using the `gh` CLI):
+```bash
+data-detective analyze incoming.csv --output-markdown summary.md --quiet
+gh pr comment "$PR_NUMBER" --body-file summary.md
+```
+The health score and insights lead the comment; the rest of the technical
+detail is tucked into a collapsed `<details>` block GitHub renders natively.
+
 ## REST API (for integration)
 
 When running the web app or backend API server, you can integrate Data Detective into your own applications.
@@ -175,12 +185,19 @@ curl -F "file=@data.csv" "http://localhost:8000/api/analyze/html" > report.html
 
 Response: A self-contained HTML file (no external dependencies).
 
+**POST /api/analyze/markdown** – Analyze a CSV file, return a Markdown report
+```bash
+curl -F "file=@data.csv" "http://localhost:8000/api/analyze/markdown" > report.md
+```
+
+Response: Markdown text, suitable for pasting into a PR comment, CI summary, or Slack message.
+
 **GET /api/health** – Health check
 ```bash
 curl http://localhost:8000/api/health
 ```
 
-Response: `{"status": "ok", "version": "0.3.0"}`
+Response: `{"status": "ok", "version": "x.y.z"}` (matches the installed package version)
 
 ### Python example
 
@@ -255,6 +272,7 @@ Data Detective automatically flags 20+ data quality issues:
 **Output**
 - A 0-100 data health score with a documented, inspectable breakdown (not a black box)
 - Plain-English actionable insights highlighting the most important issues
+- JSON, HTML, or Markdown export (the Markdown format is built for pasting into a PR comment or CI summary)
 
 ## Architecture
 
@@ -274,9 +292,10 @@ data-detective/
 │   ├── cli.py               # `data-detective` command-line entry point
 │   ├── loader.py            # CSV loading, with encoding fallback for messy files
 │   ├── html_report.py       # Static HTML report renderer
+│   ├── markdown_report.py   # Markdown report renderer (for PR/CI comments)
 │   └── report.py            # Plain-text report printer (CLI default output)
 ├── backend/app/             # FastAPI wrapper around the same DataProfiler
-│   ├── main.py              # /api/analyze, /api/analyze/html endpoints
+│   ├── main.py              # /api/analyze, /html, /markdown endpoints
 │   └── quick_scan.py        # Optional Go fastscan integration
 ├── frontend/                # Dependency-free HTML/CSS/vanilla JS web app
 ├── tools/fastscan/          # Optional Go speed layer (instant CSV pre-scan)

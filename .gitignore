@@ -19,6 +19,8 @@ htmlcov/
 # Tool output
 report.html
 *.report.html
+report.md
+*.report.md
 
 # OS / editor
 .DS_Store

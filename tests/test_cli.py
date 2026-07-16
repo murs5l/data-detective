@@ -58,6 +58,21 @@ def test_analyze_output_html_writes_given_path(sample_csv, tmp_path):
     assert out_path.exists()
 
 
+def test_analyze_markdown_flag_writes_report_md(sample_csv, tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _run(["analyze", str(sample_csv), "--markdown", "--quiet"])
+
+    assert (tmp_path / "report.md").exists()
+    assert "Data Detective Report" in (tmp_path / "report.md").read_text(encoding="utf-8")
+
+
+def test_analyze_output_markdown_writes_given_path(sample_csv, tmp_path):
+    out_path = tmp_path / "custom.md"
+    _run(["analyze", str(sample_csv), "--output-markdown", str(out_path)])
+
+    assert out_path.exists()
+
+
 def test_version_flag_prints_version_and_exits_zero(capsys):
     parser = build_parser()
     with pytest.raises(SystemExit) as exc_info:
