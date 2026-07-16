@@ -148,11 +148,69 @@
   }
 
   function renderReport(report) {
+    renderHealthScore(report.health_score);
     renderInsights(report.insights || []);
     renderStatGrid(report);
     renderHeatmap(report.correlation_matrix || {});
     renderColumnExplorer(report);
     renderTechnicalTables(report);
+  }
+
+  const HEALTH_BREAKDOWN_LABELS = {
+    missing_values: "Missing values",
+    duplicate_rows: "Duplicate rows",
+    outliers: "Outliers",
+    duplicate_columns: "Duplicate columns",
+    constant_columns: "Constant columns",
+    mixed_type_columns: "Mixed-type columns",
+    negative_values: "Unexpected negatives",
+    skewed_distributions: "Skewed distributions",
+    correlated_columns: "Correlated columns",
+  };
+
+  function gradeClass(grade) {
+    if (grade === "Fair") return "grade-fair";
+    if (grade === "Poor" || grade === "Critical") return "grade-poor";
+    return "";
+  }
+
+  function renderHealthScore(health) {
+    if (!health) return;
+
+    const badge = document.getElementById("health-score-badge");
+    const number = document.getElementById("health-score-number");
+    const gradeEl = document.getElementById("health-score-grade");
+    const toggle = document.getElementById("health-score-toggle");
+    const breakdownEl = document.getElementById("health-score-breakdown");
+
+    const cls = gradeClass(health.grade);
+    badge.className = `health-score-badge ${cls}`.trim();
+    gradeEl.className = `health-score-grade ${cls}`.trim();
+    number.textContent = health.score;
+    gradeEl.textContent = health.grade;
+
+    const items = Object.entries(health.breakdown || {})
+      .filter(([, points]) => points > 0)
+      .sort(([, a], [, b]) => b - a);
+
+    if (!items.length) {
+      breakdownEl.innerHTML = '<span class="health-score-breakdown-item">No deductions, nothing flagged.</span>';
+    } else {
+      breakdownEl.innerHTML = items
+        .map(([key, points]) => {
+          const label = HEALTH_BREAKDOWN_LABELS[key] || key;
+          return `<span class="health-score-breakdown-item">${escapeHtml(label)}: <strong>-${points}</strong></span>`;
+        })
+        .join("");
+    }
+
+    toggle.onclick = () => {
+      const isHidden = breakdownEl.hidden;
+      breakdownEl.hidden = !isHidden;
+      toggle.textContent = isHidden ? "Hide breakdown" : "Show breakdown";
+    };
+    breakdownEl.hidden = true;
+    toggle.textContent = "Show breakdown";
   }
 
   function renderInsights(insights) {

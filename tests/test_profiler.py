@@ -217,3 +217,71 @@ def test_boxplot_stats_ignores_non_numeric_columns():
     df = pd.DataFrame({"c": ["x", "y", "z"]})
     profiler = DataProfiler(df)
     assert profiler.boxplot_stats() == {}
+
+
+def test_health_score_clean_data_scores_high():
+    df = pd.DataFrame({
+        "id": range(1, 101),
+        "value": [i * 1.5 for i in range(100)],
+        "category": (["A", "B", "C"] * 34)[:100],
+    })
+    result = DataProfiler(df).health_score()
+
+    assert result["score"] >= 90
+    assert result["grade"] == "Excellent"
+    assert set(result["breakdown"]) == set(DataProfiler.HEALTH_SCORE_MAX_DEDUCTIONS)
+
+
+def test_health_score_empty_df_is_perfect():
+    result = DataProfiler(pd.DataFrame()).health_score()
+    assert result["score"] == 100
+    assert result["grade"] == "Excellent"
+
+
+def test_health_score_penalizes_a_single_severely_missing_column():
+    # One column mostly missing, everything else clean: averaging across
+    # all columns must not dilute this away to nothing.
+    df = pd.DataFrame({
+        "a": [None] * 40 + list(range(60)),
+        "b": list(range(100)),
+        "c": list(range(100)),
+    })
+    result = DataProfiler(df).health_score()
+    assert result["breakdown"]["missing_values"] > 5
+
+
+def test_health_score_flags_duplicate_and_constant_columns():
+    df = pd.DataFrame({
+        "a": [1, 2, 3, 4, 5],
+        "a_copy": [1, 2, 3, 4, 5],
+        "constant": [1, 1, 1, 1, 1],
+    })
+    result = DataProfiler(df).health_score()
+    assert result["breakdown"]["duplicate_columns"] > 0
+    assert result["breakdown"]["constant_columns"] > 0
+    assert result["score"] < 100
+
+
+def test_health_score_worse_data_scores_lower_than_better_data():
+    clean = pd.DataFrame({"a": range(100), "b": range(100)})
+    messy = pd.DataFrame({
+        "a": [None] * 50 + list(range(50)),
+        "a_copy": [None] * 50 + list(range(50)),
+        "b": [1] * 100,
+    })
+    clean_score = DataProfiler(clean).health_score()["score"]
+    messy_score = DataProfiler(messy).health_score()["score"]
+    assert messy_score < clean_score
+
+
+def test_health_score_grade_matches_score_thresholds():
+    for score, expected_grade in [(95, "Excellent"), (80, "Good"), (65, "Fair"), (45, "Poor"), (10, "Critical")]:
+        grade = next(label for threshold, label in DataProfiler.HEALTH_SCORE_GRADES if score >= threshold)
+        assert grade == expected_grade
+
+
+def test_run_full_profile_includes_health_score():
+    df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
+    report = DataProfiler(df).run_full_profile()
+    assert "health_score" in report
+    assert 0 <= report["health_score"]["score"] <= 100

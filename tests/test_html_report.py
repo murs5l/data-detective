@@ -15,6 +15,18 @@ def report():
     return DataProfiler(df).run_full_profile()
 
 
+def test_html_report_includes_health_score_before_insights(tmp_path, report):
+    output_path = tmp_path / "report.html"
+    generate_html_report(report, output_path=str(output_path))
+    html = output_path.read_text(encoding="utf-8")
+
+    assert "Data Health Score" in html
+    assert "health-score-number" in html
+    health_pos = html.index("Data Health Score")
+    insights_pos = html.index(">🧠 Insights<")
+    assert health_pos < insights_pos
+
+
 def test_html_report_includes_correlation_heatmap(tmp_path, report):
     output_path = tmp_path / "report.html"
     generate_html_report(report, output_path=str(output_path))

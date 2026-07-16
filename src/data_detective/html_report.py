@@ -68,6 +68,56 @@ def _render_insights(insights: list) -> str:
     return f'<ul class="insights-list">{items}</ul>'
 
 
+_HEALTH_GRADE_CLASS = {"Fair": "grade-fair", "Poor": "grade-poor", "Critical": "grade-poor"}
+
+_HEALTH_BREAKDOWN_LABELS = {
+    "missing_values": "Missing values",
+    "duplicate_rows": "Duplicate rows",
+    "outliers": "Outliers",
+    "duplicate_columns": "Duplicate columns",
+    "constant_columns": "Constant columns",
+    "mixed_type_columns": "Mixed-type columns",
+    "negative_values": "Unexpected negatives",
+    "skewed_distributions": "Skewed distributions",
+    "correlated_columns": "Correlated columns",
+}
+
+
+def _render_health_score(health: dict) -> str:
+    if not health:
+        return ""
+
+    grade_class = _HEALTH_GRADE_CLASS.get(health["grade"], "")
+    items = [
+        (col, points) for col, points in health.get("breakdown", {}).items() if points > 0
+    ]
+    items.sort(key=lambda pair: pair[1], reverse=True)
+
+    if not items:
+        breakdown_html = '<span class="health-score-breakdown-item">No deductions, nothing flagged.</span>'
+    else:
+        breakdown_html = "".join(
+            f'<span class="health-score-breakdown-item">'
+            f'{escape(_HEALTH_BREAKDOWN_LABELS.get(col, col))}: <strong>-{points}</strong></span>'
+            for col, points in items
+        )
+
+    return f"""
+    <div class="box health-score-card">
+        <div class="health-score-badge {grade_class}">
+            <div class="health-score-number">{health['score']}</div>
+            <div class="health-score-denom">/ 100</div>
+        </div>
+        <div class="health-score-main">
+            <div class="health-score-heading">
+                <h2>🏥 Data Health Score</h2>
+                <span class="health-score-grade {grade_class}">{escape(health['grade'])}</span>
+            </div>
+            <div class="health-score-breakdown">{breakdown_html}</div>
+        </div>
+    </div>"""
+
+
 def _color_for_correlation(value: float) -> str:
     """Blue for positive correlation, pink/red for negative, scaled by strength."""
     v = max(-1.0, min(1.0, value))
@@ -281,6 +331,10 @@ def generate_html_report(report: dict, output_path="report.html"):
         --border: #e5e5e7;
         --danger: #d70015;
         --warning: #c9720b;
+        --success: #1a8a3f;
+        --success-bg: #e8f7ec;
+        --warning-bg: #fff6ea;
+        --danger-bg: #fdecec;
     }}
 
     * {{ box-sizing: border-box; }}
@@ -412,6 +466,109 @@ def generate_html_report(report: dict, output_path="report.html"):
 
     ul li {{
         margin-bottom: 6px;
+    }}
+
+    .health-score-card {{
+        display: flex;
+        align-items: center;
+        gap: 24px;
+    }}
+
+    .health-score-badge {{
+        flex-shrink: 0;
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: var(--success-bg);
+        border: 3px solid var(--success);
+    }}
+
+    .health-score-number {{
+        font-size: 30px;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--success);
+    }}
+
+    .health-score-denom {{
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+    }}
+
+    .health-score-badge.grade-fair {{
+        background: var(--warning-bg);
+        border-color: var(--warning);
+    }}
+    .health-score-badge.grade-fair .health-score-number {{
+        color: var(--warning);
+    }}
+
+    .health-score-badge.grade-poor {{
+        background: var(--danger-bg);
+        border-color: var(--danger);
+    }}
+    .health-score-badge.grade-poor .health-score-number {{
+        color: var(--danger);
+    }}
+
+    .health-score-main {{
+        flex: 1;
+        min-width: 0;
+    }}
+
+    .health-score-heading {{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }}
+
+    .health-score-heading h2 {{
+        margin: 0;
+    }}
+
+    .health-score-grade {{
+        font-size: 13px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: var(--success-bg);
+        color: var(--success);
+    }}
+
+    .health-score-grade.grade-fair {{
+        background: var(--warning-bg);
+        color: var(--warning);
+    }}
+
+    .health-score-grade.grade-poor {{
+        background: var(--danger-bg);
+        color: var(--danger);
+    }}
+
+    .health-score-breakdown {{
+        margin-top: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }}
+
+    .health-score-breakdown-item {{
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        color: var(--muted);
+    }}
+
+    .health-score-breakdown-item strong {{
+        color: var(--text);
     }}
 
     .insights-list {{
@@ -643,6 +800,8 @@ def generate_html_report(report: dict, output_path="report.html"):
         <h1>🕵️ Data Detective Report</h1>
         <p>Automated data profiling summary</p>
     </header>
+
+    {_render_health_score(report.get("health_score", {}))}
 
     <div class="box">
         <h2>🧠 Insights</h2>

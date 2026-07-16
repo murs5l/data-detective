@@ -11,6 +11,10 @@ def print_report(report: dict):
     print("\n🕵️ DATA DETECTIVE INTELLIGENCE REPORT")
     print("=" * 70)
 
+    health = report.get("health_score")
+    if health:
+        print(f"\n🏥 DATA HEALTH SCORE: {health['score']}/100 ({health['grade']})")
+
     print(f"\n📦 Shape: {pretty(report.get('shape', {}))}")
 
     print("\n🚨 Duplicates:")

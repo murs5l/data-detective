@@ -29,6 +29,29 @@ class DataProfiler:
         "id", "uuid", "guid", "key", "code", "number", "num", "no", "index", "idx", "ref",
     })
 
+    # Health score: starts at 100, each category deducts up to its cap,
+    # scaled by how bad that category actually is (not just present/absent).
+    # Caps sum to 100 so a dataset hitting every cap simultaneously floors
+    # at 0; in practice most datasets only trip a few categories.
+    HEALTH_SCORE_MAX_DEDUCTIONS = {
+        "missing_values": 25,
+        "duplicate_rows": 20,
+        "outliers": 15,
+        "duplicate_columns": 10,
+        "constant_columns": 10,
+        "mixed_type_columns": 5,
+        "negative_values": 5,
+        "skewed_distributions": 5,
+        "correlated_columns": 5,
+    }
+    HEALTH_SCORE_GRADES = (
+        (90, "Excellent"),
+        (75, "Good"),
+        (60, "Fair"),
+        (40, "Poor"),
+        (0, "Critical"),
+    )
+
     def __init__(self, df: pd.DataFrame) -> None:
         self.df = df
 
@@ -359,6 +382,80 @@ class DataProfiler:
                     flagged.append(col)
         return flagged
 
+    def health_score(self) -> dict[str, Any]:
+        """
+        Overall 0-100 data-quality score: 100 minus a documented, capped
+        deduction per issue category (see HEALTH_SCORE_MAX_DEDUCTIONS).
+        Deliberately inspectable rather than a black box: "breakdown" shows
+        exactly how many points each category cost, so the number can be
+        explained, not just quoted.
+        """
+        caps = self.HEALTH_SCORE_MAX_DEDUCTIONS
+        total_rows = len(self.df)
+        breakdown: dict[str, float] = {}
+
+        # Missing values: blends the worst single column (70% weight, so one
+        # badly broken column is penalized even if every other column is
+        # clean, matching generate_insights() flagging any column over 30%
+        # on its own) with the overall average (30% weight, so widespread
+        # moderate missingness still registers even with no single outlier
+        # column).
+        missing_pcts = list(self.missing_percentage().values())
+        avg_missing_ratio = (sum(missing_pcts) / len(missing_pcts) / 100) if missing_pcts else 0.0
+        max_missing_ratio = (max(missing_pcts) / 100) if missing_pcts else 0.0
+        missing_ratio = 0.7 * max_missing_ratio + 0.3 * avg_missing_ratio
+        breakdown["missing_values"] = round(min(caps["missing_values"], missing_ratio * caps["missing_values"]), 1)
+
+        # Duplicate rows: ratio of duplicated rows to total rows maps
+        # directly onto the cap.
+        dup_row_ratio = (self.duplicate_rows() / total_rows) if total_rows else 0.0
+        breakdown["duplicate_rows"] = round(min(caps["duplicate_rows"], dup_row_ratio * caps["duplicate_rows"]), 1)
+
+        # Outliers: genuinely extreme values (MAD method) are only ever a
+        # small tail of any column by construction, so raw cell-ratio needs
+        # a large scale to register at all; a 1% outlier-cell rate alone
+        # maxes the deduction.
+        outlier_counts = self.detect_outliers(method="mad")
+        total_numeric_cells = int(self._numeric_df.notna().sum().sum())
+        outlier_ratio = (sum(outlier_counts.values()) / total_numeric_cells) if total_numeric_cells else 0.0
+        breakdown["outliers"] = round(min(caps["outliers"], outlier_ratio * 100 * caps["outliers"]), 1)
+
+        # Duplicate columns, constant columns, mixed-type columns, and
+        # unexpected negatives are flat points per occurrence, capped: each
+        # instance is a concrete, discrete issue rather than a proportion.
+        breakdown["duplicate_columns"] = round(
+            min(caps["duplicate_columns"], len(self.detect_duplicate_columns()) * 3), 1
+        )
+        breakdown["constant_columns"] = round(
+            min(caps["constant_columns"], len(self.detect_constant_columns()) * 3), 1
+        )
+        breakdown["mixed_type_columns"] = round(
+            min(caps["mixed_type_columns"], len(self.detect_mixed_type_columns()) * 2.5), 1
+        )
+        breakdown["negative_values"] = round(
+            min(caps["negative_values"], len(self.detect_negative_in_nonnegative_columns()) * 2.5), 1
+        )
+
+        # Skewed distributions: fraction of numeric columns heavily skewed,
+        # scaled 2x before capping so half the numeric columns being skewed
+        # maxes the deduction.
+        shapes = self.distribution_shape()
+        skewed_count = sum(1 for s in shapes.values() if abs(s["skewness"]) > self.SKEWNESS_THRESHOLD)
+        skewed_ratio = (skewed_count / len(shapes)) if shapes else 0.0
+        breakdown["skewed_distributions"] = round(
+            min(caps["skewed_distributions"], skewed_ratio * 2 * caps["skewed_distributions"]), 1
+        )
+
+        # Correlated (redundant) columns: flat points per pair, capped.
+        breakdown["correlated_columns"] = round(
+            min(caps["correlated_columns"], len(self.detect_correlated_columns()) * 1), 1
+        )
+
+        score = max(0, round(100 - sum(breakdown.values())))
+        grade = next(label for threshold, label in self.HEALTH_SCORE_GRADES if score >= threshold)
+
+        return {"score": score, "grade": grade, "breakdown": breakdown}
+
     def generate_insights(self, outlier_method: str = "mad") -> list[str]:
         """
         Human-readable detective conclusions.
@@ -421,6 +518,7 @@ class DataProfiler:
 
     def run_full_profile(self, outlier_method: str = "mad") -> dict[str, Any]:
         return {
+            "health_score": self.health_score(),
             "shape": self.shape(),
             "column_types": self.column_types(),
             "missing_values": self.missing_values(),
