@@ -64,6 +64,26 @@ anything that changes the CLI's flags, the report schema, or the API's
 public contract. That way we can agree on the shape of the change before
 you invest time in an implementation.
 
+## Releasing
+
+1. Add an entry to [CHANGELOG.md](CHANGELOG.md) under a new `## [x.y.z] - YYYY-MM-DD`
+   heading (Added/Fixed/Changed, following [Keep a Changelog](https://keepachangelog.com/)).
+   The release workflow extracts this section automatically for the GitHub
+   Release body, an untagged version gets a placeholder instead, so this
+   step isn't optional.
+2. Bump `version` in `pyproject.toml` to match.
+3. Commit, push, then tag and push the tag:
+   ```bash
+   git tag vx.y.z
+   git push origin vx.y.z
+   ```
+4. This triggers `.github/workflows/release.yml`: builds the package,
+   publishes to PyPI (if `PUBLISH_TO_PYPI` is set), pushes a Docker image to
+   GHCR, and creates the GitHub Release.
+
+Use a minor bump (`0.x.0`) for new user-facing functionality, a patch
+(`0.0.x`) for fixes only.
+
 ## Security issues
 
 Please do **not** open a public issue for security vulnerabilities. See

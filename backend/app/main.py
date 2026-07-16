@@ -1,6 +1,8 @@
 import math
 import tempfile
 import time
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as _package_version
 from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, Query, UploadFile
@@ -18,6 +20,11 @@ from .quick_scan import quick_scan
 MAX_UPLOAD_BYTES = 25 * 1024 * 1024  # 25 MB
 VALID_OUTLIER_METHODS = ("mad", "iqr")
 
+try:
+    _app_version = _package_version("data-detective-toolkit")
+except PackageNotFoundError:
+    _app_version = "unknown"
+
 app = FastAPI(
     title="Data Detective API",
     description=(
@@ -26,7 +33,7 @@ app = FastAPI(
         "plain-English insights. Files are processed in memory / a short-lived "
         "temp file and are never persisted to disk."
     ),
-    version="0.3.0",
+    version=_app_version,
 )
 
 _OUTLIER_METHOD_QUERY = Query(

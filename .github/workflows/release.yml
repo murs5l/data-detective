@@ -83,13 +83,34 @@ jobs:
     needs: [build-python, docker-publish]
     if: always() && needs.build-python.result == 'success' && needs.docker-publish.result == 'success'
     steps:
+      - uses: actions/checkout@v4
+
       - uses: actions/download-artifact@v4
         with:
           name: python-dist
           path: dist/
 
+      - name: Extract this version's CHANGELOG.md section
+        id: changelog
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v ver="$VERSION" '
+            /^## \[/ {
+              if (found) exit
+              if ($0 ~ "\\[" ver "\\]") { found = 1; next }
+              next
+            }
+            found { print }
+          ' CHANGELOG.md > release_notes.md
+          # Fall back to a placeholder if the version has no CHANGELOG.md
+          # entry yet, rather than shipping an empty release body.
+          if [ ! -s release_notes.md ]; then
+            echo "No CHANGELOG.md entry found for v$VERSION." > release_notes.md
+          fi
+          cat release_notes.md
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          generate_release_notes: true
+          body_path: release_notes.md
           files: dist/*
