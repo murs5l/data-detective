@@ -85,6 +85,66 @@ def test_high_cardinality_excludes_continuous_measures_from_insights():
     assert not any("TotalPay" in i and "ID" in i for i in insights)
 
 
+def test_near_constant_column_flagged_but_not_as_fully_constant():
+    df = pd.DataFrame({
+        "status": ["active"] * 97 + ["inactive"] * 3,
+        "normal": list(range(100)),
+    })
+    profiler = DataProfiler(df)
+    assert "status" in profiler.detect_near_constant_columns()
+    assert "status" not in profiler.detect_constant_columns()
+    assert "normal" not in profiler.detect_near_constant_columns()
+
+
+def test_near_constant_excludes_fully_constant_columns():
+    # A truly constant column shouldn't double-count as "near-constant" too.
+    df = pd.DataFrame({"c": [1] * 20})
+    profiler = DataProfiler(df)
+    assert "c" in profiler.detect_constant_columns()
+    assert "c" not in profiler.detect_near_constant_columns()
+
+
+def test_near_constant_below_threshold_not_flagged():
+    df = pd.DataFrame({"mostly_varied": ["a"] * 80 + ["b"] * 20})
+    profiler = DataProfiler(df)
+    assert "mostly_varied" not in profiler.detect_near_constant_columns()
+
+
+def test_possible_target_column_detected_by_name():
+    df = pd.DataFrame({"age": [1, 2, 3], "income": [4, 5, 6], "churn": [0, 1, 0]})
+    profiler = DataProfiler(df)
+    assert profiler.detect_possible_target_columns() == ["churn"]
+
+
+def test_possible_target_column_bare_y_detected():
+    df = pd.DataFrame({"x1": [1, 2, 3], "x2": [4, 5, 6], "y": [0, 1, 0]})
+    profiler = DataProfiler(df)
+    assert profiler.detect_possible_target_columns() == ["y"]
+
+
+def test_possible_target_column_no_false_positive_on_y_as_word_component():
+    # "y_coordinate" contains "y" as a whole word after splitting, but it's
+    # a spatial axis, not an ML target; only a column named exactly "y"
+    # should match.
+    df = pd.DataFrame({"TotalPay": [1, 2, 3], "y_coordinate": [4, 5, 6]})
+    profiler = DataProfiler(df)
+    assert profiler.detect_possible_target_columns() == []
+
+
+def test_possible_target_column_none_found_returns_empty_list():
+    df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
+    profiler = DataProfiler(df)
+    assert profiler.detect_possible_target_columns() == []
+
+
+def test_run_full_profile_includes_new_detector_keys():
+    df = pd.DataFrame({"a": [1, 2, 3], "target": [0, 1, 0]})
+    report = DataProfiler(df).run_full_profile()
+    assert "near_constant_columns" in report
+    assert "possible_target_columns" in report
+    assert report["possible_target_columns"] == ["target"]
+
+
 def test_detect_outliers(sample_df):
     profiler = DataProfiler(sample_df)
     outliers = profiler.detect_outliers(method="iqr")

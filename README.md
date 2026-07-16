@@ -227,6 +227,8 @@ Data Detective automatically flags 20+ data quality issues:
 - Duplicate rows
 - Duplicate columns (identical data, different names)
 - Constant columns (no variation; e.g., all 1s)
+- Near-constant columns (one value dominates 95%+ of rows; easy to miss since they "look" like they vary)
+- Possible modeling target column (name-based, e.g. `target`, `label`, `churn`, `y`)
 
 **Statistical Issues**
 - Outliers: IQR method (classic box-and-whisker) or MAD (robust for skewed data)
@@ -251,6 +253,7 @@ Data Detective automatically flags 20+ data quality issues:
 - Per-column memory footprint (KB)
 
 **Output**
+- A 0-100 data health score with a documented, inspectable breakdown (not a black box)
 - Plain-English actionable insights highlighting the most important issues
 
 ## Architecture

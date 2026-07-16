@@ -28,6 +28,17 @@ class DataProfiler:
     ID_NAME_WORDS = frozenset({
         "id", "uuid", "guid", "key", "code", "number", "num", "no", "index", "idx", "ref",
     })
+    # Share of non-null rows the single most common value must reach to
+    # flag a column as "near-constant" (distinct from detect_constant_columns,
+    # which only catches columns with exactly one unique value).
+    NEAR_CONSTANT_THRESHOLD = 0.95
+    # "y" is deliberately excluded here and handled separately as a full-name
+    # match only: as a word within a compound name (e.g. "y_coordinate",
+    # "pos_y") it's just as likely to mean a spatial axis as an ML target.
+    TARGET_NAME_WORDS = frozenset({
+        "target", "label", "labels", "class", "outcome", "churn",
+        "response", "result", "diagnosis", "prediction", "output",
+    })
 
     # Health score: starts at 100, each category deducts up to its cap,
     # scaled by how bad that category actually is (not just present/absent).
@@ -109,11 +120,49 @@ class DataProfiler:
     def detect_constant_columns(self) -> list[str]:
         return self._nunique[self._nunique <= 1].index.tolist()
 
+    def detect_near_constant_columns(self) -> list[str]:
+        """
+        Flags columns where one value dominates almost all non-null rows
+        (default 95%+) but the column isn't fully constant. These are easy
+        to miss since they "look" like they vary, but carry almost no
+        information, arguably a subtler problem than a true constant
+        column, which at least is obvious at a glance.
+        """
+        flagged: list[str] = []
+        for col in self.df.columns:
+            series = self.df[col].dropna()
+            if series.empty or series.nunique() <= 1:
+                continue  # empty or fully constant; detect_constant_columns handles that
+            top_share = series.value_counts(normalize=True).iloc[0]
+            if top_share >= self.NEAR_CONSTANT_THRESHOLD:
+                flagged.append(col)
+        return flagged
+
+    def detect_possible_target_columns(self) -> list[str]:
+        """
+        Best-effort guess at which column(s) could be a modeling target.
+        Name-based only (e.g. 'target', 'label', 'churn'), matched as whole
+        words, deliberately conservative: guessing from cardinality or
+        position alone (e.g. "the last binary column") produces far too
+        many false positives on ordinary feature columns to be useful.
+        """
+        matches = []
+        for col in self.df.columns:
+            if col.strip().lower() == "y" or any(w in self.TARGET_NAME_WORDS for w in self._name_words(col)):
+                matches.append(col)
+        return matches
+
+    @staticmethod
+    def _name_words(col: str) -> list[str]:
+        """Splits a column name into lowercase whole words (handles snake_case,
+        kebab-case, and camelCase), so name-based detectors can match on whole
+        words rather than substrings (e.g. so 'TotalPay' doesn't match 'total')."""
+        spaced = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", col)
+        return [w.lower() for w in re.split(r"[^a-zA-Z0-9]+", spaced) if w]
+
     def _name_looks_like_identifier(self, col: str) -> bool:
         """True if the column name itself suggests an ID/key (e.g. 'employee_id')."""
-        spaced = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", col)
-        words = [w.lower() for w in re.split(r"[^a-zA-Z0-9]+", spaced) if w]
-        return any(w in self.ID_NAME_WORDS for w in words)
+        return any(w in self.ID_NAME_WORDS for w in self._name_words(col))
 
     def _is_sequential_integer_column(self, col: str) -> bool:
         """True if a numeric column is a gapless run of integers (e.g. 1..N), the
@@ -473,6 +522,14 @@ class DataProfiler:
         for col in constants:
             insights.append(f"⚠️ Column '{col}' is constant (no variation).")
 
+        # Near-constant columns
+        for col in self.detect_near_constant_columns():
+            insights.append(f"🔁 Column '{col}' is nearly constant (one value dominates almost all rows).")
+
+        # Possible modeling target
+        for col in self.detect_possible_target_columns():
+            insights.append(f"🎯 Column '{col}' looks like it could be the modeling target.")
+
         # High cardinality (possible ID)
         ids = self.detect_high_cardinality()
         for col in ids:
@@ -526,6 +583,8 @@ class DataProfiler:
             "duplicates": self.duplicate_rows(),
             "unique_counts": self.unique_counts(),
             "constant_columns": self.detect_constant_columns(),
+            "near_constant_columns": self.detect_near_constant_columns(),
+            "possible_target_columns": self.detect_possible_target_columns(),
             "high_cardinality_columns": self.detect_high_cardinality(),
             "outliers_iqr": self.detect_outliers(method="iqr"),
             "outliers_mad": self.detect_outliers(method="mad"),

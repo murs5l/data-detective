@@ -438,6 +438,8 @@
     renderKvTable("tech-outliers-iqr", report.outliers_iqr);
     renderList("tech-high-cardinality", report.high_cardinality_columns);
     renderList("tech-constant", report.constant_columns);
+    renderList("tech-near-constant", report.near_constant_columns);
+    renderList("tech-target", report.possible_target_columns);
     renderPairs("tech-dup-columns", report.duplicate_columns);
     renderPairs("tech-correlated", report.correlated_columns);
     renderList("tech-date-like", report.date_like_columns);

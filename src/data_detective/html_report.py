@@ -873,6 +873,16 @@ def generate_html_report(report: dict, output_path="report.html"):
             </div>
 
             <div class="tech-box">
+                <h3>Near-constant columns</h3>
+                {_render_list(report.get("near_constant_columns", []), "None found.")}
+            </div>
+
+            <div class="tech-box">
+                <h3>Possible target column</h3>
+                {_render_list(report.get("possible_target_columns", []), "None found.")}
+            </div>
+
+            <div class="tech-box">
                 <h3>Duplicate columns</h3>
                 {_render_pairs(report.get("duplicate_columns", []), "None found.")}
             </div>
