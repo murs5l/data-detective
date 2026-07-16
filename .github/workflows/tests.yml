@@ -86,6 +86,46 @@ jobs:
       - name: Run backend API tests
         run: pytest -v backend/tests
 
+  coverage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install package, dev/API dependencies, and coverage tools
+        run: |
+          pip install -e ".[dev,api]"
+          pip install -r backend/requirements-dev.txt
+          pip install coverage-badge
+
+      - name: Run full test suite with coverage
+        run: |
+          pytest tests backend/tests \
+            --cov=src/data_detective --cov=backend/app \
+            --cov-report=term-missing --cov-fail-under=85
+
+      - name: Generate coverage badge
+        run: coverage-badge -o docs/coverage.svg -f
+
+      - name: Commit updated badge
+        if: github.event_name == 'push'
+        run: |
+          if ! git diff --quiet -- docs/coverage.svg; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add docs/coverage.svg
+            git commit -m "chore: update coverage badge [skip ci]"
+            git push
+          fi
+
   fastscan:
     runs-on: ubuntu-latest
 

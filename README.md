@@ -1,6 +1,7 @@
 # 🕵️ Data Detective
 
 [![Tests](https://github.com/murs5l/data-detective/actions/workflows/tests.yml/badge.svg)](https://github.com/murs5l/data-detective/actions/workflows/tests.yml)
+[![Coverage](docs/coverage.svg)](https://github.com/murs5l/data-detective/actions/workflows/tests.yml)
 [![PyPI](https://img.shields.io/pypi/v/data-detective-toolkit.svg)](https://pypi.org/project/data-detective-toolkit/)
 [![Python](https://img.shields.io/badge/python-3.9%20%7C%203.11%20%7C%203.12-blue.svg)](https://github.com/murs5l/data-detective/blob/main/.github/workflows/tests.yml)
 [![Docker](https://img.shields.io/badge/docker-ghcr.io-2496ED?logo=docker&logoColor=white)](https://github.com/murs5l/data-detective/pkgs/container/data-detective)
