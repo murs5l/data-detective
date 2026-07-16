@@ -1,6 +1,11 @@
 # 🕵️ Data Detective
 
 [![Tests](https://github.com/murs5l/data-detective/actions/workflows/tests.yml/badge.svg)](https://github.com/murs5l/data-detective/actions/workflows/tests.yml)
+[![PyPI](https://img.shields.io/pypi/v/data-detective-toolkit.svg)](https://pypi.org/project/data-detective-toolkit/)
+[![Python](https://img.shields.io/badge/python-3.9%20%7C%203.11%20%7C%203.12-blue.svg)](https://github.com/murs5l/data-detective/blob/main/.github/workflows/tests.yml)
+[![Docker](https://img.shields.io/badge/docker-ghcr.io-2496ED?logo=docker&logoColor=white)](https://github.com/murs5l/data-detective/pkgs/container/data-detective)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
 **Automated data quality profiling in seconds.** Point Data Detective at a CSV and get back an intelligent report: shape, data types, missing values, duplicates, outliers, correlations, distribution skew, ID-like columns, and actionable insights. Choose your interface: fast CLI for scripts and CI, browser-based web app for exploration, or REST API for integration.
 
