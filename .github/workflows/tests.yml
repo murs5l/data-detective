@@ -100,11 +100,10 @@ jobs:
           python-version: "3.12"
           cache: "pip"
 
-      - name: Install package, dev/API dependencies, and coverage tools
+      - name: Install package and dev/API dependencies
         run: |
           pip install -e ".[dev,api]"
           pip install -r backend/requirements-dev.txt
-          pip install coverage-badge
 
       - name: Run full test suite with coverage
         run: |
@@ -113,7 +112,7 @@ jobs:
             --cov-report=term-missing --cov-fail-under=85
 
       - name: Generate coverage badge
-        run: coverage-badge -o docs/coverage.svg -f
+        run: python scripts/gen_coverage_badge.py docs/coverage.svg
 
       - name: Commit updated badge
         if: github.event_name == 'push'
