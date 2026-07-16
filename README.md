@@ -253,6 +253,41 @@ Data Detective automatically flags 20+ data quality issues:
 **Output**
 - Plain-English actionable insights highlighting the most important issues
 
+## Architecture
+
+The CLI, web app, and REST API are three interfaces over one profiling
+engine, not three separate implementations. `DataProfiler` in
+`src/data_detective/profiler.py` holds every detector (missing values,
+outliers, correlations, the health score, etc.) and is the only place that
+logic lives. The CLI calls it directly; the FastAPI backend wraps the exact
+same class and exposes it over HTTP for both the web app and the REST API.
+Add a detector once, and it's instantly available everywhere the tool is
+used, no duplicated logic to keep in sync across surfaces.
+
+```
+data-detective/
+├── src/data_detective/      # Core engine + CLI - the shared source of truth
+│   ├── profiler.py          # DataProfiler: every detector, the health score
+│   ├── cli.py               # `data-detective` command-line entry point
+│   ├── loader.py            # CSV loading, with encoding fallback for messy files
+│   ├── html_report.py       # Static HTML report renderer
+│   └── report.py            # Plain-text report printer (CLI default output)
+├── backend/app/             # FastAPI wrapper around the same DataProfiler
+│   ├── main.py              # /api/analyze, /api/analyze/html endpoints
+│   └── quick_scan.py        # Optional Go fastscan integration
+├── frontend/                # Dependency-free HTML/CSS/vanilla JS web app
+├── tools/fastscan/          # Optional Go speed layer (instant CSV pre-scan)
+├── tests/, backend/tests/   # Core engine tests, API tests
+├── docs/                    # README images/GIF, generated coverage badge
+├── scripts/                 # Small maintenance scripts (e.g. coverage badge)
+└── .github/workflows/       # CI (tests, lint, typecheck, coverage) + release automation
+```
+
+The Go speed layer is a pure optimization, not a dependency: `quick_scan.py`
+checks whether the `fastscan` binary is present and returns `None` cleanly
+if it isn't, so the app works identically (just without the instant
+pre-scan stat) on a plain `pip install` with no Go toolchain.
+
 ## Development
 
 ```bash
