@@ -6,6 +6,9 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+### Added
+- Markdown report export (`--markdown` / `--output-markdown` CLI flags, `POST /api/analyze/markdown`, and a "Download Markdown" button in the web app): health score and insights lead, technical detail collapses into a `<details>` block for pasting into a PR comment or CI summary.
+
 ## [0.4.0] - 2026-07-17
 
 ### Added
