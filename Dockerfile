@@ -5,7 +5,7 @@ COPY tools/fastscan/ .
 RUN go build -o /out/fastscan .
 
 # --- Stage 2: Python runtime serving the API + frontend ---
-FROM python:3.12-slim
+FROM python:3.14-slim
 WORKDIR /app
 
 COPY pyproject.toml README.md ./
