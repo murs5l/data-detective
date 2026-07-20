@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Detective Report</title>
+<style>
+    :root {
+        --bg: #f5f5f7;
+        --card-bg: #ffffff;
+        --text: #1d1d1f;
+        --muted: #6e6e73;
+        --accent: #0071e3;
+        --border: #e5e5e7;
+        --danger: #d70015;
+        --warning: #c9720b;
+        --success: #1a8a3f;
+        --success-bg: #e8f7ec;
+        --warning-bg: #fff6ea;
+        --danger-bg: #fdecec;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        margin: 0;
+        padding: 48px 24px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+        max-width: 920px;
+        margin: 0 auto;
+    }
+
+    header {
+        margin-bottom: 32px;
+    }
+
+    header h1 {
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 0 0 4px 0;
+    }
+
+    header p {
+        color: var(--muted);
+        margin: 0;
+        font-size: 15px;
+    }
+
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+
+    .stat-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .stat-card .value {
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .stat-card .label {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 4px;
+    }
+
+    .box {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 20px;
+        /* Grid items default to min-width: auto, which lets wide content
+           (e.g. the correlation heatmap table) force the whole grid, and
+           the page, to overflow horizontally instead of scrolling here. */
+        min-width: 0;
+    }
+
+    .box h2 {
+        font-size: 17px;
+        font-weight: 600;
+        margin: 0 0 14px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+    td {
+        padding: 9px 4px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    td:first-child {
+        color: var(--muted);
+        width: 60%;
+    }
+
+    td:last-child {
+        font-weight: 500;
+        text-align: right;
+    }
+
+    .nested-summary td:last-child,
+    .nested td:last-child {
+        text-align: left;
+    }
+
+    .nested {
+        width: 100%;
+    }
+
+    .nested td {
+        padding: 4px 0;
+        border-bottom: none;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    ul {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 14px;
+    }
+
+    ul li {
+        margin-bottom: 6px;
+    }
+
+    .health-score-card {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+    }
+
+    .health-score-badge {
+        flex-shrink: 0;
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: var(--success-bg);
+        border: 3px solid var(--success);
+    }
+
+    .health-score-number {
+        font-size: 30px;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--success);
+    }
+
+    .health-score-denom {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    .health-score-badge.grade-fair {
+        background: var(--warning-bg);
+        border-color: var(--warning);
+    }
+    .health-score-badge.grade-fair .health-score-number {
+        color: var(--warning);
+    }
+
+    .health-score-badge.grade-poor {
+        background: var(--danger-bg);
+        border-color: var(--danger);
+    }
+    .health-score-badge.grade-poor .health-score-number {
+        color: var(--danger);
+    }
+
+    .health-score-main {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .health-score-heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .health-score-heading h2 {
+        margin: 0;
+    }
+
+    .health-score-grade {
+        font-size: 13px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: var(--success-bg);
+        color: var(--success);
+    }
+
+    .health-score-grade.grade-fair {
+        background: var(--warning-bg);
+        color: var(--warning);
+    }
+
+    .health-score-grade.grade-poor {
+        background: var(--danger-bg);
+        color: var(--danger);
+    }
+
+    .health-score-breakdown {
+        margin-top: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .health-score-breakdown-item {
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        color: var(--muted);
+    }
+
+    .health-score-breakdown-item strong {
+        color: var(--text);
+    }
+
+    .insights-list {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .insights-list li {
+        background: #f9f9fb;
+        border-radius: 10px;
+        padding: 10px 14px;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .empty {
+        color: var(--muted);
+        font-size: 14px;
+        font-style: italic;
+        margin: 0;
+    }
+
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    @media (max-width: 640px) {
+        .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .heatmap-wrap {
+        overflow-x: auto;
+    }
+
+    .heatmap-table {
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+    .heatmap-table th,
+    .heatmap-table td {
+        padding: 6px 8px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .heatmap-table th {
+        color: var(--muted);
+        font-weight: 500;
+    }
+
+    .heatmap-cell {
+        border-radius: 6px;
+        font-weight: 600;
+        color: #fff;
+        min-width: 46px;
+        padding: 4px 0;
+    }
+
+    .explorer-note {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0 0 16px 0;
+    }
+
+    .explorer-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .explorer-controls label {
+        font-size: 13px;
+        color: var(--muted);
+    }
+
+    .explorer-controls select {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-size: 13px;
+        background: var(--card-bg);
+        color: var(--text);
+    }
+
+    .explorer-block h4 {
+        margin: 0 0 10px 0;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+    }
+
+    .explorer-hist-bars {
+        display: flex;
+        align-items: flex-end;
+        gap: 4px;
+        height: 110px;
+    }
+
+    .explorer-hist-bar-wrap {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        height: 100%;
+        min-width: 0;
+    }
+
+    .explorer-hist-count {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 2px;
+    }
+
+    .hist-bar {
+        width: 100%;
+        background: var(--accent);
+        border-radius: 2px 2px 0 0;
+        min-height: 2px;
+    }
+
+    .explorer-hist-edge {
+        font-size: 10px;
+        color: var(--muted);
+        margin-top: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    .explorer-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+    }
+
+    .stat-chip {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 8px 12px;
+        text-align: center;
+        min-width: 76px;
+    }
+
+    .stat-chip-value {
+        display: block;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .stat-chip-label {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    .box-plot-svg {
+        width: 100%;
+        height: 46px;
+        display: block;
+    }
+
+    .box-whisker {
+        stroke: var(--muted);
+        stroke-width: 1.5;
+    }
+
+    .box-rect {
+        fill: #f0f6ff;
+        stroke: var(--accent);
+        stroke-width: 1.5;
+    }
+
+    .box-median {
+        stroke: var(--accent);
+        stroke-width: 2;
+    }
+
+    .box-outlier {
+        fill: var(--danger);
+        opacity: 0.7;
+    }
+
+    .details-card summary {
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 17px;
+        list-style: none;
+    }
+
+    .details-card summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .details-card[open] summary {
+        margin-bottom: 16px;
+    }
+
+    .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+    }
+
+    .tech-box h3 {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+        margin: 0 0 8px 0;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+
+    <header>
+        <h1>🕵️ Data Detective Report</h1>
+        <p>Automated data profiling summary</p>
+    </header>
+
+    
+    <div class="box health-score-card">
+        <div class="health-score-badge grade-fair">
+            <div class="health-score-number">64</div>
+            <div class="health-score-denom">/ 100</div>
+        </div>
+        <div class="health-score-main">
+            <div class="health-score-heading">
+                <h2>🏥 Data Health Score</h2>
+                <span class="health-score-grade grade-fair">Fair</span>
+            </div>
+            <div class="health-score-breakdown"><span class="health-score-breakdown-item">Missing values: <strong>-15.8</strong></span><span class="health-score-breakdown-item">Outliers: <strong>-15</strong></span><span class="health-score-breakdown-item">Skewed distributions: <strong>-5</strong></span></div>
+        </div>
+    </div>
+
+    <div class="box">
+        <h2>🧠 Insights</h2>
+        <ul class="insights-list"><li class="insight">🚨 Column &#x27;notes&#x27; has high missingness (86.5%).</li><li class="insight">🆔 Column &#x27;id&#x27; looks like an ID (very high uniqueness).</li><li class="insight">🆔 Column &#x27;signup_date&#x27; looks like an ID (very high uniqueness).</li><li class="insight">🆔 Column &#x27;email&#x27; looks like an ID (very high uniqueness).</li><li class="insight">📊 Column &#x27;income&#x27; has 3 potential outlier(s) (MAD method).</li><li class="insight">📊 Column &#x27;score&#x27; has 55 potential outlier(s) (MAD method).</li><li class="insight">📅 Column &#x27;signup_date&#x27; looks like it contains dates (consider parsing as datetime).</li><li class="insight">📐 Column &#x27;income&#x27; is heavily skewed (skew=15.922).</li><li class="insight">📐 Column &#x27;score&#x27; is heavily skewed (skew=2.367).</li></ul>
+    </div>
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="value">1000</div>
+            <div class="label">Rows</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">10</div>
+            <div class="label">Columns</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">2</div>
+            <div class="label">Duplicate rows</div>
+        </div>
+    </div>
+
+    <div class="box">
+        <h2>🔗 Correlation Heatmap</h2>
+        <div class="heatmap-wrap"><table class="heatmap-table"><thead><tr><th></th><th>id</th><th>age</th><th>income</th><th>score</th></tr></thead><tbody><tr><th>id</th><td><div class="heatmap-cell" style="background:rgb(55, 95, 255)">1.00</div></td><td><div class="heatmap-cell" style="background:rgb(255, 194, 234)">-0.01</div></td><td><div class="heatmap-cell" style="background:rgb(191, 231, 255)">0.03</div></td><td><div class="heatmap-cell" style="background:rgb(255, 193, 233)">-0.02</div></td></tr><tr><th>age</th><td><div class="heatmap-cell" style="background:rgb(255, 194, 234)">-0.01</div></td><td><div class="heatmap-cell" style="background:rgb(55, 95, 255)">1.00</div></td><td><div class="heatmap-cell" style="background:rgb(194, 234, 255)">0.01</div></td><td><div class="heatmap-cell" style="background:rgb(255, 194, 234)">-0.01</div></td></tr><tr><th>income</th><td><div class="heatmap-cell" style="background:rgb(191, 231, 255)">0.03</div></td><td><div class="heatmap-cell" style="background:rgb(194, 234, 255)">0.01</div></td><td><div class="heatmap-cell" style="background:rgb(55, 95, 255)">1.00</div></td><td><div class="heatmap-cell" style="background:rgb(192, 232, 255)">0.02</div></td></tr><tr><th>score</th><td><div class="heatmap-cell" style="background:rgb(255, 193, 233)">-0.02</div></td><td><div class="heatmap-cell" style="background:rgb(255, 194, 234)">-0.01</div></td><td><div class="heatmap-cell" style="background:rgb(192, 232, 255)">0.02</div></td><td><div class="heatmap-cell" style="background:rgb(55, 95, 255)">1.00</div></td></tr></tbody></table></div>
+    </div>
+
+    <div class="box">
+        <h2>🔍 Column Explorer</h2>
+        <p class="explorer-note">ID-like and constant columns are left out here since a chart of them isn't meaningful. See the full technical report below for those.</p><div class="explorer-controls"><label for="column-select">Column</label><select id="column-select" onchange="ddShowColumn(this.value)"><option value="age">age</option><option value="income">income</option><option value="score">score</option></select></div><div id="explorer-blocks"><div class="explorer-panel" data-column="age"><div class="grid-2"><div class="explorer-block"><h4>Histogram</h4><div class="explorer-hist-bars"><div class="explorer-hist-bar-wrap" title="18.0 to 25.1: 108 rows"><div class="explorer-hist-count">108</div><div class="hist-bar" style="height:93.9%"></div><div class="explorer-hist-edge">18.0</div></div><div class="explorer-hist-bar-wrap" title="25.1 to 32.2: 112 rows"><div class="explorer-hist-count">112</div><div class="hist-bar" style="height:97.4%"></div><div class="explorer-hist-edge">25.1</div></div><div class="explorer-hist-bar-wrap" title="32.2 to 39.3: 86 rows"><div class="explorer-hist-count">86</div><div class="hist-bar" style="height:74.8%"></div><div class="explorer-hist-edge">32.2</div></div><div class="explorer-hist-bar-wrap" title="39.3 to 46.4: 72 rows"><div class="explorer-hist-count">72</div><div class="hist-bar" style="height:62.6%"></div><div class="explorer-hist-edge">39.3</div></div><div class="explorer-hist-bar-wrap" title="46.4 to 53.5: 111 rows"><div class="explorer-hist-count">111</div><div class="hist-bar" style="height:96.5%"></div><div class="explorer-hist-edge">46.4</div></div><div class="explorer-hist-bar-wrap" title="53.5 to 60.6: 102 rows"><div class="explorer-hist-count">102</div><div class="hist-bar" style="height:88.7%"></div><div class="explorer-hist-edge">53.5</div></div><div class="explorer-hist-bar-wrap" title="60.6 to 67.7: 96 rows"><div class="explorer-hist-count">96</div><div class="hist-bar" style="height:83.5%"></div><div class="explorer-hist-edge">60.6</div></div><div class="explorer-hist-bar-wrap" title="67.7 to 74.8: 106 rows"><div class="explorer-hist-count">106</div><div class="hist-bar" style="height:92.2%"></div><div class="explorer-hist-edge">67.7</div></div><div class="explorer-hist-bar-wrap" title="74.8 to 81.9: 92 rows"><div class="explorer-hist-count">92</div><div class="hist-bar" style="height:80.0%"></div><div class="explorer-hist-edge">74.8</div></div><div class="explorer-hist-bar-wrap" title="81.9 to 89.0: 115 rows"><div class="explorer-hist-count">115</div><div class="hist-bar" style="height:100.0%"></div><div class="explorer-hist-edge">81.9</div></div></div></div><div class="explorer-block"><h4>Boxplot</h4><svg class="box-plot-svg" viewBox="0 0 300 46" preserveAspectRatio="none"><line class="box-whisker" x1="14.0" y1="23.0" x2="286.0" y2="23.0" /><line class="box-whisker" x1="14.0" y1="17.0" x2="14.0" y2="29.0" /><line class="box-whisker" x1="286.0" y1="17.0" x2="286.0" y2="29.0" /><rect class="box-rect" x="79.12676056338027" y="10.0" width="141.74647887323943" height="26" rx="3" /><line class="box-median" x1="151.91549295774647" y1="10.0" x2="151.91549295774647" y2="36.0" /></svg></div></div><div class="explorer-stats"><div class="stat-chip"><span class="stat-chip-value">18.0</span><span class="stat-chip-label">Min</span></div><div class="stat-chip"><span class="stat-chip-value">35.0</span><span class="stat-chip-label">Q1</span></div><div class="stat-chip"><span class="stat-chip-value">54.0</span><span class="stat-chip-label">Median</span></div><div class="stat-chip"><span class="stat-chip-value">72.0</span><span class="stat-chip-label">Q3</span></div><div class="stat-chip"><span class="stat-chip-value">89.0</span><span class="stat-chip-label">Max</span></div><div class="stat-chip"><span class="stat-chip-value">0</span><span class="stat-chip-label">Outliers beyond whiskers</span></div><div class="stat-chip"><span class="stat-chip-value">0</span><span class="stat-chip-label">Outliers (MAD)</span></div><div class="stat-chip"><span class="stat-chip-value">0</span><span class="stat-chip-label">Outliers (IQR)</span></div><div class="stat-chip"><span class="stat-chip-value">-0.033</span><span class="stat-chip-label">Skewness</span></div><div class="stat-chip"><span class="stat-chip-value">-1.21</span><span class="stat-chip-label">Kurtosis</span></div><div class="stat-chip"><span class="stat-chip-value">0.0%</span><span class="stat-chip-label">Missing</span></div></div></div><div class="explorer-panel" hidden data-column="income"><div class="grid-2"><div class="explorer-block"><h4>Histogram</h4><div class="explorer-hist-bars"><div class="explorer-hist-bar-wrap" title="-17968.26 to 88088.135: 916 rows"><div class="explorer-hist-count">916</div><div class="hist-bar" style="height:100.0%"></div><div class="explorer-hist-edge">-17968.26</div></div><div class="explorer-hist-bar-wrap" title="88088.135 to 194144.53: 44 rows"><div class="explorer-hist-count">44</div><div class="hist-bar" style="height:4.8%"></div><div class="explorer-hist-edge">88088.135</div></div><div class="explorer-hist-bar-wrap" title="194144.53 to 300200.925: 0 rows"><div class="explorer-hist-count">0</div><div class="hist-bar" style="height:2.0%"></div><div class="explorer-hist-edge">194144.53</div></div><div class="explorer-hist-bar-wrap" title="300200.925 to 406257.32: 0 rows"><div class="explorer-hist-count">0</div><div class="hist-bar" style="height:2.0%"></div><div class="explorer-hist-edge">300200.925</div></div><div class="explorer-hist-bar-wrap" title="406257.32 to 512313.715: 0 rows"><div class="explorer-hist-count">0</div><div class="hist-bar" style="height:2.0%"></div><div class="explorer-hist-edge">406257.32</div></div><div class="explorer-hist-bar-wrap" title="512313.715 to 618370.11: 0 rows"><div class="explorer-hist-count">0</div><div class="hist-bar" style="height:2.0%"></div><div class="explorer-hist-edge">512313.715</div></div><div class="explorer-hist-bar-wrap" title="618370.11 to 724426.504: 1 rows"><div class="explorer-hist-count">1</div><div class="hist-bar" style="height:2.0%"></div><div class="explorer-hist-edge">618370.11</div></div><div class="explorer-hist-bar-wrap" title="724426.504 to 830482.899: 0 rows"><div class="explorer-hist-count">0</div><div class="hist-bar" style="height:2.0%"></div><div class="explorer-hist-edge">724426.504</div></div><div class="explorer-hist-bar-wrap" title="830482.899 to 936539.294: 0 rows"><div class="explorer-hist-count">0</div><div class="hist-bar" style="height:2.0%"></div><div class="explorer-hist-edge">830482.899</div></div><div class="explorer-hist-bar-wrap" title="936539.294 to 1042595.689: 1 rows"><div class="explorer-hist-count">1</div><div class="hist-bar" style="height:2.0%"></div><div class="explorer-hist-edge">936539.294</div></div></div></div><div class="explorer-block"><h4>Boxplot</h4><svg class="box-plot-svg" viewBox="0 0 300 46" preserveAspectRatio="none"><line class="box-whisker" x1="19.11244275756539" y1="23.0" x2="45.790361224130194" y2="23.0" /><line class="box-whisker" x1="19.11244275756539" y1="17.0" x2="19.11244275756539" y2="29.0" /><line class="box-whisker" x1="45.790361224130194" y1="17.0" x2="45.790361224130194" y2="29.0" /><rect class="box-rect" x="29.163324937796844" y="10.0" width="6.750024334459063" height="26" rx="3" /><line class="box-median" x1="32.67953737130094" y1="10.0" x2="32.67953737130094" y2="36.0" /><circle class="box-outlier" cx="17.507878014812665" cy="23.0" r="3" /><circle class="box-outlier" cx="19.004080183004596" cy="23.0" r="3" /><circle class="box-outlier" cx="286.0" cy="23.0" r="3" /><circle class="box-outlier" cx="17.681939824262308" cy="23.0" r="3" /><circle class="box-outlier" cx="14.0" cy="23.0" r="3" /><circle class="box-outlier" cx="47.12339118553237" cy="23.0" r="3" /><circle class="box-outlier" cx="18.46467810306458" cy="23.0" r="3" /><circle class="box-outlier" cx="193.93797933254095" cy="23.0" r="3" /><circle class="box-outlier" cx="46.61832751586392" cy="23.0" r="3" /><circle class="box-outlier" cx="18.007855937407506" cy="23.0" r="3" /><circle class="box-outlier" cx="17.553580492297122" cy="23.0" r="3" /></svg></div></div><div class="explorer-stats"><div class="stat-chip"><span class="stat-chip-value">-17968.26</span><span class="stat-chip-label">Min</span></div><div class="stat-chip"><span class="stat-chip-value">41155.548</span><span class="stat-chip-label">Q1</span></div><div class="stat-chip"><span class="stat-chip-value">54865.725</span><span class="stat-chip-label">Median</span></div><div class="stat-chip"><span class="stat-chip-value">67474.785</span><span class="stat-chip-label">Q3</span></div><div class="stat-chip"><span class="stat-chip-value">1042595.689</span><span class="stat-chip-label">Max</span></div><div class="stat-chip"><span class="stat-chip-value">11</span><span class="stat-chip-label">Outliers beyond whiskers</span></div><div class="stat-chip"><span class="stat-chip-value">3</span><span class="stat-chip-label">Outliers (MAD)</span></div><div class="stat-chip"><span class="stat-chip-value">11</span><span class="stat-chip-label">Outliers (IQR)</span></div><div class="stat-chip"><span class="stat-chip-value">15.922</span><span class="stat-chip-label">Skewness</span></div><div class="stat-chip"><span class="stat-chip-value">338.445</span><span class="stat-chip-label">Kurtosis</span></div><div class="stat-chip"><span class="stat-chip-value">3.8%</span><span class="stat-chip-label">Missing</span></div></div></div><div class="explorer-panel" hidden data-column="score"><div class="grid-2"><div class="explorer-block"><h4>Histogram</h4><div class="explorer-hist-bars"><div class="explorer-hist-bar-wrap" title="0.07 to 47.654: 614 rows"><div class="explorer-hist-count">614</div><div class="hist-bar" style="height:100.0%"></div><div class="explorer-hist-edge">0.07</div></div><div class="explorer-hist-bar-wrap" title="47.654 to 95.238: 238 rows"><div class="explorer-hist-count">238</div><div class="hist-bar" style="height:38.8%"></div><div class="explorer-hist-edge">47.654</div></div><div class="explorer-hist-bar-wrap" title="95.238 to 142.822: 80 rows"><div class="explorer-hist-count">80</div><div class="hist-bar" style="height:13.0%"></div><div class="explorer-hist-edge">95.238</div></div><div class="explorer-hist-bar-wrap" title="142.822 to 190.406: 40 rows"><div class="explorer-hist-count">40</div><div class="hist-bar" style="height:6.5%"></div><div class="explorer-hist-edge">142.822</div></div><div class="explorer-hist-bar-wrap" title="190.406 to 237.99: 15 rows"><div class="explorer-hist-count">15</div><div class="hist-bar" style="height:2.4%"></div><div class="explorer-hist-edge">190.406</div></div><div class="explorer-hist-bar-wrap" title="237.99 to 285.574: 7 rows"><div class="explorer-hist-count">7</div><div class="hist-bar" style="height:2.0%"></div><div class="explorer-hist-edge">237.99</div></div><div class="explorer-hist-bar-wrap" title="285.574 to 333.158: 4 rows"><div class="explorer-hist-count">4</div><div class="hist-bar" style="height:2.0%"></div><div class="explorer-hist-edge">285.574</div></div><div class="explorer-hist-bar-wrap" title="333.158 to 380.742: 1 rows"><div class="explorer-hist-count">1</div><div class="hist-bar" style="height:2.0%"></div><div class="explorer-hist-edge">333.158</div></div><div class="explorer-hist-bar-wrap" title="380.742 to 428.326: 0 rows"><div class="explorer-hist-count">0</div><div class="hist-bar" style="height:2.0%"></div><div class="explorer-hist-edge">380.742</div></div><div class="explorer-hist-bar-wrap" title="428.326 to 475.91: 1 rows"><div class="explorer-hist-count">1</div><div class="hist-bar" style="height:2.0%"></div><div class="explorer-hist-edge">428.326</div></div></div></div><div class="explorer-block"><h4>Boxplot</h4><svg class="box-plot-svg" viewBox="0 0 300 46" preserveAspectRatio="none"><line class="box-whisker" x1="14.0" y1="23.0" x2="97.74815063887021" y2="23.0" /><line class="box-whisker" x1="14.0" y1="17.0" x2="14.0" y2="29.0" /><line class="box-whisker" x1="97.74815063887021" y1="17.0" x2="97.74815063887021" y2="29.0" /><rect class="box-rect" x="22.208473436449225" y="10.0" width="30.291324815063888" height="26" rx="3" /><line class="box-median" x1="33.72091459314055" y1="10.0" x2="33.72091459314055" y2="36.0" /><circle class="box-outlier" cx="100.07464694014794" cy="23.0" r="3" /><circle class="box-outlier" cx="104.80195023537323" cy="23.0" r="3" /><circle class="box-outlier" cx="109.81506388702084" cy="23.0" r="3" /><circle class="box-outlier" cx="102.31540013449899" cy="23.0" r="3" /><circle class="box-outlier" cx="125.01445864156018" cy="23.0" r="3" /><circle class="box-outlier" cx="146.82178883658372" cy="23.0" r="3" /><circle class="box-outlier" cx="119.05245460659044" cy="23.0" r="3" /><circle class="box-outlier" cx="109.11197041022193" cy="23.0" r="3" /><circle class="box-outlier" cx="101.72663080026899" cy="23.0" r="3" /><circle class="box-outlier" cx="156.29926025554806" cy="23.0" r="3" /><circle class="box-outlier" cx="114.19939475453936" cy="23.0" r="3" /><circle class="box-outlier" cx="146.25016812373906" cy="23.0" r="3" /><circle class="box-outlier" cx="191.83120376597174" cy="23.0" r="3" /><circle class="box-outlier" cx="231.59314055144588" cy="23.0" r="3" /><circle class="box-outlier" cx="146.40450571620713" cy="23.0" r="3" /><circle class="box-outlier" cx="107.89441829186282" cy="23.0" r="3" /><circle class="box-outlier" cx="129.364492266308" cy="23.0" r="3" /><circle class="box-outlier" cx="141.19704102219234" cy="23.0" r="3" /><circle class="box-outlier" cx="107.41997310020176" cy="23.0" r="3" /><circle class="box-outlier" cx="129.07868190988566" cy="23.0" r="3" /><circle class="box-outlier" cx="122.39643577673166" cy="23.0" r="3" /><circle class="box-outlier" cx="100.69771351714861" cy="23.0" r="3" /><circle class="box-outlier" cx="113.88500336247478" cy="23.0" r="3" /><circle class="box-outlier" cx="100.50336247478144" cy="23.0" r="3" /><circle class="box-outlier" cx="184.6173503698722" cy="23.0" r="3" /><circle class="box-outlier" cx="127.8782784129119" cy="23.0" r="3" /><circle class="box-outlier" cx="103.9273705447209" cy="23.0" r="3" /><circle class="box-outlier" cx="202.7091459314055" cy="23.0" r="3" /><circle class="box-outlier" cx="111.70141223940821" cy="23.0" r="3" /><circle class="box-outlier" cx="192.2656355077337" cy="23.0" r="3" /><circle class="box-outlier" cx="151.47478143913918" cy="23.0" r="3" /><circle class="box-outlier" cx="121.42468056489575" cy="23.0" r="3" /><circle class="box-outlier" cx="149.19973100201747" cy="23.0" r="3" /><circle class="box-outlier" cx="110.36953597848016" cy="23.0" r="3" /><circle class="box-outlier" cx="132.46267652992603" cy="23.0" r="3" /><circle class="box-outlier" cx="109.00907868190988" cy="23.0" r="3" /><circle class="box-outlier" cx="113.98789509078682" cy="23.0" r="3" /><circle class="box-outlier" cx="113.97646267652993" cy="23.0" r="3" /><circle class="box-outlier" cx="286.0" cy="23.0" r="3" /><circle class="box-outlier" cx="160.80363147276395" cy="23.0" r="3" /><circle class="box-outlier" cx="99.41156691324815" cy="23.0" r="3" /><circle class="box-outlier" cx="98.21116341627437" cy="23.0" r="3" /><circle class="box-outlier" cx="132.52555480833894" cy="23.0" r="3" /><circle class="box-outlier" cx="114.01647612642904" cy="23.0" r="3" /><circle class="box-outlier" cx="152.2121721587088" cy="23.0" r="3" /><circle class="box-outlier" cx="105.54505716207127" cy="23.0" r="3" /><circle class="box-outlier" cx="105.56792199058506" cy="23.0" r="3" /><circle class="box-outlier" cx="124.33422999327504" cy="23.0" r="3" /><circle class="box-outlier" cx="100.98924008069939" cy="23.0" r="3" /><circle class="box-outlier" cx="155.20174848688634" cy="23.0" r="3" /></svg></div></div><div class="explorer-stats"><div class="stat-chip"><span class="stat-chip-value">0.07</span><span class="stat-chip-label">Min</span></div><div class="stat-chip"><span class="stat-chip-value">14.43</span><span class="stat-chip-label">Q1</span></div><div class="stat-chip"><span class="stat-chip-value">34.57</span><span class="stat-chip-label">Median</span></div><div class="stat-chip"><span class="stat-chip-value">67.422</span><span class="stat-chip-label">Q3</span></div><div class="stat-chip"><span class="stat-chip-value">475.91</span><span class="stat-chip-label">Max</span></div><div class="stat-chip"><span class="stat-chip-value">50</span><span class="stat-chip-label">Outliers beyond whiskers</span></div><div class="stat-chip"><span class="stat-chip-value">55</span><span class="stat-chip-label">Outliers (MAD)</span></div><div class="stat-chip"><span class="stat-chip-value">64</span><span class="stat-chip-label">Outliers (IQR)</span></div><div class="stat-chip"><span class="stat-chip-value">2.367</span><span class="stat-chip-label">Skewness</span></div><div class="stat-chip"><span class="stat-chip-value">8.627</span><span class="stat-chip-label">Kurtosis</span></div><div class="stat-chip"><span class="stat-chip-value">0.0%</span><span class="stat-chip-label">Missing</span></div></div></div></div><script>
+function ddShowColumn(col) {
+    document.querySelectorAll('.explorer-panel').forEach(function (el) {
+        el.hidden = el.getAttribute('data-column') !== col;
+    });
+}
+</script>
+    </div>
+
+    <details class="box details-card">
+        <summary>🔬 Full technical report</summary>
+
+        <div class="tech-grid">
+            <div class="tech-box">
+                <h3>Column types</h3>
+                <table><tbody><tr><td>id</td><td>int16</td></tr><tr><td>age</td><td>float32</td></tr><tr><td>income</td><td>float64</td></tr><tr><td>score</td><td>float32</td></tr><tr><td>signup_date</td><td>object</td></tr><tr><td>category</td><td>object</td></tr><tr><td>region</td><td>object</td></tr><tr><td>notes</td><td>object</td></tr><tr><td>email</td><td>object</td></tr><tr><td>active</td><td>bool</td></tr></tbody></table>
+            </div>
+
+            <div class="tech-box">
+                <h3>Missing values (%)</h3>
+                <table><tbody><tr><td>id</td><td>0.0</td></tr><tr><td>age</td><td>0.0</td></tr><tr><td>income</td><td>3.8</td></tr><tr><td>score</td><td>0.0</td></tr><tr><td>signup_date</td><td>0.0</td></tr><tr><td>category</td><td>0.0</td></tr><tr><td>region</td><td>0.0</td></tr><tr><td>notes</td><td>86.5</td></tr><tr><td>email</td><td>0.0</td></tr><tr><td>active</td><td>0.0</td></tr></tbody></table>
+            </div>
+
+            <div class="tech-box">
+                <h3>Outliers (IQR)</h3>
+                <table><tbody><tr><td>id</td><td>0</td></tr><tr><td>age</td><td>0</td></tr><tr><td>income</td><td>11</td></tr><tr><td>score</td><td>64</td></tr></tbody></table>
+            </div>
+
+            <div class="tech-box">
+                <h3>Outliers (MAD)</h3>
+                <table><tbody><tr><td>id</td><td>0</td></tr><tr><td>age</td><td>0</td></tr><tr><td>income</td><td>3</td></tr><tr><td>score</td><td>55</td></tr></tbody></table>
+            </div>
+
+            <div class="tech-box">
+                <h3>Distribution shape</h3>
+                <table class="nested-summary"><tbody><tr><td>id</td><td><table class="nested"><tbody><tr><td>skewness</td><td>0.003</td></tr><tr><td>kurtosis</td><td>-1.206</td></tr></tbody></table></td></tr><tr><td>age</td><td><table class="nested"><tbody><tr><td>skewness</td><td>-0.033</td></tr><tr><td>kurtosis</td><td>-1.21</td></tr></tbody></table></td></tr><tr><td>income</td><td><table class="nested"><tbody><tr><td>skewness</td><td>15.922</td></tr><tr><td>kurtosis</td><td>338.445</td></tr></tbody></table></td></tr><tr><td>score</td><td><table class="nested"><tbody><tr><td>skewness</td><td>2.367</td></tr><tr><td>kurtosis</td><td>8.627</td></tr></tbody></table></td></tr></tbody></table>
+            </div>
+
+            <div class="tech-box">
+                <h3>High-cardinality columns</h3>
+                <ul><li>id</li><li>signup_date</li><li>email</li></ul>
+            </div>
+
+            <div class="tech-box">
+                <h3>Constant columns</h3>
+                <p class="empty">None found.</p>
+            </div>
+
+            <div class="tech-box">
+                <h3>Near-constant columns</h3>
+                <p class="empty">None found.</p>
+            </div>
+
+            <div class="tech-box">
+                <h3>Possible target column</h3>
+                <p class="empty">None found.</p>
+            </div>
+
+            <div class="tech-box">
+                <h3>Duplicate columns</h3>
+                <p class="empty">None found.</p>
+            </div>
+
+            <div class="tech-box">
+                <h3>Correlated pairs</h3>
+                <p class="empty">None found.</p>
+            </div>
+
+            <div class="tech-box">
+                <h3>Mixed-type columns</h3>
+                <p class="empty">None found.</p>
+            </div>
+
+            <div class="tech-box">
+                <h3>Negative values (unexpected)</h3>
+                <p class="empty">None found.</p>
+            </div>
+
+            <div class="tech-box">
+                <h3>Memory usage (KB)</h3>
+                <table><tbody><tr><td>id</td><td>1.95</td></tr><tr><td>age</td><td>3.91</td></tr><tr><td>income</td><td>7.81</td></tr><tr><td>score</td><td>3.91</td></tr><tr><td>signup_date</td><td>74.22</td></tr><tr><td>category</td><td>56.64</td></tr><tr><td>region</td><td>60.36</td></tr><tr><td>notes</td><td>35.51</td></tr><tr><td>email</td><td>74.11</td></tr><tr><td>active</td><td>0.98</td></tr></tbody></table>
+            </div>
+
+            <div class="tech-box">
+                <h3>Text column stats</h3>
+                <table class="nested-summary"><tbody><tr><td>signup_date</td><td><table class="nested"><tbody><tr><td>avg_length</td><td>19.0</td></tr><tr><td>min_length</td><td>19</td></tr><tr><td>max_length</td><td>19</td></tr><tr><td>blank_or_whitespace_only</td><td>0</td></tr></tbody></table></td></tr><tr><td>category</td><td><table class="nested"><tbody><tr><td>avg_length</td><td>1.0</td></tr><tr><td>min_length</td><td>1</td></tr><tr><td>max_length</td><td>1</td></tr><tr><td>blank_or_whitespace_only</td><td>0</td></tr></tbody></table></td></tr><tr><td>region</td><td><table class="nested"><tbody><tr><td>avg_length</td><td>4.8</td></tr><tr><td>min_length</td><td>4</td></tr><tr><td>max_length</td><td>5</td></tr><tr><td>blank_or_whitespace_only</td><td>0</td></tr></tbody></table></td></tr><tr><td>notes</td><td><table class="nested"><tbody><tr><td>avg_length</td><td>7.3</td></tr><tr><td>min_length</td><td>7</td></tr><tr><td>max_length</td><td>8</td></tr><tr><td>blank_or_whitespace_only</td><td>0</td></tr></tbody></table></td></tr><tr><td>email</td><td><table class="nested"><tbody><tr><td>avg_length</td><td>18.9</td></tr><tr><td>min_length</td><td>17</td></tr><tr><td>max_length</td><td>19</td></tr><tr><td>blank_or_whitespace_only</td><td>0</td></tr></tbody></table></td></tr></tbody></table>
+            </div>
+
+            <div class="tech-box">
+                <h3>Date-like columns</h3>
+                <ul><li>signup_date</li></ul>
+            </div>
+        </div>
+    </details>
+
+</div>
+</body>
+</html>
