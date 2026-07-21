@@ -219,6 +219,31 @@ select {
   }
 }
 
+.progress-bar {
+  width: 240px;
+  max-width: 100%;
+  height: 8px;
+  margin: 16px auto 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.2s ease-out;
+}
+
+.progress-percent {
+  font-size: 13px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
 .card-header {
   display: flex;
   align-items: center;

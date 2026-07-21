@@ -15,8 +15,45 @@
   const downloadHtmlBtn = document.getElementById("download-html");
   const downloadMarkdownBtn = document.getElementById("download-markdown");
 
+  const progressBarFill = document.getElementById("progress-bar-fill");
+  const progressPercent = document.getElementById("progress-percent");
+
   let selectedFile = null;
   let lastReport = null;
+  let progressTimer = null;
+
+  // ---------- fake progress bar ----------
+  // The backend runs analysis as a single request/response with no progress
+  // events, so this eases toward 90% while waiting and snaps to 100% on
+  // completion, rather than leaving the user staring at a bare spinner.
+
+  function setProgress(value) {
+    const rounded = Math.round(value);
+    progressBarFill.style.width = `${rounded}%`;
+    progressPercent.textContent = `${rounded}%`;
+  }
+
+  function startProgress() {
+    let progress = 0;
+    setProgress(progress);
+    progressTimer = setInterval(() => {
+      progress += (90 - progress) * 0.12 + 0.5;
+      if (progress > 90) progress = 90;
+      setProgress(progress);
+    }, 150);
+  }
+
+  function stopProgress(finalValue) {
+    if (progressTimer) {
+      clearInterval(progressTimer);
+      progressTimer = null;
+    }
+    if (finalValue !== undefined) setProgress(finalValue);
+  }
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   function showSections(show, hide) {
     show.forEach((el) => (el.hidden = false));
@@ -63,6 +100,7 @@
     if (!selectedFile) return;
     hideError();
     showSections([loadingSection], [uploadSection]);
+    startProgress();
 
     const formData = new FormData();
     formData.append("file", selectedFile);
@@ -79,10 +117,13 @@
         throw new Error(body.detail || "Analysis failed.");
       }
 
+      stopProgress(100);
       lastReport = body;
       renderReport(body);
+      await sleep(200);
       showSections([resultsSection], [loadingSection]);
     } catch (err) {
+      stopProgress();
       showSections([uploadSection], [loadingSection]);
       showError(err.message || "Something went wrong while analyzing the file.");
     }

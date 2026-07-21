@@ -8,6 +8,7 @@ All notable changes to this project are documented here. Format follows
 
 ### Added
 - Markdown report export (`--markdown` / `--output-markdown` CLI flags, `POST /api/analyze/markdown`, and a "Download Markdown" button in the web app): health score and insights lead, technical detail collapses into a `<details>` block for pasting into a PR comment or CI summary.
+- A progress bar during analysis in the web app, replacing the bare spinner. Eases toward 90% while the request is in flight and completes to 100% on response, since the backend doesn't stream real progress events.
 
 ## [0.4.0] - 2026-07-17
 
