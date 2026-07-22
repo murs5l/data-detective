@@ -1,3 +1,4 @@
+import logging
 import math
 import tempfile
 import time
@@ -20,6 +21,15 @@ from .quick_scan import quick_scan
 
 MAX_UPLOAD_BYTES = 25 * 1024 * 1024  # 25 MB
 VALID_OUTLIER_METHODS = ("mad", "iqr")
+
+# uvicorn only configures its own "uvicorn.*" loggers, not the root logger,
+# so without this, INFO-level records from `logger` below fall through to
+# logging's lastResort handler, which silently drops anything under
+# WARNING. basicConfig() is a no-op if the root logger already has handlers
+# (e.g. this module imported under a different runner), so this is safe to
+# call unconditionally.
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+logger = logging.getLogger("data_detective.api")
 
 try:
     _app_version = _package_version("data-detective-toolkit")
@@ -59,16 +69,23 @@ app.add_middleware(
 
 def _validate_upload(file: UploadFile, contents: bytes) -> None:
     if not file.filename or not file.filename.lower().endswith(".csv"):
+        logger.warning("Rejected upload: not a .csv file (filename=%r)", file.filename)
         raise HTTPException(status_code=400, detail="Only .csv files are supported.")
     if len(contents) == 0:
+        logger.warning("Rejected upload: empty file (filename=%r)", file.filename)
         raise HTTPException(status_code=400, detail="Uploaded file is empty.")
     if len(contents) > MAX_UPLOAD_BYTES:
         max_mb = MAX_UPLOAD_BYTES // (1024 * 1024)
+        logger.warning(
+            "Rejected upload: too large (filename=%r, size=%d bytes, max=%d MB)",
+            file.filename, len(contents), max_mb,
+        )
         raise HTTPException(status_code=413, detail=f"File too large. Max size is {max_mb} MB.")
 
 
 def _validate_outlier_method(outlier_method: str) -> None:
     if outlier_method not in VALID_OUTLIER_METHODS:
+        logger.warning("Rejected request: invalid outlier_method=%r", outlier_method)
         raise HTTPException(
             status_code=400,
             detail=f"outlier_method must be one of {VALID_OUTLIER_METHODS}.",
@@ -96,8 +113,10 @@ def _load_dataframe(tmp_path: str):
     try:
         return load_csv(tmp_path)
     except DataDetectiveError as e:
+        logger.warning("CSV load rejected: %s", e)
         raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
+        logger.warning("CSV parse failed: %s", e, exc_info=True)
         raise HTTPException(status_code=400, detail=f"Could not parse CSV: {e}") from e
 
 
@@ -109,6 +128,10 @@ async def _run_analysis(file: UploadFile, contents: bytes, outlier_method: str):
     _validate_outlier_method(outlier_method)
     _validate_upload(file, contents)
 
+    logger.info(
+        "Analyzing upload: filename=%r size=%d bytes outlier_method=%s",
+        file.filename, len(contents), outlier_method,
+    )
     started = time.perf_counter()
 
     with tempfile.NamedTemporaryFile(suffix=".csv") as tmp:
@@ -122,9 +145,14 @@ async def _run_analysis(file: UploadFile, contents: bytes, outlier_method: str):
         try:
             report = profiler.run_full_profile(outlier_method=outlier_method)
         except Exception as e:
+            logger.error("Profiling failed for filename=%r: %s", file.filename, e, exc_info=True)
             raise HTTPException(status_code=500, detail=f"Profiling failed: {e}") from e
 
     processing_ms = round((time.perf_counter() - started) * 1000, 1)
+    logger.info(
+        "Analysis complete: filename=%r rows=%d columns=%d processing_ms=%s",
+        file.filename, df.shape[0], df.shape[1], processing_ms,
+    )
     return df, report, processing_ms, quick
 
 
