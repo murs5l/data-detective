@@ -10,6 +10,7 @@ All notable changes to this project are documented here. Format follows
 - Markdown report export (`--markdown` / `--output-markdown` CLI flags, `POST /api/analyze/markdown`, and a "Download Markdown" button in the web app): health score and insights lead, technical detail collapses into a `<details>` block for pasting into a PR comment or CI summary.
 - A progress bar during analysis in the web app, replacing the bare spinner. Eases toward 90% while the request is in flight and completes to 100% on response, since the backend doesn't stream real progress events.
 - Logging in the FastAPI backend: every upload rejection, CSV parse failure, and profiling crash is now logged server-side (with a full traceback on unexpected errors), and every successful analysis logs its shape and timing. Previously a deployed instance had no server-side trail at all beyond the response body the client saw.
+- CodeQL static security scanning (`.github/workflows/codeql.yml`) for both the Python and Go source, on every push to main, every PR, and weekly. Dependabot already covered known CVEs in dependencies; this scans the project's own code.
 
 ## [0.4.0] - 2026-07-17
 
