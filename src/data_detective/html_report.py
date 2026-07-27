@@ -309,20 +309,66 @@ def _boxplot_svg(box: dict) -> str:
     )
 
 
-def generate_html_report(report: dict, output_path="report.html"):
-    shape = report.get("shape", {})
-    rows = shape.get("rows", "N/A")
-    cols = shape.get("columns", "N/A")
-    duplicates = report.get("duplicates", 0)
+def _render_stat_grid(rows, cols, duplicates) -> str:
+    return f"""
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="value">{rows}</div>
+            <div class="label">Rows</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">{cols}</div>
+            <div class="label">Columns</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">{duplicates}</div>
+            <div class="label">Duplicate rows</div>
+        </div>
+    </div>"""
 
-    html = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Data Detective Report</title>
-<style>
-    :root {{
+
+# (title, report key, render helper, empty message) for each section of the
+# collapsed technical report. Declarative so adding a detector's output here
+# is a one-line addition, not another copy-pasted <div class="tech-box">.
+_TECH_SECTIONS = (
+    ("Column types", "column_types", _render_kv_table, "No data."),
+    ("Missing values (%)", "missing_percentage", _render_kv_table, "No missing values."),
+    ("Outliers (IQR)", "outliers_iqr", _render_kv_table, "No outliers detected."),
+    ("Outliers (MAD)", "outliers_mad", _render_kv_table, "No outliers detected."),
+    ("Distribution shape", "distribution_shape", _render_nested_table, "No numeric columns."),
+    ("High-cardinality columns", "high_cardinality_columns", _render_list, "None found."),
+    ("Constant columns", "constant_columns", _render_list, "None found."),
+    ("Near-constant columns", "near_constant_columns", _render_list, "None found."),
+    ("Possible target column", "possible_target_columns", _render_list, "None found."),
+    ("Duplicate columns", "duplicate_columns", _render_pairs, "None found."),
+    ("Correlated pairs", "correlated_columns", _render_pairs, "None found."),
+    ("Mixed-type columns", "mixed_type_columns", _render_list, "None found."),
+    ("Negative values (unexpected)", "negative_in_nonnegative_columns", _render_list, "None found."),
+    ("Memory usage (KB)", "memory_usage_kb", _render_kv_table, "No data."),
+    ("Text column stats", "text_column_stats", _render_nested_table, "No text columns."),
+    ("Date-like columns", "date_like_columns", _render_list, "None found."),
+)
+
+
+def _render_technical_report(report: dict) -> str:
+    # {} is a safe empty-collection default for every renderer here: each
+    # one only ever checks `if not x` for its "nothing to show" branch, so
+    # a missing key renders identically regardless of the section's real
+    # value type (list of columns vs. dict of column -> stat).
+    boxes = "".join(
+        f'<div class="tech-box"><h3>{title}</h3>{render(report.get(key, {}), empty)}</div>'
+        for title, key, render, empty in _TECH_SECTIONS
+    )
+    return f"""
+    <details class="box details-card">
+        <summary>🔬 Full technical report</summary>
+
+        <div class="tech-grid">{boxes}</div>
+    </details>"""
+
+
+_STYLES = """
+    :root {
         --bg: #f5f5f7;
         --card-bg: #ffffff;
         --text: #1d1d1f;
@@ -335,11 +381,11 @@ def generate_html_report(report: dict, output_path="report.html"):
         --success-bg: #e8f7ec;
         --warning-bg: #fff6ea;
         --danger-bg: #fdecec;
-    }}
+    }
 
-    * {{ box-sizing: border-box; }}
+    * { box-sizing: border-box; }
 
-    body {{
+    body {
         font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
                      "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         background: var(--bg);
@@ -348,57 +394,57 @@ def generate_html_report(report: dict, output_path="report.html"):
         padding: 48px 24px;
         line-height: 1.5;
         -webkit-font-smoothing: antialiased;
-    }}
+    }
 
-    .container {{
+    .container {
         max-width: 920px;
         margin: 0 auto;
-    }}
+    }
 
-    header {{
+    header {
         margin-bottom: 32px;
-    }}
+    }
 
-    header h1 {{
+    header h1 {
         font-size: 32px;
         font-weight: 700;
         letter-spacing: -0.02em;
         margin: 0 0 4px 0;
-    }}
+    }
 
-    header p {{
+    header p {
         color: var(--muted);
         margin: 0;
         font-size: 15px;
-    }}
+    }
 
-    .stat-grid {{
+    .stat-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
         gap: 16px;
         margin-bottom: 32px;
-    }}
+    }
 
-    .stat-card {{
+    .stat-card {
         background: var(--card-bg);
         border: 1px solid var(--border);
         border-radius: 14px;
         padding: 20px;
         text-align: center;
-    }}
+    }
 
-    .stat-card .value {{
+    .stat-card .value {
         font-size: 28px;
         font-weight: 700;
-    }}
+    }
 
-    .stat-card .label {{
+    .stat-card .label {
         font-size: 13px;
         color: var(--muted);
         margin-top: 4px;
-    }}
+    }
 
-    .box {{
+    .box {
         background: var(--card-bg);
         border: 1px solid var(--border);
         border-radius: 14px;
@@ -408,73 +454,73 @@ def generate_html_report(report: dict, output_path="report.html"):
            (e.g. the correlation heatmap table) force the whole grid, and
            the page, to overflow horizontally instead of scrolling here. */
         min-width: 0;
-    }}
+    }
 
-    .box h2 {{
+    .box h2 {
         font-size: 17px;
         font-weight: 600;
         margin: 0 0 14px 0;
         display: flex;
         align-items: center;
         gap: 8px;
-    }}
+    }
 
-    table {{
+    table {
         width: 100%;
         border-collapse: collapse;
         font-size: 14px;
-    }}
+    }
 
-    td {{
+    td {
         padding: 9px 4px;
         border-bottom: 1px solid var(--border);
-    }}
+    }
 
-    td:first-child {{
+    td:first-child {
         color: var(--muted);
         width: 60%;
-    }}
+    }
 
-    td:last-child {{
+    td:last-child {
         font-weight: 500;
         text-align: right;
-    }}
+    }
 
     .nested-summary td:last-child,
-    .nested td:last-child {{
+    .nested td:last-child {
         text-align: left;
-    }}
+    }
 
-    .nested {{
+    .nested {
         width: 100%;
-    }}
+    }
 
-    .nested td {{
+    .nested td {
         padding: 4px 0;
         border-bottom: none;
-    }}
+    }
 
-    tr:last-child td {{
+    tr:last-child td {
         border-bottom: none;
-    }}
+    }
 
-    ul {{
+    ul {
         margin: 0;
         padding-left: 20px;
         font-size: 14px;
-    }}
+    }
 
-    ul li {{
+    ul li {
         margin-bottom: 6px;
-    }}
+    }
 
-    .health-score-card {{
+    .health-score-card {
         display: flex;
         align-items: center;
         gap: 24px;
-    }}
+    }
 
-    .health-score-badge {{
+    .health-score-badge {
         flex-shrink: 0;
         width: 96px;
         height: 96px;
@@ -485,193 +531,193 @@ def generate_html_report(report: dict, output_path="report.html"):
         justify-content: center;
         background: var(--success-bg);
         border: 3px solid var(--success);
-    }}
+    }
 
-    .health-score-number {{
+    .health-score-number {
         font-size: 30px;
         font-weight: 700;
         line-height: 1;
         color: var(--success);
-    }}
+    }
 
-    .health-score-denom {{
+    .health-score-denom {
         font-size: 11px;
         color: var(--muted);
         margin-top: 2px;
-    }}
+    }
 
-    .health-score-badge.grade-fair {{
+    .health-score-badge.grade-fair {
         background: var(--warning-bg);
         border-color: var(--warning);
-    }}
-    .health-score-badge.grade-fair .health-score-number {{
+    }
+    .health-score-badge.grade-fair .health-score-number {
         color: var(--warning);
-    }}
+    }
 
-    .health-score-badge.grade-poor {{
+    .health-score-badge.grade-poor {
         background: var(--danger-bg);
         border-color: var(--danger);
-    }}
-    .health-score-badge.grade-poor .health-score-number {{
+    }
+    .health-score-badge.grade-poor .health-score-number {
         color: var(--danger);
-    }}
+    }
 
-    .health-score-main {{
+    .health-score-main {
         flex: 1;
         min-width: 0;
-    }}
+    }
 
-    .health-score-heading {{
+    .health-score-heading {
         display: flex;
         align-items: center;
         gap: 10px;
         flex-wrap: wrap;
-    }}
+    }
 
-    .health-score-heading h2 {{
+    .health-score-heading h2 {
         margin: 0;
-    }}
+    }
 
-    .health-score-grade {{
+    .health-score-grade {
         font-size: 13px;
         font-weight: 600;
         padding: 3px 10px;
         border-radius: 999px;
         background: var(--success-bg);
         color: var(--success);
-    }}
+    }
 
-    .health-score-grade.grade-fair {{
+    .health-score-grade.grade-fair {
         background: var(--warning-bg);
         color: var(--warning);
-    }}
+    }
 
-    .health-score-grade.grade-poor {{
+    .health-score-grade.grade-poor {
         background: var(--danger-bg);
         color: var(--danger);
-    }}
+    }
 
-    .health-score-breakdown {{
+    .health-score-breakdown {
         margin-top: 12px;
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
-    }}
+    }
 
-    .health-score-breakdown-item {{
+    .health-score-breakdown-item {
         font-size: 12px;
         padding: 4px 10px;
         border-radius: 999px;
         background: var(--bg);
         border: 1px solid var(--border);
         color: var(--muted);
-    }}
+    }
 
-    .health-score-breakdown-item strong {{
+    .health-score-breakdown-item strong {
         color: var(--text);
-    }}
+    }
 
-    .insights-list {{
+    .insights-list {
         list-style: none;
         padding-left: 0;
-    }}
+    }
 
-    .insights-list li {{
+    .insights-list li {
         background: #f9f9fb;
         border-radius: 10px;
         padding: 10px 14px;
         margin-bottom: 8px;
         font-size: 14px;
-    }}
+    }
 
-    .empty {{
+    .empty {
         color: var(--muted);
         font-size: 14px;
         font-style: italic;
         margin: 0;
-    }}
+    }
 
-    .grid-2 {{
+    .grid-2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 20px;
-    }}
+    }
 
-    @media (max-width: 640px) {{
-        .grid-2 {{ grid-template-columns: 1fr; }}
-    }}
+    @media (max-width: 640px) {
+        .grid-2 { grid-template-columns: 1fr; }
+    }
 
-    .heatmap-wrap {{
+    .heatmap-wrap {
         overflow-x: auto;
-    }}
+    }
 
-    .heatmap-table {{
+    .heatmap-table {
         border-collapse: collapse;
         font-size: 12px;
-    }}
+    }
 
     .heatmap-table th,
-    .heatmap-table td {{
+    .heatmap-table td {
         padding: 6px 8px;
         text-align: center;
         white-space: nowrap;
-    }}
+    }
 
-    .heatmap-table th {{
+    .heatmap-table th {
         color: var(--muted);
         font-weight: 500;
-    }}
+    }
 
-    .heatmap-cell {{
+    .heatmap-cell {
         border-radius: 6px;
         font-weight: 600;
         color: #fff;
         min-width: 46px;
         padding: 4px 0;
-    }}
+    }
 
-    .explorer-note {{
+    .explorer-note {
         font-size: 12px;
         color: var(--muted);
         margin: 0 0 16px 0;
-    }}
+    }
 
-    .explorer-controls {{
+    .explorer-controls {
         display: flex;
         align-items: center;
         gap: 10px;
         margin-bottom: 20px;
-    }}
+    }
 
-    .explorer-controls label {{
+    .explorer-controls label {
         font-size: 13px;
         color: var(--muted);
-    }}
+    }
 
-    .explorer-controls select {{
+    .explorer-controls select {
         border: 1px solid var(--border);
         border-radius: 8px;
         padding: 8px 10px;
         font-size: 13px;
         background: var(--card-bg);
         color: var(--text);
-    }}
+    }
 
-    .explorer-block h4 {{
+    .explorer-block h4 {
         margin: 0 0 10px 0;
         font-size: 13px;
         font-weight: 600;
         color: var(--muted);
-    }}
+    }
 
-    .explorer-hist-bars {{
+    .explorer-hist-bars {
         display: flex;
         align-items: flex-end;
         gap: 4px;
         height: 110px;
-    }}
+    }
 
-    .explorer-hist-bar-wrap {{
+    .explorer-hist-bar-wrap {
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -679,23 +725,23 @@ def generate_html_report(report: dict, output_path="report.html"):
         justify-content: flex-end;
         height: 100%;
         min-width: 0;
-    }}
+    }
 
-    .explorer-hist-count {{
+    .explorer-hist-count {
         font-size: 11px;
         font-weight: 600;
         color: var(--text);
         margin-bottom: 2px;
-    }}
+    }
 
-    .hist-bar {{
+    .hist-bar {
         width: 100%;
         background: var(--accent);
         border-radius: 2px 2px 0 0;
         min-height: 2px;
-    }}
+    }
 
-    .explorer-hist-edge {{
+    .explorer-hist-edge {
         font-size: 10px;
         color: var(--muted);
         margin-top: 4px;
@@ -703,95 +749,110 @@ def generate_html_report(report: dict, output_path="report.html"):
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 100%;
-    }}
+    }
 
-    .explorer-stats {{
+    .explorer-stats {
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
         margin-top: 20px;
         padding-top: 16px;
         border-top: 1px solid var(--border);
-    }}
+    }
 
-    .stat-chip {{
+    .stat-chip {
         background: var(--bg);
         border: 1px solid var(--border);
         border-radius: 10px;
         padding: 8px 12px;
         text-align: center;
         min-width: 76px;
-    }}
+    }
 
-    .stat-chip-value {{
+    .stat-chip-value {
         display: block;
         font-size: 15px;
         font-weight: 700;
-    }}
+    }
 
-    .stat-chip-label {{
+    .stat-chip-label {
         display: block;
         font-size: 11px;
         color: var(--muted);
         margin-top: 2px;
-    }}
+    }
 
-    .box-plot-svg {{
+    .box-plot-svg {
         width: 100%;
         height: 46px;
         display: block;
-    }}
+    }
 
-    .box-whisker {{
+    .box-whisker {
         stroke: var(--muted);
         stroke-width: 1.5;
-    }}
+    }
 
-    .box-rect {{
+    .box-rect {
         fill: #f0f6ff;
         stroke: var(--accent);
         stroke-width: 1.5;
-    }}
+    }
 
-    .box-median {{
+    .box-median {
         stroke: var(--accent);
         stroke-width: 2;
-    }}
+    }
 
-    .box-outlier {{
+    .box-outlier {
         fill: var(--danger);
         opacity: 0.7;
-    }}
+    }
 
-    .details-card summary {{
+    .details-card summary {
         cursor: pointer;
         font-weight: 600;
         font-size: 17px;
         list-style: none;
-    }}
+    }
 
-    .details-card summary::-webkit-details-marker {{
+    .details-card summary::-webkit-details-marker {
         display: none;
-    }}
+    }
 
-    .details-card[open] summary {{
+    .details-card[open] summary {
         margin-bottom: 16px;
-    }}
+    }
 
-    .tech-grid {{
+    .tech-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         gap: 18px;
-    }}
+    }
 
-    .tech-box h3 {{
+    .tech-box h3 {
         font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 0.04em;
         color: var(--muted);
         margin: 0 0 8px 0;
-    }}
-</style>
+    }
+"""
+
+
+def generate_html_report(report: dict, output_path="report.html") -> None:
+    shape = report.get("shape", {})
+    rows = shape.get("rows", "N/A")
+    cols = shape.get("columns", "N/A")
+    duplicates = report.get("duplicates", 0)
+
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Detective Report</title>
+<style>{_STYLES}</style>
 </head>
 <body>
 <div class="container">
@@ -808,20 +869,7 @@ def generate_html_report(report: dict, output_path="report.html"):
         {_render_insights(report.get("insights", []))}
     </div>
 
-    <div class="stat-grid">
-        <div class="stat-card">
-            <div class="value">{rows}</div>
-            <div class="label">Rows</div>
-        </div>
-        <div class="stat-card">
-            <div class="value">{cols}</div>
-            <div class="label">Columns</div>
-        </div>
-        <div class="stat-card">
-            <div class="value">{duplicates}</div>
-            <div class="label">Duplicate rows</div>
-        </div>
-    </div>
+    {_render_stat_grid(rows, cols, duplicates)}
 
     <div class="box">
         <h2>🔗 Correlation Heatmap</h2>
@@ -833,91 +881,7 @@ def generate_html_report(report: dict, output_path="report.html"):
         {_render_column_explorer(report)}
     </div>
 
-    <details class="box details-card">
-        <summary>🔬 Full technical report</summary>
-
-        <div class="tech-grid">
-            <div class="tech-box">
-                <h3>Column types</h3>
-                {_render_kv_table(report.get("column_types", {}), "No data.")}
-            </div>
-
-            <div class="tech-box">
-                <h3>Missing values (%)</h3>
-                {_render_kv_table(report.get("missing_percentage", {}), "No missing values.")}
-            </div>
-
-            <div class="tech-box">
-                <h3>Outliers (IQR)</h3>
-                {_render_kv_table(report.get("outliers_iqr", {}), "No outliers detected.")}
-            </div>
-
-            <div class="tech-box">
-                <h3>Outliers (MAD)</h3>
-                {_render_kv_table(report.get("outliers_mad", {}), "No outliers detected.")}
-            </div>
-
-            <div class="tech-box">
-                <h3>Distribution shape</h3>
-                {_render_nested_table(report.get("distribution_shape", {}), "No numeric columns.")}
-            </div>
-
-            <div class="tech-box">
-                <h3>High-cardinality columns</h3>
-                {_render_list(report.get("high_cardinality_columns", []), "None found.")}
-            </div>
-
-            <div class="tech-box">
-                <h3>Constant columns</h3>
-                {_render_list(report.get("constant_columns", []), "None found.")}
-            </div>
-
-            <div class="tech-box">
-                <h3>Near-constant columns</h3>
-                {_render_list(report.get("near_constant_columns", []), "None found.")}
-            </div>
-
-            <div class="tech-box">
-                <h3>Possible target column</h3>
-                {_render_list(report.get("possible_target_columns", []), "None found.")}
-            </div>
-
-            <div class="tech-box">
-                <h3>Duplicate columns</h3>
-                {_render_pairs(report.get("duplicate_columns", []), "None found.")}
-            </div>
-
-            <div class="tech-box">
-                <h3>Correlated pairs</h3>
-                {_render_pairs(report.get("correlated_columns", []), "None found.")}
-            </div>
-
-            <div class="tech-box">
-                <h3>Mixed-type columns</h3>
-                {_render_list(report.get("mixed_type_columns", []), "None found.")}
-            </div>
-
-            <div class="tech-box">
-                <h3>Negative values (unexpected)</h3>
-                {_render_list(report.get("negative_in_nonnegative_columns", []), "None found.")}
-            </div>
-
-            <div class="tech-box">
-                <h3>Memory usage (KB)</h3>
-                {_render_kv_table(report.get("memory_usage_kb", {}), "No data.")}
-            </div>
-
-            <div class="tech-box">
-                <h3>Text column stats</h3>
-                {_render_nested_table(report.get("text_column_stats", {}), "No text columns.")}
-            </div>
-
-            <div class="tech-box">
-                <h3>Date-like columns</h3>
-                {_render_list(report.get("date_like_columns", []), "None found.")}
-            </div>
-        </div>
-    </details>
+    {_render_technical_report(report)}
 
 </div>
 </body>
