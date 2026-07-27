@@ -29,6 +29,23 @@ curl http://localhost:8000/api/health
 ```
 Response: `{"status": "ok", "version": "x.y.z"}` (matches the installed package version)
 
+## Rate limiting
+
+The three `/api/analyze*` endpoints are limited to 60 requests per minute
+per client IP (`/api/health` is exempt, so health checks always succeed).
+Exceeding it returns `429 Too Many Requests` with a `Retry-After` header
+telling you how many seconds to wait:
+
+```bash
+curl -i -F "file=@data.csv" "http://localhost:8000/api/analyze"
+# HTTP/1.1 429 Too Many Requests
+# retry-after: 42
+```
+
+This is in-memory and per-process: it resets on restart and doesn't
+coordinate across multiple replicas behind a load balancer. Fine for the
+single-container deployment this project ships (see [docker-compose.yml](../docker-compose.yml)); if you're running several replicas behind a shared proxy, put a real rate limiter (or your proxy's own) in front instead.
+
 ## Python example
 
 ```python

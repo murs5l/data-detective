@@ -2,11 +2,12 @@ import logging
 import math
 import tempfile
 import time
+from collections import defaultdict, deque
 from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as _package_version
 from pathlib import Path
 
-from fastapi import FastAPI, File, HTTPException, Query, UploadFile
+from fastapi import Depends, FastAPI, File, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
@@ -65,6 +66,41 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+RATE_LIMIT_REQUESTS = 60
+RATE_LIMIT_WINDOW_SECONDS = 60
+
+# In-memory sliding window, per client IP. Deliberately simple for a
+# single-process, self-hosted tool: no Redis, no external state. Two known
+# limitations, acceptable for this app's threat model (not a hardened
+# internet-facing service): it resets on restart, and it trusts
+# request.client.host directly rather than X-Forwarded-For, so it won't
+# distinguish clients behind a shared reverse proxy.
+_request_log: dict[str, deque] = defaultdict(deque)
+
+
+def _check_rate_limit(request: Request) -> None:
+    client_ip = request.client.host if request.client else "unknown"
+    now = time.monotonic()
+    window_start = now - RATE_LIMIT_WINDOW_SECONDS
+    log = _request_log[client_ip]
+
+    while log and log[0] < window_start:
+        log.popleft()
+
+    if len(log) >= RATE_LIMIT_REQUESTS:
+        retry_after = int(log[0] + RATE_LIMIT_WINDOW_SECONDS - now) + 1
+        logger.warning("Rate limit exceeded for client_ip=%s", client_ip)
+        raise HTTPException(
+            status_code=429,
+            detail=(
+                f"Rate limit exceeded: max {RATE_LIMIT_REQUESTS} requests per "
+                f"{RATE_LIMIT_WINDOW_SECONDS}s. Try again in {retry_after}s."
+            ),
+            headers={"Retry-After": str(retry_after)},
+        )
+
+    log.append(now)
 
 
 def _validate_upload(file: UploadFile, contents: bytes) -> None:
@@ -172,9 +208,11 @@ def health():
     tags=["analysis"],
     summary="Profile a CSV, return JSON",
     response_description="Full profiling report as JSON.",
+    dependencies=[Depends(_check_rate_limit)],
     responses={
         400: {"description": "Invalid file (wrong extension, empty, malformed CSV, or bad outlier_method)."},
         413: {"description": "File exceeds the upload size limit."},
+        429: {"description": "Rate limit exceeded."},
         500: {"description": "Profiling engine raised an unexpected error."},
     },
 )
@@ -208,9 +246,11 @@ async def analyze(
     response_class=HTMLResponse,
     summary="Profile a CSV, return a standalone HTML report",
     response_description="Self-contained HTML report (no external CSS/JS dependencies).",
+    dependencies=[Depends(_check_rate_limit)],
     responses={
         400: {"description": "Invalid file (wrong extension, empty, malformed CSV, or bad outlier_method)."},
         413: {"description": "File exceeds the upload size limit."},
+        429: {"description": "Rate limit exceeded."},
         500: {"description": "Profiling engine raised an unexpected error."},
     },
 )
@@ -236,9 +276,11 @@ async def analyze_html(
     response_class=PlainTextResponse,
     summary="Profile a CSV, return a Markdown report",
     response_description="Markdown report, suitable for pasting into a PR comment or CI summary.",
+    dependencies=[Depends(_check_rate_limit)],
     responses={
         400: {"description": "Invalid file (wrong extension, empty, malformed CSV, or bad outlier_method)."},
         413: {"description": "File exceeds the upload size limit."},
+        429: {"description": "Rate limit exceeded."},
         500: {"description": "Profiling engine raised an unexpected error."},
     },
 )

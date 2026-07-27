@@ -83,3 +83,35 @@ def test_analyze_markdown_success():
     assert response.headers["content-type"].startswith("text/markdown")
     assert "# 🕵️ Data Detective Report" in response.text
     assert "Data Health Score:" in response.text
+
+
+def test_analyze_rate_limit_returns_429_with_retry_after():
+    from backend.app import main as main_module
+
+    main_module._request_log.clear()
+    csv_content = b"a,b\n1,2\n3,4\n"
+
+    for _ in range(main_module.RATE_LIMIT_REQUESTS):
+        response = client.post("/api/analyze", files=_csv_upload(csv_content))
+        assert response.status_code == 200
+
+    response = client.post("/api/analyze", files=_csv_upload(csv_content))
+    assert response.status_code == 429
+    assert "Retry-After" in response.headers
+    assert "Rate limit exceeded" in response.json()["detail"]
+
+    main_module._request_log.clear()
+
+
+def test_health_is_never_rate_limited():
+    from backend.app import main as main_module
+
+    main_module._request_log.clear()
+    csv_content = b"a,b\n1,2\n3,4\n"
+    for _ in range(main_module.RATE_LIMIT_REQUESTS + 5):
+        client.post("/api/analyze", files=_csv_upload(csv_content))
+
+    response = client.get("/api/health")
+    assert response.status_code == 200
+
+    main_module._request_log.clear()
