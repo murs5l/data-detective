@@ -63,6 +63,22 @@ class DataProfiler:
         (0, "Critical"),
     )
 
+    # Tuning constants for health_score()'s per-category deductions. Named
+    # so there's one place to find and adjust them, rather than magic
+    # numbers buried in the method body. Each was set empirically against
+    # sample messy data, not derived from a formal model; the comment next
+    # to each deduction in health_score() explains the reasoning behind
+    # its specific value.
+    MISSING_VALUES_WORST_COLUMN_WEIGHT = 0.7
+    MISSING_VALUES_AVERAGE_WEIGHT = 0.3
+    OUTLIER_CELL_RATIO_SCALE = 100
+    DUPLICATE_COLUMN_POINTS_PER_OCCURRENCE = 3
+    CONSTANT_COLUMN_POINTS_PER_OCCURRENCE = 3
+    MIXED_TYPE_POINTS_PER_OCCURRENCE = 2.5
+    NEGATIVE_VALUES_POINTS_PER_OCCURRENCE = 2.5
+    SKEWED_RATIO_SCALE = 2
+    CORRELATED_PAIR_POINTS = 1
+
     def __init__(self, df: pd.DataFrame) -> None:
         self.df = df
 
@@ -452,7 +468,10 @@ class DataProfiler:
         missing_pcts = list(self.missing_percentage().values())
         avg_missing_ratio = (sum(missing_pcts) / len(missing_pcts) / 100) if missing_pcts else 0.0
         max_missing_ratio = (max(missing_pcts) / 100) if missing_pcts else 0.0
-        missing_ratio = 0.7 * max_missing_ratio + 0.3 * avg_missing_ratio
+        missing_ratio = (
+            self.MISSING_VALUES_WORST_COLUMN_WEIGHT * max_missing_ratio
+            + self.MISSING_VALUES_AVERAGE_WEIGHT * avg_missing_ratio
+        )
         breakdown["missing_values"] = round(min(caps["missing_values"], missing_ratio * caps["missing_values"]), 1)
 
         # Duplicate rows: ratio of duplicated rows to total rows maps
@@ -467,22 +486,40 @@ class DataProfiler:
         outlier_counts = self.detect_outliers(method="mad")
         total_numeric_cells = int(self._numeric_df.notna().sum().sum())
         outlier_ratio = (sum(outlier_counts.values()) / total_numeric_cells) if total_numeric_cells else 0.0
-        breakdown["outliers"] = round(min(caps["outliers"], outlier_ratio * 100 * caps["outliers"]), 1)
+        breakdown["outliers"] = round(
+            min(caps["outliers"], outlier_ratio * self.OUTLIER_CELL_RATIO_SCALE * caps["outliers"]), 1
+        )
 
         # Duplicate columns, constant columns, mixed-type columns, and
         # unexpected negatives are flat points per occurrence, capped: each
         # instance is a concrete, discrete issue rather than a proportion.
         breakdown["duplicate_columns"] = round(
-            min(caps["duplicate_columns"], len(self.detect_duplicate_columns()) * 3), 1
+            min(
+                caps["duplicate_columns"],
+                len(self.detect_duplicate_columns()) * self.DUPLICATE_COLUMN_POINTS_PER_OCCURRENCE,
+            ),
+            1,
         )
         breakdown["constant_columns"] = round(
-            min(caps["constant_columns"], len(self.detect_constant_columns()) * 3), 1
+            min(
+                caps["constant_columns"],
+                len(self.detect_constant_columns()) * self.CONSTANT_COLUMN_POINTS_PER_OCCURRENCE,
+            ),
+            1,
         )
         breakdown["mixed_type_columns"] = round(
-            min(caps["mixed_type_columns"], len(self.detect_mixed_type_columns()) * 2.5), 1
+            min(
+                caps["mixed_type_columns"],
+                len(self.detect_mixed_type_columns()) * self.MIXED_TYPE_POINTS_PER_OCCURRENCE,
+            ),
+            1,
         )
         breakdown["negative_values"] = round(
-            min(caps["negative_values"], len(self.detect_negative_in_nonnegative_columns()) * 2.5), 1
+            min(
+                caps["negative_values"],
+                len(self.detect_negative_in_nonnegative_columns()) * self.NEGATIVE_VALUES_POINTS_PER_OCCURRENCE,
+            ),
+            1,
         )
 
         # Skewed distributions: fraction of numeric columns heavily skewed,
@@ -492,12 +529,13 @@ class DataProfiler:
         skewed_count = sum(1 for s in shapes.values() if abs(s["skewness"]) > self.SKEWNESS_THRESHOLD)
         skewed_ratio = (skewed_count / len(shapes)) if shapes else 0.0
         breakdown["skewed_distributions"] = round(
-            min(caps["skewed_distributions"], skewed_ratio * 2 * caps["skewed_distributions"]), 1
+            min(caps["skewed_distributions"], skewed_ratio * self.SKEWED_RATIO_SCALE * caps["skewed_distributions"]),
+            1,
         )
 
         # Correlated (redundant) columns: flat points per pair, capped.
         breakdown["correlated_columns"] = round(
-            min(caps["correlated_columns"], len(self.detect_correlated_columns()) * 1), 1
+            min(caps["correlated_columns"], len(self.detect_correlated_columns()) * self.CORRELATED_PAIR_POINTS), 1
         )
 
         score = max(0, round(100 - sum(breakdown.values())))
