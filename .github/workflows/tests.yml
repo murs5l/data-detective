@@ -125,6 +125,26 @@ jobs:
             git push
           fi
 
+  e2e:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install package and e2e dependencies
+        run: |
+          pip install -e ".[api,e2e]"
+          playwright install --with-deps chromium
+
+      - name: Run end-to-end test
+        run: pytest -v e2e
+
   fastscan:
     runs-on: ubuntu-latest
 

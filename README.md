@@ -150,6 +150,7 @@ data-detective/
 ├── frontend/                 # Dependency-free HTML/CSS/vanilla JS web app
 ├── tools/fastscan/           # Optional Go speed layer (instant CSV pre-scan)
 ├── tests/, backend/tests/    # Core engine tests, API tests
+├── e2e/                      # One browser test against the real served app
 ├── examples/                 # Sample dataset + generated sample HTML/Markdown reports
 ├── docs/                     # Detailed docs, README images/GIF, coverage badge
 ├── scripts/                  # Maintenance scripts (coverage badge, benchmark data)

@@ -1,8 +1,8 @@
 # Contributing to Data Detective
 
-Thanks for considering a contribution! This project has three moving parts —
+Thanks for considering a contribution! This project has three moving parts:
 a Python profiling engine + CLI, a FastAPI backend, and a dependency-free
-frontend — plus an optional Go speed layer. This guide covers how to get set
+frontend, plus an optional Go speed layer. This guide covers how to get set
 up and what to expect when opening a PR.
 
 ## Getting set up
@@ -22,6 +22,12 @@ pytest backend/tests
 
 # fastscan, the Go speed layer (optional, only if touching tools/fastscan)
 cd tools/fastscan && go test ./...
+
+# end-to-end (optional, only if touching frontend/ or backend/): a real
+# browser driving the real served web app against a real running server
+pip install -e ".[api,e2e]"
+playwright install chromium
+pytest e2e
 ```
 
 To run the full web app locally while developing:

@@ -34,6 +34,10 @@ api = [
 	"uvicorn[standard]>=0.29",
 	"python-multipart>=0.0.9",
 ]
+e2e = [
+	"playwright>=1.40",
+	"pytest-playwright>=0.4",
+]
 
 [tool.mypy]
 # No explicit python_version pin: the typecheck CI job runs on 3.12 (the
