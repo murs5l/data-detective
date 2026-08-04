@@ -21,6 +21,7 @@ def test_render_markdown_report_includes_health_score_and_insights(report):
     assert "# 🕵️ Data Detective Report" in md
     assert "Data Health Score:" in md
     assert "## Insights" in md
+    assert "Tracked but not scored" in md
 
 
 def test_render_markdown_report_health_score_leads_insights(report):

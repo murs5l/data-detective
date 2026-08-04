@@ -80,6 +80,8 @@ _HEALTH_BREAKDOWN_LABELS = {
     "negative_values": "Unexpected negatives",
     "skewed_distributions": "Skewed distributions",
     "correlated_columns": "Correlated columns",
+    "near_constant_columns": "Near-constant columns",
+    "date_like_columns": "Date-like columns",
 }
 
 
@@ -102,6 +104,12 @@ def _render_health_score(health: dict) -> str:
             for col, points in items
         )
 
+    informational = health.get("informational_categories", [])
+    informational_html = ""
+    if informational:
+        labels = ", ".join(_HEALTH_BREAKDOWN_LABELS.get(col, col).lower() for col in informational)
+        informational_html = f'<p class="health-score-informational">Tracked but not scored: {escape(labels)}</p>'
+
     return f"""
     <div class="box health-score-card">
         <div class="health-score-badge {grade_class}">
@@ -114,6 +122,7 @@ def _render_health_score(health: dict) -> str:
                 <span class="health-score-grade {grade_class}">{escape(health['grade'])}</span>
             </div>
             <div class="health-score-breakdown">{breakdown_html}</div>
+            {informational_html}
         </div>
     </div>"""
 
@@ -615,6 +624,13 @@ _STYLES = """
 
     .health-score-breakdown-item strong {
         color: var(--text);
+    }
+
+    .health-score-informational {
+        font-size: 12px;
+        color: var(--muted);
+        font-style: italic;
+        margin: 10px 0 0 0;
     }
 
     .insights-list {

@@ -223,6 +223,8 @@
     negative_values: "Unexpected negatives",
     skewed_distributions: "Skewed distributions",
     correlated_columns: "Correlated columns",
+    near_constant_columns: "Near-constant columns",
+    date_like_columns: "Date-like columns",
   };
 
   function gradeClass(grade) {
@@ -268,6 +270,16 @@
     };
     breakdownEl.hidden = true;
     toggle.textContent = "Show breakdown";
+
+    const informationalEl = document.getElementById("health-score-informational");
+    const informational = health.informational_categories || [];
+    if (informational.length) {
+      const labels = informational.map((key) => (HEALTH_BREAKDOWN_LABELS[key] || key).toLowerCase()).join(", ");
+      informationalEl.textContent = `Tracked but not scored: ${labels}`;
+      informationalEl.hidden = false;
+    } else {
+      informationalEl.hidden = true;
+    }
   }
 
   function renderInsights(insights) {

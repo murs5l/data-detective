@@ -76,10 +76,16 @@ Every report leads with one number: a 0-100 score with a letter grade, so you
 can gauge data quality at a glance before reading a single technical table.
 
 **What it is:** a deterministic function of the data. 100 points, minus a
-capped deduction for each of 9 issue categories (missing values, duplicate
-rows, outliers, duplicate/constant/mixed-type columns, unexpected negatives,
-skewed distributions, redundant correlated columns). No model, no randomness,
-no external calls; the same CSV always produces the same score.
+capped deduction for each of 9 scored issue categories (missing values,
+duplicate rows, outliers, duplicate/constant/mixed-type columns, unexpected
+negatives, skewed distributions, redundant correlated columns). No model, no
+randomness, no external calls; the same CSV always produces the same score.
+
+Two more categories, near-constant and date-like columns, are tracked but
+not scored by default: whether either is actually a problem depends on
+context a generic score can't know (a near-constant `country` column might
+be entirely expected). They're labeled explicitly as informational in every
+report, not silently excluded.
 
 **Why it exists:** most profiling tools hand you dozens of independent
 statistics and leave you to decide what's actually wrong. The health score
@@ -93,6 +99,7 @@ Example, from the [sample dataset](examples/sample_data.csv) above:
 
 ```
 Data Health Score: 64/100 (Fair)
+  Tracked but not scored: date-like columns, near-constant columns
 
   Missing Values          -15.8
   Outliers                -15.0

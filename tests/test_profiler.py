@@ -340,6 +340,24 @@ def test_health_score_grade_matches_score_thresholds():
         assert grade == expected_grade
 
 
+def test_health_score_labels_near_constant_and_date_like_as_informational():
+    # Present in the data, present in the breakdown at 0, but not scored:
+    # this is the "tracked but not scored" contract, not silent exclusion.
+    df = pd.DataFrame({
+        "status": ["active"] * 97 + ["inactive"] * 3,
+        "signup_date": [f"2024-01-{i:02d}" for i in range(1, 21)] * 5,
+        "normal": list(range(100)),
+    })
+    result = DataProfiler(df).health_score()
+
+    assert result["breakdown"]["near_constant_columns"] == 0.0
+    assert result["breakdown"]["date_like_columns"] == 0.0
+    assert "near_constant_columns" in result["informational_categories"]
+    assert "date_like_columns" in result["informational_categories"]
+    # Scored categories must never appear here.
+    assert "missing_values" not in result["informational_categories"]
+
+
 def test_run_full_profile_includes_health_score():
     df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
     report = DataProfiler(df).run_full_profile()

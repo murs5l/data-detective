@@ -82,6 +82,12 @@ def render_markdown_report(report: dict) -> str:
             lines.append("</details>")
             lines.append("")
 
+        informational = health.get("informational_categories", [])
+        if informational:
+            labels = ", ".join(name.replace("_", " ") for name in informational)
+            lines.append(f"_Tracked but not scored: {labels}._")
+            lines.append("")
+
     lines.append(f"**Shape:** {rows} rows &times; {cols} columns &nbsp;|&nbsp; **Duplicate rows:** {duplicates}")
     lines.append("")
 

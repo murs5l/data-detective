@@ -13,6 +13,7 @@ All notable changes to this project are documented here. Format follows
 - CodeQL static security scanning (`.github/workflows/codeql.yml`) for both the Python and Go source, on every push to main, every PR, and weekly. Dependabot already covered known CVEs in dependencies; this scans the project's own code.
 - Rate limiting on the `/api/analyze*` endpoints: 60 requests per minute per client IP, returning `429` with a `Retry-After` header past the limit. In-memory and dependency-free, matching the project's single-process deployment; `/api/health` is exempt.
 - An end-to-end test (`e2e/`, new `e2e` extra, new CI job): a real Playwright browser driving the actual served web app against a real running server, uploading a CSV and checking the rendered health score and insights. Previously the frontend had zero automated coverage; every check was manual.
+- The health score now explicitly labels near-constant and date-like columns as "tracked but not scored" (in the CLI, HTML report, Markdown report, and web app) instead of silently excluding them from the breakdown with no explanation. Doesn't change any existing score: both categories default to zero weight.
 
 ## [0.4.0] - 2026-07-17
 

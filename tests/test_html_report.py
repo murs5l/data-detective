@@ -26,6 +26,10 @@ def test_html_report_includes_health_score_before_insights(tmp_path, report):
     insights_pos = html.index(">🧠 Insights<")
     assert health_pos < insights_pos
 
+    # near_constant_columns/date_like_columns are tracked but not scored by
+    # default: labeled explicitly, not silently absent from the report.
+    assert "Tracked but not scored" in html
+
 
 def test_html_report_includes_correlation_heatmap(tmp_path, report):
     output_path = tmp_path / "report.html"

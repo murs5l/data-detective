@@ -14,6 +14,10 @@ def print_report(report: dict):
     health = report.get("health_score")
     if health:
         print(f"\n🏥 DATA HEALTH SCORE: {health['score']}/100 ({health['grade']})")
+        informational = health.get("informational_categories", [])
+        if informational:
+            labels = ", ".join(name.replace("_", " ") for name in informational)
+            print(f"   ℹ️  Tracked but not scored: {labels}")
 
     print(f"\n📦 Shape: {pretty(report.get('shape', {}))}")
 

@@ -25,6 +25,7 @@ def test_analyze_default_prints_report(sample_csv, capsys):
     out = capsys.readouterr().out
     assert exit_code == 0
     assert "INSIGHTS" in out
+    assert "Tracked but not scored" in out
 
 
 def test_analyze_json_flag_prints_valid_json(sample_csv, capsys):

@@ -54,6 +54,15 @@ class DataProfiler:
         "negative_values": 5,
         "skewed_distributions": 5,
         "correlated_columns": 5,
+        # Tracked but not scored by default: whether a near-constant or
+        # date-like column is actually a problem depends on context a
+        # generic score can't know (e.g. a near-constant "country" column
+        # might be entirely expected). Zero weight, not omission, so the
+        # distinction between "checked and found unremarkable" and "not
+        # checked at all" is explicit rather than silent. See
+        # `informational_categories` in health_score()'s return value.
+        "near_constant_columns": 0,
+        "date_like_columns": 0,
     }
     HEALTH_SCORE_GRADES = (
         (90, "Excellent"),
@@ -78,6 +87,10 @@ class DataProfiler:
     NEGATIVE_VALUES_POINTS_PER_OCCURRENCE = 2.5
     SKEWED_RATIO_SCALE = 2
     CORRELATED_PAIR_POINTS = 1
+    # Only meaningful if a caller raises these categories' cap above 0 via
+    # a rules override; unused at the default weight of 0.
+    NEAR_CONSTANT_COLUMN_POINTS_PER_OCCURRENCE = 3
+    DATE_LIKE_COLUMN_POINTS_PER_OCCURRENCE = 2
 
     def __init__(self, df: pd.DataFrame) -> None:
         self.df = df
@@ -538,10 +551,44 @@ class DataProfiler:
             min(caps["correlated_columns"], len(self.detect_correlated_columns()) * self.CORRELATED_PAIR_POINTS), 1
         )
 
+        # Near-constant and date-like columns: capped at 0 by default (see
+        # HEALTH_SCORE_MAX_DEDUCTIONS), so skip the detector call entirely
+        # rather than computing it just to multiply by zero. Both detectors
+        # already run once, unconditionally, in run_full_profile() and are
+        # surfaced there and in generate_insights() regardless of scoring.
+        if caps["near_constant_columns"] > 0:
+            breakdown["near_constant_columns"] = round(
+                min(
+                    caps["near_constant_columns"],
+                    len(self.detect_near_constant_columns()) * self.NEAR_CONSTANT_COLUMN_POINTS_PER_OCCURRENCE,
+                ),
+                1,
+            )
+        else:
+            breakdown["near_constant_columns"] = 0.0
+
+        if caps["date_like_columns"] > 0:
+            breakdown["date_like_columns"] = round(
+                min(
+                    caps["date_like_columns"],
+                    len(self.detect_date_like_columns()) * self.DATE_LIKE_COLUMN_POINTS_PER_OCCURRENCE,
+                ),
+                1,
+            )
+        else:
+            breakdown["date_like_columns"] = 0.0
+
         score = max(0, round(100 - sum(breakdown.values())))
         grade = next(label for threshold, label in self.HEALTH_SCORE_GRADES if score >= threshold)
 
-        return {"score": score, "grade": grade, "breakdown": breakdown}
+        informational_categories = sorted(name for name, cap in caps.items() if cap == 0)
+
+        return {
+            "score": score,
+            "grade": grade,
+            "breakdown": breakdown,
+            "informational_categories": informational_categories,
+        }
 
     def generate_insights(self, outlier_method: str = "mad") -> list[str]:
         """
