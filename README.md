@@ -95,6 +95,13 @@ does that triage for you, without hiding how it got there.
 return the full breakdown alongside the score, exactly how many points each
 category cost, so you can always answer "why is this a 64, not a 90?"
 
+**Configurable per team:** the default weights are a reasonable starting
+point, not a universal truth. A negative value in a `price` column matters
+more to a billing team than to someone doing rough exploration; an optional
+YAML rules file lets you say so, weight-by-weight and column-by-column, and
+mark specific checks as a hard CI failure instead of just a point deduction.
+See [health score rules](docs/rules-contract.md).
+
 Example, from the [sample dataset](examples/sample_data.csv) above:
 
 ```
@@ -144,24 +151,25 @@ stat) on a plain `pip install` with no Go toolchain.
 
 ```
 data-detective/
-├── src/data_detective/       # Core engine + CLI - the shared source of truth
-│   ├── profiler.py           # DataProfiler: every detector, the health score
-│   ├── cli.py                # `data-detective` command-line entry point
-│   ├── loader.py             # CSV loading, with encoding fallback for messy files
-│   ├── html_report.py        # Static HTML report renderer
-│   ├── markdown_report.py    # Markdown report renderer (for PR/CI comments)
-│   └── report.py             # Plain-text report printer (CLI default output)
-├── backend/app/              # FastAPI wrapper around the same DataProfiler
-│   ├── main.py               # /api/analyze, /html, /markdown endpoints
-│   └── quick_scan.py         # Optional Go fastscan integration
-├── frontend/                 # Dependency-free HTML/CSS/vanilla JS web app
-├── tools/fastscan/           # Optional Go speed layer (instant CSV pre-scan)
-├── tests/, backend/tests/    # Core engine tests, API tests
-├── e2e/                      # One browser test against the real served app
-├── examples/                 # Sample dataset + generated sample HTML/Markdown reports
-├── docs/                     # Detailed docs, README images/GIF, coverage badge
-├── scripts/                  # Maintenance scripts (coverage badge, benchmark data)
-└── .github/workflows/        # CI (tests, lint, typecheck, coverage) + release automation
+├── src/data_detective/        # Core engine + CLI - the shared source of truth
+│   ├── profiler.py            # DataProfiler: every detector, the health score
+│   ├── cli.py                 # `data-detective` command-line entry point
+│   ├── loader.py              # CSV loading, with encoding fallback for messy files
+│   ├── html_report.py         # Static HTML report renderer
+│   ├── markdown_report.py     # Markdown report renderer (for PR/CI comments)
+│   ├── rules.py               # Health-score rules contract (weights, severities)
+│   └── report.py              # Plain-text report printer (CLI default output)
+├── backend/app/               # FastAPI wrapper around the same DataProfiler
+│   ├── main.py                # /api/analyze, /html, /markdown endpoints
+│   └── quick_scan.py          # Optional Go fastscan integration
+├── frontend/                  # Dependency-free HTML/CSS/vanilla JS web app
+├── tools/fastscan/            # Optional Go speed layer (instant CSV pre-scan)
+├── tests/, backend/tests/     # Core engine tests, API tests
+├── e2e/                       # One browser test against the real served app
+├── examples/                  # Sample dataset + generated sample HTML/Markdown reports
+├── docs/                      # Detailed docs, README images/GIF, coverage badge
+├── scripts/                   # Maintenance scripts (coverage badge, benchmark data)
+└── .github/workflows/         # CI (tests, lint, typecheck, coverage) + release automation
 ```
 
 </details>
@@ -229,6 +237,7 @@ Ideas being explored, not commitments:
 - [CLI reference](docs/cli-reference.md): installation, all flags, examples
 - [REST API reference](docs/api-reference.md): endpoints, Python/JS examples
 - [Full detector list](docs/detectors.md): all 20+ checks in detail
+- [Health score rules](docs/rules-contract.md): configuring per-team weights and severities
 - [Advanced usage](docs/advanced-usage.md): CI/PR integration, batch processing, using it as a Python library
 - [Contributing](CONTRIBUTING.md): dev setup, testing, releasing
 

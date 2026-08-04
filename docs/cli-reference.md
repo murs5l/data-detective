@@ -59,6 +59,8 @@ data-detective analyze myfile.csv --output-html reports/q1_data.html
 | `--output-html`     | Write HTML report to a specific file path             | `--output-html reports/profile.html`        |
 | `--output-markdown` | Write Markdown report to a specific file path         | `--output-markdown reports/profile.md`      |
 | `--outlier-method`  | Choose outlier detection: `iqr` or `mad` (default)    | `--outlier-method iqr`                      |
+| `--rules`           | YAML file overriding health-score weights/severities (needs the `rules` extra) | `--rules team-rules.yaml` |
+| `--fail-on`         | Exit non-zero if any category is at `failure` severity | `--fail-on failure`                        |
 | `--quiet`           | Suppress non-error progress messages                  | `--quiet`                                   |
 | `--version`         | Print the installed version and exit                  | `data-detective --version`                  |
 
@@ -75,4 +77,5 @@ data-detective analyze input.csv --quiet --json | jq '.high_cardinality_columns'
 ```
 
 See [advanced usage](advanced-usage.md) for CI/CD gating, batch processing, and
-posting a Markdown report straight to a GitHub PR.
+posting a Markdown report straight to a GitHub PR, and
+[health score rules](rules-contract.md) for `--rules`/`--fail-on`.

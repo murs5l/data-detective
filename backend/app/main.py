@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import math
 import tempfile
@@ -6,6 +8,7 @@ from collections import defaultdict, deque
 from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as _package_version
 from pathlib import Path
+from typing import Optional
 
 from fastapi import Depends, FastAPI, File, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,6 +20,7 @@ from data_detective.html_report import generate_html_report
 from data_detective.loader import load_csv
 from data_detective.markdown_report import render_markdown_report
 from data_detective.profiler import DataProfiler
+from data_detective.rules import HealthScoreRules, RulesError, load_rules
 
 from .quick_scan import quick_scan
 
@@ -156,7 +160,24 @@ def _load_dataframe(tmp_path: str):
         raise HTTPException(status_code=400, detail=f"Could not parse CSV: {e}") from e
 
 
-async def _run_analysis(file: UploadFile, contents: bytes, outlier_method: str):
+async def _load_rules_from_upload(rules_file: UploadFile | None) -> HealthScoreRules | None:
+    if rules_file is None:
+        return None
+
+    contents = await rules_file.read()
+    with tempfile.NamedTemporaryFile(suffix=".yaml") as tmp:
+        tmp.write(contents)
+        tmp.flush()
+        try:
+            return load_rules(tmp.name, base=DataProfiler.DEFAULT_RULES)
+        except RulesError as e:
+            logger.warning("Rejected rules_file: %s", e)
+            raise HTTPException(status_code=400, detail=str(e)) from e
+
+
+async def _run_analysis(
+    file: UploadFile, contents: bytes, outlier_method: str, rules: HealthScoreRules | None = None
+):
     """Validates, loads, and profiles a CSV.
 
     Returns tuple of (df, report, processing_ms, quick_scan).
@@ -179,7 +200,7 @@ async def _run_analysis(file: UploadFile, contents: bytes, outlier_method: str):
 
         profiler = DataProfiler(df)
         try:
-            report = profiler.run_full_profile(outlier_method=outlier_method)
+            report = profiler.run_full_profile(outlier_method=outlier_method, rules=rules)
         except Exception as e:
             logger.error("Profiling failed for filename=%r: %s", file.filename, e, exc_info=True)
             raise HTTPException(status_code=500, detail=f"Profiling failed: {e}") from e
@@ -210,7 +231,12 @@ def health():
     response_description="Full profiling report as JSON.",
     dependencies=[Depends(_check_rate_limit)],
     responses={
-        400: {"description": "Invalid file (wrong extension, empty, malformed CSV, or bad outlier_method)."},
+        400: {
+            "description": (
+                "Invalid file (wrong extension, empty, malformed CSV, or bad outlier_method), "
+                "or an invalid rules_file."
+            )
+        },
         413: {"description": "File exceeds the upload size limit."},
         429: {"description": "Rate limit exceeded."},
         500: {"description": "Profiling engine raised an unexpected error."},
@@ -219,6 +245,16 @@ def health():
 async def analyze(
     file: UploadFile = File(..., description="A .csv file, up to 25 MB."),
     outlier_method: str = _OUTLIER_METHOD_QUERY,
+    # Optional[UploadFile], not `UploadFile | None`: FastAPI evaluates a route
+    # handler's own parameter annotations at request time to build validation,
+    # and that eval fails on Python 3.9 for the `|` union syntax (needs 3.10).
+    rules_file: Optional[UploadFile] = File(
+        None,
+        description=(
+            "Optional YAML rules file overriding health-score weights and severities. "
+            "See docs/rules-contract.md."
+        ),
+    ),
 ):
     """Runs the full profiling engine over an uploaded CSV and returns JSON.
 
@@ -230,7 +266,8 @@ async def analyze(
     from the Go fastscan pre-check when the binary is present.
     """
     contents = await file.read()
-    _, report, processing_ms, quick = await _run_analysis(file, contents, outlier_method)
+    rules = await _load_rules_from_upload(rules_file)
+    _, report, processing_ms, quick = await _run_analysis(file, contents, outlier_method, rules)
 
     report["filename"] = file.filename
     report["processing_ms"] = processing_ms

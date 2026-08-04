@@ -38,6 +38,9 @@ e2e = [
 	"playwright>=1.40",
 	"pytest-playwright>=0.4",
 ]
+rules = [
+	"PyYAML>=6.0",
+]
 
 [tool.mypy]
 # No explicit python_version pin: the typecheck CI job runs on 3.12 (the
@@ -54,6 +57,13 @@ check_untyped_defs = true
 # adopting pandas-stubs is a separate, deliberate effort (it's strict
 # enough to need real tuning against this codebase, not a drive-by add).
 module = ["pandas.*", "numpy.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# yaml is an optional import (the `rules` extra, loaded lazily inside
+# load_rules()): the typecheck CI job doesn't install it, so this needs to
+# be ignorable regardless of whether it's present or has stubs.
+module = ["yaml.*"]
 ignore_missing_imports = true
 
 [tool.setuptools]

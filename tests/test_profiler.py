@@ -2,6 +2,7 @@ import pandas as pd
 import pytest
 
 from data_detective.profiler import DataProfiler
+from data_detective.rules import CategoryRule, ColumnOverride, HealthScoreRules, load_rules
 
 
 @pytest.fixture
@@ -356,6 +357,99 @@ def test_health_score_labels_near_constant_and_date_like_as_informational():
     assert "date_like_columns" in result["informational_categories"]
     # Scored categories must never appear here.
     assert "missing_values" not in result["informational_categories"]
+
+
+def test_health_score_default_rules_matches_no_rules_argument():
+    # Pinned regression: omitting `rules` and passing DEFAULT_RULES
+    # explicitly must always agree, since DEFAULT_RULES *is* the fallback,
+    # not a separate code path that merely happens to match today.
+    df = pd.DataFrame({
+        "a": [1, 2, 3, None, 5],
+        "b": [10, 20, 30, 40, 50000],
+        "a_copy": [1, 2, 3, None, 5],
+    })
+    profiler = DataProfiler(df)
+    assert profiler.health_score() == profiler.health_score(rules=None)
+    assert profiler.health_score() == profiler.health_score(rules=DataProfiler.DEFAULT_RULES)
+
+
+def test_health_score_rules_file_changes_severity(tmp_path):
+    df = pd.DataFrame({"a": [1, 2, 3], "constant": [1, 1, 1]})
+    rules_file = tmp_path / "rules.yaml"
+    rules_file.write_text("categories:\n  constant_columns:\n    severity: failure\n")
+
+    rules = load_rules(rules_file, base=DataProfiler.DEFAULT_RULES)
+    result = DataProfiler(df).health_score(rules=rules)
+
+    assert "constant_columns" in result["failures"]
+    # Same weight as default, unaffected by the severity-only override.
+    default_result = DataProfiler(df).health_score()
+    assert result["breakdown"]["constant_columns"] == default_result["breakdown"]["constant_columns"]
+
+
+def test_health_score_rules_file_changes_weight(tmp_path):
+    # Total category weights are capped at 100 by design, so raising one
+    # category's weight means lowering another to make room. Four constant
+    # columns (4 * CONSTANT_COLUMN_POINTS_PER_OCCURRENCE=3 = 12) so the raw
+    # deduction actually exceeds the default cap of 10 and a raised cap is
+    # observable, rather than both capping down to the same smaller number.
+    df = pd.DataFrame({
+        "a": [1, 2, 3],
+        "c1": [1, 1, 1],
+        "c2": [1, 1, 1],
+        "c3": [1, 1, 1],
+        "c4": [1, 1, 1],
+    })
+    rules_file = tmp_path / "rules.yaml"
+    rules_file.write_text(
+        "categories:\n"
+        "  constant_columns:\n"
+        "    weight: 15\n"
+        "  correlated_columns:\n"
+        "    weight: 0\n"
+    )
+
+    rules = load_rules(rules_file, base=DataProfiler.DEFAULT_RULES)
+    result = DataProfiler(df).health_score(rules=rules)
+
+    assert result["breakdown"]["constant_columns"] > DataProfiler.HEALTH_SCORE_MAX_DEDUCTIONS["constant_columns"]
+
+
+def test_health_score_column_override_applies_only_to_named_column():
+    # The request's own example: negative_values on `price` specifically
+    # should fail, while the same category on other columns stays a warning.
+    df = pd.DataFrame({"price": [10, -5, 20]})
+    rules = HealthScoreRules(
+        categories=dict(DataProfiler.DEFAULT_RULES.categories),
+        column_overrides=[ColumnOverride(column="price", category="negative_values", severity="failure")],
+    )
+    result = DataProfiler(df).health_score(rules=rules)
+    assert "negative_values" in result["failures"]
+
+    # A dataset with a *different* nonnegative-implying column has no
+    # override targeting it, so it stays a warning, not a failure.
+    other_df = pd.DataFrame({"amount": [10, -5, 20]})
+    other_result = DataProfiler(other_df).health_score(rules=rules)
+    assert other_result["breakdown"]["negative_values"] > 0
+    assert "negative_values" not in other_result["failures"]
+
+
+def test_health_score_no_failures_without_rules():
+    df = pd.DataFrame({"price": [10, -5, 20], "constant": [1, 1, 1]})
+    result = DataProfiler(df).health_score()
+    assert result["failures"] == []
+
+
+def test_health_score_category_severity_failure_without_column_override():
+    df = pd.DataFrame({"a": [1, 1, 1, 1, 1]})
+    rules = HealthScoreRules(
+        categories={
+            **DataProfiler.DEFAULT_RULES.categories,
+            "constant_columns": CategoryRule(weight=10, severity="failure"),
+        }
+    )
+    result = DataProfiler(df).health_score(rules=rules)
+    assert "constant_columns" in result["failures"]
 
 
 def test_run_full_profile_includes_health_score():

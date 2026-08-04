@@ -20,6 +20,12 @@ Fail the build if outlier count exceeds a threshold:
 data-detective analyze incoming.csv --json | jq '.outliers_mad | length' | xargs -I {} bash -c 'exit {}'
 ```
 
+For a gate that's specific to the categories your team actually cares about
+(rather than counting outliers generically), see
+[health score rules](rules-contract.md): `--rules team-rules.yaml --fail-on failure`
+fails the build only when a category you've explicitly marked
+`severity: failure` actually triggers.
+
 ## Batch processing
 
 Profile every CSV in a directory:

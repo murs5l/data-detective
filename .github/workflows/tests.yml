@@ -24,7 +24,7 @@ jobs:
 
       - name: Install package and dev dependencies
         run: |
-          pip install -e ".[dev]"
+          pip install -e ".[dev,rules]"
 
       - name: Run tests
         run: pytest -v tests
@@ -80,7 +80,7 @@ jobs:
 
       - name: Install package and API dependencies
         run: |
-          pip install -e ".[api]"
+          pip install -e ".[api,rules]"
           pip install -r backend/requirements-dev.txt
 
       - name: Run backend API tests
@@ -102,7 +102,7 @@ jobs:
 
       - name: Install package and dev/API dependencies
         run: |
-          pip install -e ".[dev,api]"
+          pip install -e ".[dev,api,rules]"
           pip install -r backend/requirements-dev.txt
 
       - name: Run full test suite with coverage

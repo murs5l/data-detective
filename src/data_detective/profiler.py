@@ -7,6 +7,8 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from .rules import CategoryRule, HealthScoreRules
+
 
 class DataProfiler:
     """
@@ -70,6 +72,20 @@ class DataProfiler:
         (60, "Fair"),
         (40, "Poor"),
         (0, "Critical"),
+    )
+
+    # The rules health_score() falls back to when no `rules` argument is
+    # given: every category at its HEALTH_SCORE_MAX_DEDUCTIONS weight,
+    # "warning" severity except the two zero-weight informational
+    # categories. This *is* the default, not an approximation of it, so
+    # calling health_score() and health_score(rules=DataProfiler.DEFAULT_RULES)
+    # always produce identical output. Load a YAML file with `load_rules()`
+    # (src/data_detective/rules.py) to override weights/severities per team.
+    DEFAULT_RULES = HealthScoreRules(
+        categories={
+            name: CategoryRule(weight=cap, severity="info" if cap == 0 else "warning")
+            for name, cap in HEALTH_SCORE_MAX_DEDUCTIONS.items()
+        }
     )
 
     # Tuning constants for health_score()'s per-category deductions. Named
@@ -460,17 +476,44 @@ class DataProfiler:
                     flagged.append(col)
         return flagged
 
-    def health_score(self) -> dict[str, Any]:
+    def health_score(self, rules: HealthScoreRules | None = None) -> dict[str, Any]:
         """
         Overall 0-100 data-quality score: 100 minus a documented, capped
         deduction per issue category (see HEALTH_SCORE_MAX_DEDUCTIONS).
         Deliberately inspectable rather than a black box: "breakdown" shows
         exactly how many points each category cost, so the number can be
         explained, not just quoted.
+
+        `rules` overrides the default per-category weights/severities and
+        adds per-column severity overrides (e.g. "negative_values is a
+        failure specifically on the price column, a warning everywhere
+        else"); see src/data_detective/rules.py and load_rules(). Omitting
+        it (the default) reproduces today's fixed scoring exactly:
+        health_score() and health_score(rules=DataProfiler.DEFAULT_RULES)
+        always agree, since DEFAULT_RULES *is* what this falls back to.
         """
-        caps = self.HEALTH_SCORE_MAX_DEDUCTIONS
+        rules = rules or self.DEFAULT_RULES
         total_rows = len(self.df)
         breakdown: dict[str, float] = {}
+        failures: set[str] = set()
+
+        def weight(category: str) -> float:
+            return rules.categories[category].weight
+
+        def flag_failure(category: str, affected_columns: list[str] | None = None) -> None:
+            """Marks `category` as a failure if its resolved severity is
+            "failure", either category-wide or via a per-column override
+            on one of `affected_columns`. Only called after confirming the
+            category actually deducted something."""
+            rule = rules.categories[category]
+            if rule.severity == "failure":
+                failures.add(category)
+                return
+            for column in affected_columns or []:
+                override = rules.override_for(category, column)
+                if override and (override.severity or rule.severity) == "failure":
+                    failures.add(category)
+                    return
 
         # Missing values: blends the worst single column (70% weight, so one
         # badly broken column is penalized even if every other column is
@@ -478,19 +521,26 @@ class DataProfiler:
         # on its own) with the overall average (30% weight, so widespread
         # moderate missingness still registers even with no single outlier
         # column).
-        missing_pcts = list(self.missing_percentage().values())
+        missing_pcts_by_col = self.missing_percentage()
+        missing_pcts = list(missing_pcts_by_col.values())
         avg_missing_ratio = (sum(missing_pcts) / len(missing_pcts) / 100) if missing_pcts else 0.0
         max_missing_ratio = (max(missing_pcts) / 100) if missing_pcts else 0.0
         missing_ratio = (
             self.MISSING_VALUES_WORST_COLUMN_WEIGHT * max_missing_ratio
             + self.MISSING_VALUES_AVERAGE_WEIGHT * avg_missing_ratio
         )
-        breakdown["missing_values"] = round(min(caps["missing_values"], missing_ratio * caps["missing_values"]), 1)
+        missing_values_cap = weight("missing_values")
+        breakdown["missing_values"] = round(min(missing_values_cap, missing_ratio * missing_values_cap), 1)
+        if breakdown["missing_values"] > 0:
+            flag_failure("missing_values", [col for col, pct in missing_pcts_by_col.items() if pct > 0])
 
         # Duplicate rows: ratio of duplicated rows to total rows maps
         # directly onto the cap.
         dup_row_ratio = (self.duplicate_rows() / total_rows) if total_rows else 0.0
-        breakdown["duplicate_rows"] = round(min(caps["duplicate_rows"], dup_row_ratio * caps["duplicate_rows"]), 1)
+        duplicate_rows_cap = weight("duplicate_rows")
+        breakdown["duplicate_rows"] = round(min(duplicate_rows_cap, dup_row_ratio * duplicate_rows_cap), 1)
+        if breakdown["duplicate_rows"] > 0:
+            flag_failure("duplicate_rows")
 
         # Outliers: genuinely extreme values (MAD method) are only ever a
         # small tail of any column by construction, so raw cell-ratio needs
@@ -499,95 +549,109 @@ class DataProfiler:
         outlier_counts = self.detect_outliers(method="mad")
         total_numeric_cells = int(self._numeric_df.notna().sum().sum())
         outlier_ratio = (sum(outlier_counts.values()) / total_numeric_cells) if total_numeric_cells else 0.0
+        outliers_cap = weight("outliers")
         breakdown["outliers"] = round(
-            min(caps["outliers"], outlier_ratio * self.OUTLIER_CELL_RATIO_SCALE * caps["outliers"]), 1
+            min(outliers_cap, outlier_ratio * self.OUTLIER_CELL_RATIO_SCALE * outliers_cap), 1
         )
+        if breakdown["outliers"] > 0:
+            flag_failure("outliers", [col for col, count in outlier_counts.items() if count > 0])
 
         # Duplicate columns, constant columns, mixed-type columns, and
         # unexpected negatives are flat points per occurrence, capped: each
         # instance is a concrete, discrete issue rather than a proportion.
+        duplicate_column_pairs = self.detect_duplicate_columns()
+        duplicate_columns_cap = weight("duplicate_columns")
         breakdown["duplicate_columns"] = round(
-            min(
-                caps["duplicate_columns"],
-                len(self.detect_duplicate_columns()) * self.DUPLICATE_COLUMN_POINTS_PER_OCCURRENCE,
-            ),
-            1,
+            min(duplicate_columns_cap, len(duplicate_column_pairs) * self.DUPLICATE_COLUMN_POINTS_PER_OCCURRENCE), 1
         )
+        if breakdown["duplicate_columns"] > 0:
+            flag_failure("duplicate_columns", [col for pair in duplicate_column_pairs for col in pair])
+
+        constant_cols = self.detect_constant_columns()
+        constant_columns_cap = weight("constant_columns")
         breakdown["constant_columns"] = round(
-            min(
-                caps["constant_columns"],
-                len(self.detect_constant_columns()) * self.CONSTANT_COLUMN_POINTS_PER_OCCURRENCE,
-            ),
-            1,
+            min(constant_columns_cap, len(constant_cols) * self.CONSTANT_COLUMN_POINTS_PER_OCCURRENCE), 1
         )
+        if breakdown["constant_columns"] > 0:
+            flag_failure("constant_columns", constant_cols)
+
+        mixed_type_cols = self.detect_mixed_type_columns()
+        mixed_type_columns_cap = weight("mixed_type_columns")
         breakdown["mixed_type_columns"] = round(
-            min(
-                caps["mixed_type_columns"],
-                len(self.detect_mixed_type_columns()) * self.MIXED_TYPE_POINTS_PER_OCCURRENCE,
-            ),
-            1,
+            min(mixed_type_columns_cap, len(mixed_type_cols) * self.MIXED_TYPE_POINTS_PER_OCCURRENCE), 1
         )
+        if breakdown["mixed_type_columns"] > 0:
+            flag_failure("mixed_type_columns", mixed_type_cols)
+
+        negative_cols = self.detect_negative_in_nonnegative_columns()
+        negative_values_cap = weight("negative_values")
         breakdown["negative_values"] = round(
-            min(
-                caps["negative_values"],
-                len(self.detect_negative_in_nonnegative_columns()) * self.NEGATIVE_VALUES_POINTS_PER_OCCURRENCE,
-            ),
-            1,
+            min(negative_values_cap, len(negative_cols) * self.NEGATIVE_VALUES_POINTS_PER_OCCURRENCE), 1
         )
+        if breakdown["negative_values"] > 0:
+            flag_failure("negative_values", negative_cols)
 
         # Skewed distributions: fraction of numeric columns heavily skewed,
         # scaled 2x before capping so half the numeric columns being skewed
         # maxes the deduction.
         shapes = self.distribution_shape()
-        skewed_count = sum(1 for s in shapes.values() if abs(s["skewness"]) > self.SKEWNESS_THRESHOLD)
-        skewed_ratio = (skewed_count / len(shapes)) if shapes else 0.0
+        skewed_cols = [col for col, s in shapes.items() if abs(s["skewness"]) > self.SKEWNESS_THRESHOLD]
+        skewed_ratio = (len(skewed_cols) / len(shapes)) if shapes else 0.0
+        skewed_distributions_cap = weight("skewed_distributions")
         breakdown["skewed_distributions"] = round(
-            min(caps["skewed_distributions"], skewed_ratio * self.SKEWED_RATIO_SCALE * caps["skewed_distributions"]),
-            1,
+            min(skewed_distributions_cap, skewed_ratio * self.SKEWED_RATIO_SCALE * skewed_distributions_cap), 1
         )
+        if breakdown["skewed_distributions"] > 0:
+            flag_failure("skewed_distributions", skewed_cols)
 
         # Correlated (redundant) columns: flat points per pair, capped.
+        correlated_pairs = self.detect_correlated_columns()
+        correlated_columns_cap = weight("correlated_columns")
         breakdown["correlated_columns"] = round(
-            min(caps["correlated_columns"], len(self.detect_correlated_columns()) * self.CORRELATED_PAIR_POINTS), 1
+            min(correlated_columns_cap, len(correlated_pairs) * self.CORRELATED_PAIR_POINTS), 1
         )
+        if breakdown["correlated_columns"] > 0:
+            flag_failure("correlated_columns", [col for a, b, _ in correlated_pairs for col in (a, b)])
 
         # Near-constant and date-like columns: capped at 0 by default (see
-        # HEALTH_SCORE_MAX_DEDUCTIONS), so skip the detector call entirely
-        # rather than computing it just to multiply by zero. Both detectors
-        # already run once, unconditionally, in run_full_profile() and are
-        # surfaced there and in generate_insights() regardless of scoring.
-        if caps["near_constant_columns"] > 0:
+        # HEALTH_SCORE_MAX_DEDUCTIONS/DEFAULT_RULES), so skip the detector
+        # call entirely rather than computing it just to multiply by zero.
+        # Both detectors already run once, unconditionally, in
+        # run_full_profile() and are surfaced there and in
+        # generate_insights() regardless of scoring.
+        near_constant_cap = weight("near_constant_columns")
+        if near_constant_cap > 0:
+            near_constant_cols = self.detect_near_constant_columns()
             breakdown["near_constant_columns"] = round(
-                min(
-                    caps["near_constant_columns"],
-                    len(self.detect_near_constant_columns()) * self.NEAR_CONSTANT_COLUMN_POINTS_PER_OCCURRENCE,
-                ),
-                1,
+                min(near_constant_cap, len(near_constant_cols) * self.NEAR_CONSTANT_COLUMN_POINTS_PER_OCCURRENCE), 1
             )
+            if breakdown["near_constant_columns"] > 0:
+                flag_failure("near_constant_columns", near_constant_cols)
         else:
             breakdown["near_constant_columns"] = 0.0
 
-        if caps["date_like_columns"] > 0:
+        date_like_cap = weight("date_like_columns")
+        if date_like_cap > 0:
+            date_like_cols = self.detect_date_like_columns()
             breakdown["date_like_columns"] = round(
-                min(
-                    caps["date_like_columns"],
-                    len(self.detect_date_like_columns()) * self.DATE_LIKE_COLUMN_POINTS_PER_OCCURRENCE,
-                ),
-                1,
+                min(date_like_cap, len(date_like_cols) * self.DATE_LIKE_COLUMN_POINTS_PER_OCCURRENCE), 1
             )
+            if breakdown["date_like_columns"] > 0:
+                flag_failure("date_like_columns", date_like_cols)
         else:
             breakdown["date_like_columns"] = 0.0
 
         score = max(0, round(100 - sum(breakdown.values())))
         grade = next(label for threshold, label in self.HEALTH_SCORE_GRADES if score >= threshold)
 
-        informational_categories = sorted(name for name, cap in caps.items() if cap == 0)
+        informational_categories = sorted(name for name, rule in rules.categories.items() if rule.weight == 0)
 
         return {
             "score": score,
             "grade": grade,
             "breakdown": breakdown,
             "informational_categories": informational_categories,
+            "failures": sorted(failures),
         }
 
     def generate_insights(self, outlier_method: str = "mad") -> list[str]:
@@ -658,9 +722,9 @@ class DataProfiler:
 
         return insights
 
-    def run_full_profile(self, outlier_method: str = "mad") -> dict[str, Any]:
+    def run_full_profile(self, outlier_method: str = "mad", rules: HealthScoreRules | None = None) -> dict[str, Any]:
         return {
-            "health_score": self.health_score(),
+            "health_score": self.health_score(rules=rules),
             "shape": self.shape(),
             "column_types": self.column_types(),
             "missing_values": self.missing_values(),

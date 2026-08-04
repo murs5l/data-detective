@@ -10,6 +10,8 @@ Detective into your own applications.
 curl -F "file=@data.csv" "http://localhost:8000/api/analyze?outlier_method=mad"
 ```
 Response: JSON object with all profiling data (see the Python example below).
+Optionally accepts a second file field, `rules_file`, overriding health-score
+weights and severities; see [health score rules](rules-contract.md).
 
 **POST /api/analyze/html** – Analyze a CSV file, return standalone HTML report
 ```bash

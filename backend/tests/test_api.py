@@ -115,3 +115,43 @@ def test_health_is_never_rate_limited():
     assert response.status_code == 200
 
     main_module._request_log.clear()
+
+
+def test_analyze_rules_file_affects_health_score():
+    csv_content = b"price,quantity\n10,5\n-5,3\n20,7\n"
+    rules_yaml = (
+        b"column_overrides:\n"
+        b"  - column: price\n"
+        b"    category: negative_values\n"
+        b"    severity: failure\n"
+    )
+    response = client.post(
+        "/api/analyze",
+        files={
+            "file": ("price.csv", csv_content, "text/csv"),
+            "rules_file": ("rules.yaml", rules_yaml, "application/x-yaml"),
+        },
+    )
+    assert response.status_code == 200
+    assert "negative_values" in response.json()["health_score"]["failures"]
+
+
+def test_analyze_without_rules_file_has_no_failures():
+    csv_content = b"price,quantity\n10,5\n-5,3\n20,7\n"
+    response = client.post("/api/analyze", files=_csv_upload(csv_content))
+    assert response.status_code == 200
+    assert response.json()["health_score"]["failures"] == []
+
+
+def test_analyze_invalid_rules_file_returns_400():
+    csv_content = b"a,b\n1,2\n3,4\n"
+    bad_rules_yaml = b"categories:\n  totally_made_up:\n    weight: 5\n"
+    response = client.post(
+        "/api/analyze",
+        files={
+            "file": ("sample.csv", csv_content, "text/csv"),
+            "rules_file": ("rules.yaml", bad_rules_yaml, "application/x-yaml"),
+        },
+    )
+    assert response.status_code == 400
+    assert "Unknown category" in response.json()["detail"]

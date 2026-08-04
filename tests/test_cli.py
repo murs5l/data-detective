@@ -127,3 +127,58 @@ def test_main_handles_empty_file_gracefully(tmp_path, monkeypatch, capsys):
     err = capsys.readouterr().err
     assert exit_code == 1
     assert "empty" in err.lower()
+
+
+@pytest.fixture
+def price_csv(tmp_path: Path) -> Path:
+    csv_path = tmp_path / "price.csv"
+    csv_path.write_text("price,quantity\n10,5\n-5,3\n20,7\n", encoding="utf-8")
+    return csv_path
+
+
+@pytest.fixture
+def price_rules_yaml(tmp_path: Path) -> Path:
+    rules_path = tmp_path / "rules.yaml"
+    rules_path.write_text(
+        "column_overrides:\n  - column: price\n    category: negative_values\n    severity: failure\n"
+    )
+    return rules_path
+
+
+def test_analyze_rules_flag_affects_health_score(price_csv, price_rules_yaml, capsys):
+    _run(["analyze", str(price_csv), "--rules", str(price_rules_yaml), "--json", "--quiet"])
+
+    report = json.loads(capsys.readouterr().out)
+    assert "negative_values" in report["health_score"]["failures"]
+
+
+def test_analyze_fail_on_failure_exits_nonzero(price_csv, price_rules_yaml, capsys):
+    exit_code = _run(
+        ["analyze", str(price_csv), "--rules", str(price_rules_yaml), "--fail-on", "failure", "--quiet"]
+    )
+    assert exit_code == 1
+    assert "negative_values" in capsys.readouterr().err
+
+
+def test_analyze_fail_on_failure_without_rules_exits_zero(price_csv, capsys):
+    exit_code = _run(["analyze", str(price_csv), "--fail-on", "failure", "--quiet"])
+    assert exit_code == 0
+
+
+def test_analyze_missing_rules_file_raises_rules_error(sample_csv):
+    from data_detective.rules import RulesError
+
+    parser = build_parser()
+    args = parser.parse_args(["analyze", str(sample_csv), "--rules", "/does/not/exist.yaml"])
+    with pytest.raises(RulesError):
+        args.func(args)
+
+
+def test_main_handles_missing_rules_file_gracefully(sample_csv, monkeypatch, capsys):
+    monkeypatch.setattr("sys.argv", ["data-detective", "analyze", str(sample_csv), "--rules", "/does/not/exist.yaml"])
+
+    exit_code = main()
+
+    err = capsys.readouterr().err
+    assert exit_code == 1
+    assert "Could not read rules file" in err

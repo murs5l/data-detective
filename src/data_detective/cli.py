@@ -7,12 +7,13 @@ from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as _package_version
 from pathlib import Path
 
-from data_detective.exceptions import DataLoadError
+from data_detective.exceptions import DataDetectiveError
 from data_detective.html_report import generate_html_report
 from data_detective.loader import load_csv
 from data_detective.markdown_report import generate_markdown_report
 from data_detective.profiler import DataProfiler
 from data_detective.report import print_report
+from data_detective.rules import load_rules
 
 try:
     __version__ = _package_version("data-detective-toolkit")
@@ -29,9 +30,13 @@ def run_analyze(args: argparse.Namespace) -> int:
     if not args.quiet:
         print("🔥 Data Detective starting...\n")
 
+    rules = None
+    if args.rules:
+        rules = load_rules(args.rules, base=DataProfiler.DEFAULT_RULES)
+
     df = load_csv(args.file)
     profiler = DataProfiler(df)
-    report = profiler.run_full_profile(outlier_method=args.outlier_method)
+    report = profiler.run_full_profile(outlier_method=args.outlier_method, rules=rules)
 
     emit_html = args.html or bool(args.output_html)
     emit_markdown = args.markdown or bool(args.output_markdown)
@@ -52,11 +57,13 @@ def run_analyze(args: argparse.Namespace) -> int:
         elif args.json:
             print(payload)
 
-    if emit_html or emit_markdown or emit_json:
-        return 0
-
-    if not args.json and not args.html and not args.markdown:
+    if not (emit_html or emit_markdown or emit_json):
         print_report(report)
+
+    if args.fail_on == "failure" and report["health_score"]["failures"]:
+        failed = ", ".join(report["health_score"]["failures"])
+        print(f"❌ Failing categories: {failed}", file=sys.stderr)
+        return 1
 
     return 0
 
@@ -98,6 +105,19 @@ def build_parser() -> argparse.ArgumentParser:
         help="Outlier detection method used for insights (default: mad)",
     )
     analyze_parser.add_argument(
+        "--rules",
+        help=(
+            "Path to a YAML rules file overriding health-score weights and "
+            "severities (requires the 'rules' extra: pip install "
+            "data-detective-toolkit[rules])"
+        ),
+    )
+    analyze_parser.add_argument(
+        "--fail-on",
+        choices=["failure"],
+        help="Exit with a non-zero status if any category is at 'failure' severity (see --rules)",
+    )
+    analyze_parser.add_argument(
         "--quiet",
         action="store_true",
         help="Suppress non-error progress messages",
@@ -121,7 +141,7 @@ def main() -> int:
 
     try:
         return args.func(args)
-    except DataLoadError as e:
+    except DataDetectiveError as e:
         print(f"❌ {e}", file=sys.stderr)
         return 1
     except Exception as e:
