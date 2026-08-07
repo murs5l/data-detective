@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -163,6 +164,52 @@ def test_duplicate_columns(sample_df):
     profiler = DataProfiler(sample_df)
     dup_pairs = profiler.detect_duplicate_columns()
     assert ("value", "dup_of_value") in dup_pairs or ("dup_of_value", "value") in dup_pairs
+
+
+def test_duplicate_columns_group_of_three_reports_all_pairs():
+    # detect_duplicate_columns() hash-buckets columns before comparing, so
+    # a group larger than 2 needs its own test: every pair within the
+    # group must still be reported, not just adjacent ones.
+    df = pd.DataFrame({"a": [1, 2, 3], "b": [1, 2, 3], "c": [1, 2, 3], "unrelated": [9, 8, 7]})
+    pairs = DataProfiler(df).detect_duplicate_columns()
+    assert set(pairs) == {("a", "b"), ("a", "c"), ("b", "c")}
+
+
+def test_duplicate_columns_same_values_different_dtype_not_flagged():
+    # .equals() is dtype-sensitive; hash-bucketing must not paper over
+    # that by treating int64 [1,2,3] and float64 [1.0,2.0,3.0] as equal
+    # just because they'd hash into the same bucket.
+    df = pd.DataFrame({"as_int": [1, 2, 3], "as_float": [1.0, 2.0, 3.0]})
+    assert df["as_int"].dtype != df["as_float"].dtype
+    assert DataProfiler(df).detect_duplicate_columns() == []
+
+
+def test_duplicate_columns_matches_naive_pairwise_comparison_on_random_data():
+    # Regression test for the hash-bucketing optimization: compare against
+    # a brute-force O(n^2) reference on data deliberately constructed with
+    # several duplicate groups of different sizes, mixed dtypes, and NaNs.
+    def brute_force(df):
+        cols = list(df.columns)
+        return [
+            (cols[i], cols[j])
+            for i in range(len(cols))
+            for j in range(i + 1, len(cols))
+            if df[cols[i]].equals(df[cols[j]])
+        ]
+
+    rng = np.random.default_rng(7)
+    df = pd.DataFrame({
+        "a": rng.integers(0, 100, 200),
+        "b": ["x", "y", "z"] * 66 + ["x", "y"],
+        "c": rng.normal(size=200),
+    })
+    df["a_dup"] = df["a"]
+    df["b_dup1"] = df["b"]
+    df["b_dup2"] = df["b"]
+    df["with_nan"] = [None, 1.0, 2.0] * 66 + [None, 1.0]
+    df["with_nan_dup"] = df["with_nan"]
+
+    assert DataProfiler(df).detect_duplicate_columns() == brute_force(df)
 
 
 def test_correlated_columns(sample_df):

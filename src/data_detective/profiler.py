@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import re
 from functools import cached_property
 from typing import Any
@@ -317,15 +318,32 @@ class DataProfiler:
         """
         Finds pairs of columns that are exactly identical.
         Returns a list of (col_a, col_b) tuples.
+
+        Hash-buckets columns first (one O(columns * rows) pass) so the
+        expensive pairwise .equals() check only ever runs within a bucket
+        of columns that already hash identically, not across every
+        possible pair. Duplicate columns are rare in practice, so most
+        buckets end up with exactly one column and need no comparison at
+        all; two different columns can never land in different buckets
+        and be wrongly skipped (hash_pandas_object is a deterministic
+        function of a column's values, so equal columns always hash
+        equal), and .equals() still verifies every candidate pair before
+        it's reported, so a hash collision between genuinely different
+        columns can't produce a false positive either.
         """
         duplicates: list[tuple[str, str]] = []
-        cols = list(self.df.columns)
+        buckets: dict[bytes, list[str]] = {}
 
-        for i in range(len(cols)):
-            for j in range(i + 1, len(cols)):
-                col_a, col_b = cols[i], cols[j]
-                if self.df[col_a].equals(self.df[col_b]):
-                    duplicates.append((col_a, col_b))
+        for col in self.df.columns:
+            digest = hashlib.sha256(pd.util.hash_pandas_object(self.df[col], index=False).values.tobytes()).digest()
+            buckets.setdefault(digest, []).append(col)
+
+        for cols_in_bucket in buckets.values():
+            for i in range(len(cols_in_bucket)):
+                for j in range(i + 1, len(cols_in_bucket)):
+                    col_a, col_b = cols_in_bucket[i], cols_in_bucket[j]
+                    if self.df[col_a].equals(self.df[col_b]):
+                        duplicates.append((col_a, col_b))
 
         return duplicates
 
