@@ -134,6 +134,17 @@ class DataProfiler:
             return pd.DataFrame()
         return self._numeric_df.quantile([0.25, 0.75])
 
+    @cached_property
+    def _correlation_matrix_raw(self) -> pd.DataFrame:
+        """Unrounded pandas .corr() output, computed once. Both
+        detect_correlated_columns() and correlation_matrix() need this;
+        .corr() is O(columns^2 * rows), too expensive to redo twice per
+        profile just because two different callers want different
+        post-processing (abs()+threshold vs. round()+fillna())."""
+        if self._numeric_df.shape[1] < 2:
+            return pd.DataFrame()
+        return self._numeric_df.corr()
+
     # -------------------------
     # BASIC STRUCTURE
     # -------------------------
@@ -327,7 +338,7 @@ class DataProfiler:
         if self._numeric_df.shape[1] < 2:
             return []
 
-        corr_matrix = self._numeric_df.corr().abs()
+        corr_matrix = self._correlation_matrix_raw.abs()
         pairs: list[tuple[str, str, float]] = []
         cols = corr_matrix.columns
 
@@ -348,7 +359,7 @@ class DataProfiler:
         if self._numeric_df.shape[1] < 2:
             return {}
 
-        corr = self._numeric_df.corr().round(3)
+        corr = self._correlation_matrix_raw.round(3)
         # Replace NaN (e.g. constant columns) with 0 so it's JSON-safe.
         corr = corr.fillna(0)
         return {col: corr[col].to_dict() for col in corr.columns}
