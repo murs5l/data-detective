@@ -400,6 +400,15 @@ select {
   margin: 10px 0 0;
 }
 
+.partial-analysis-notice {
+  font-size: 13px;
+  color: var(--warning);
+  background: var(--warning-bg);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 0;
+}
+
 .insight {
   border-radius: 10px;
   padding: 12px 14px;

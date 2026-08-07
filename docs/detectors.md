@@ -28,7 +28,7 @@ Data Detective automatically flags 20+ data quality issues:
 - Blank or whitespace-only values
 
 **Aggregates**
-- Full numeric correlation matrix
+- Full numeric correlation matrix (above 50 numeric columns, replaced by the top 50 correlated pairs instead; an n&times;n matrix that wide stops being a useful heatmap or JSON payload even though computing it is still fast, and the report's `partial_analysis` field explains why)
 - Histograms with bin edges and counts for numeric columns
 - Five-number summary (min, Q1, median, Q3, max) per numeric column
 - Per-column memory footprint (KB)

@@ -137,9 +137,16 @@ def _color_for_correlation(value: float) -> str:
     return f"rgb(255, {intensity - 60}, {intensity - 20})"
 
 
-def _render_correlation_heatmap(matrix: dict, empty_message="Not enough numeric columns for a heatmap.") -> str:
+def _render_correlation_heatmap(
+    matrix: dict, partial_analysis_notices=None, empty_message="Not enough numeric columns for a heatmap."
+) -> str:
     cols = list(matrix.keys())
     if len(cols) < 2:
+        if partial_analysis_notices:
+            notices_html = "".join(
+                f'<p class="partial-analysis-notice">{escape(notice)}</p>' for notice in partial_analysis_notices
+            )
+            return notices_html
         return f'<p class="empty">{empty_message}</p>'
 
     header_cells = "".join(f"<th>{escape(str(c))}</th>" for c in cols)
@@ -633,6 +640,15 @@ _STYLES = """
         margin: 10px 0 0 0;
     }
 
+    .partial-analysis-notice {
+        font-size: 13px;
+        color: var(--warning);
+        background: var(--warning-bg);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin: 0;
+    }
+
     .insights-list {
         list-style: none;
         padding-left: 0;
@@ -889,7 +905,7 @@ def generate_html_report(report: dict, output_path="report.html") -> None:
 
     <div class="box">
         <h2>🔗 Correlation Heatmap</h2>
-        {_render_correlation_heatmap(report.get("correlation_matrix", {}))}
+        {_render_correlation_heatmap(report.get("correlation_matrix", {}), report.get("partial_analysis", []))}
     </div>
 
     <div class="box">

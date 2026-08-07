@@ -30,9 +30,11 @@ def _pairs(pairs: list, empty_message: str = "None found.") -> str:
     return "\n".join(lines) + "\n"
 
 
-def _correlation_table(matrix: dict) -> str:
+def _correlation_table(matrix: dict, partial_analysis_notices: list | None = None) -> str:
     cols = list(matrix.keys())
     if len(cols) < 2:
+        if partial_analysis_notices:
+            return "\n".join(f"> ⚠️ {notice}" for notice in partial_analysis_notices) + "\n"
         return "_Not enough numeric columns for a correlation matrix._\n"
     header = "| | " + " | ".join(cols) + " |\n"
     header += "|---|" + "---|" * len(cols) + "\n"
@@ -132,7 +134,7 @@ def render_markdown_report(report: dict) -> str:
     lines.append(_pairs(report.get("correlated_columns", [])))
 
     lines.append("### Correlation matrix")
-    lines.append(_correlation_table(report.get("correlation_matrix", {})))
+    lines.append(_correlation_table(report.get("correlation_matrix", {}), report.get("partial_analysis", [])))
 
     lines.append("### Date-like columns")
     lines.append(_list(report.get("date_like_columns", [])))

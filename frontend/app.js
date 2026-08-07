@@ -208,7 +208,7 @@
     renderHealthScore(report.health_score);
     renderInsights(report.insights || []);
     renderStatGrid(report);
-    renderHeatmap(report.correlation_matrix || {});
+    renderHeatmap(report.correlation_matrix || {}, report.partial_analysis || []);
     renderColumnExplorer(report);
     renderTechnicalTables(report);
   }
@@ -335,11 +335,17 @@
     return `rgb(255, ${intensity - 60}, ${intensity - 20})`;
   }
 
-  function renderHeatmap(matrix) {
+  function renderHeatmap(matrix, partialAnalysisNotices) {
     const wrap = document.getElementById("heatmap-wrap");
     const cols = Object.keys(matrix);
     if (cols.length < 2) {
-      wrap.innerHTML = '<p class="empty-msg">Not enough numeric columns for a correlation heatmap.</p>';
+      if (partialAnalysisNotices && partialAnalysisNotices.length) {
+        wrap.innerHTML = partialAnalysisNotices
+          .map((notice) => `<p class="partial-analysis-notice">${escapeHtml(notice)}</p>`)
+          .join("");
+      } else {
+        wrap.innerHTML = '<p class="empty-msg">Not enough numeric columns for a correlation heatmap.</p>';
+      }
       return;
     }
 

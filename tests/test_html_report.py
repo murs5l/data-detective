@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -39,6 +40,24 @@ def test_html_report_includes_correlation_heatmap(tmp_path, report):
     assert "Correlation Heatmap" in html
     assert "heatmap-table" in html
     assert "heatmap-cell" in html
+
+
+def test_html_report_shows_partial_analysis_notice_for_wide_data(tmp_path):
+    rng = np.random.default_rng(1)
+    base = rng.normal(size=200)
+    n_cols = DataProfiler.MAX_COLUMNS_FOR_FULL_CORRELATION + 10
+    df = pd.DataFrame({f"col{i}": base + rng.normal(scale=0.001, size=200) for i in range(n_cols)})
+    report = DataProfiler(df).run_full_profile()
+
+    output_path = tmp_path / "report.html"
+    generate_html_report(report, output_path=str(output_path))
+    html = output_path.read_text(encoding="utf-8")
+
+    assert "partial-analysis-notice" in html
+    assert "Correlation matrix omitted" in html
+    # The CSS rule for .heatmap-table is always present in <style>; what
+    # must be absent is an actual rendered heatmap table element.
+    assert '<table class="heatmap-table">' not in html
 
 
 def test_html_report_includes_column_explorer(tmp_path, report):

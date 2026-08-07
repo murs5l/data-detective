@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -67,6 +68,18 @@ def test_render_markdown_report_no_numeric_columns_correlation_fallback():
     report = DataProfiler(df).run_full_profile()
     md = render_markdown_report(report)
     assert "Not enough numeric columns for a correlation matrix." in md
+
+
+def test_render_markdown_report_shows_partial_analysis_notice_for_wide_data():
+    rng = np.random.default_rng(1)
+    base = rng.normal(size=200)
+    n_cols = DataProfiler.MAX_COLUMNS_FOR_FULL_CORRELATION + 10
+    df = pd.DataFrame({f"col{i}": base + rng.normal(scale=0.001, size=200) for i in range(n_cols)})
+    report = DataProfiler(df).run_full_profile()
+
+    md = render_markdown_report(report)
+    assert "Correlation matrix omitted" in md
+    assert "| **col0** |" not in md
 
 
 def test_generate_markdown_report_writes_file(tmp_path, report):

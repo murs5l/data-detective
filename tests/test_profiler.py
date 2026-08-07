@@ -218,6 +218,50 @@ def test_correlated_columns(sample_df):
     assert any(pair[0] == "value" and pair[1] == "dup_of_value" for pair in correlated)
 
 
+def _wide_correlated_df(n_cols: int, seed: int = 1) -> pd.DataFrame:
+    rng = np.random.default_rng(seed)
+    base = rng.normal(size=200)
+    return pd.DataFrame({f"col{i}": base + rng.normal(scale=0.001, size=200) for i in range(n_cols)})
+
+
+def test_correlation_matrix_omitted_above_column_cap():
+    df = _wide_correlated_df(DataProfiler.MAX_COLUMNS_FOR_FULL_CORRELATION + 1)
+    profiler = DataProfiler(df)
+    assert profiler.correlation_matrix() == {}
+    assert profiler.detect_correlated_columns() != []
+
+
+def test_correlation_matrix_present_at_or_below_column_cap():
+    df = _wide_correlated_df(DataProfiler.MAX_COLUMNS_FOR_FULL_CORRELATION)
+    profiler = DataProfiler(df)
+    assert profiler.correlation_matrix() != {}
+
+
+def test_correlated_pairs_truncated_to_top_n_sorted_by_strength():
+    # Every column here correlates with every other, so there are far
+    # more than TOP_CORRELATED_PAIRS_LIMIT qualifying pairs.
+    df = _wide_correlated_df(60)
+    pairs = DataProfiler(df).detect_correlated_columns()
+
+    assert len(pairs) == DataProfiler.TOP_CORRELATED_PAIRS_LIMIT
+    strengths = [p[2] for p in pairs]
+    assert strengths == sorted(strengths, reverse=True)
+
+
+def test_partial_analysis_notice_present_when_wide_absent_when_not(sample_df):
+    wide_df = _wide_correlated_df(DataProfiler.MAX_COLUMNS_FOR_FULL_CORRELATION + 1)
+    wide_notices = DataProfiler(wide_df).partial_analysis_notices()
+    assert len(wide_notices) == 1
+    assert "Correlation matrix omitted" in wide_notices[0]
+
+    assert DataProfiler(sample_df).partial_analysis_notices() == []
+
+
+def test_run_full_profile_includes_partial_analysis_key(sample_df):
+    report = DataProfiler(sample_df).run_full_profile()
+    assert report["partial_analysis"] == []
+
+
 def test_date_like_columns():
     df = pd.DataFrame({
         "created_at": ["2024-01-01", "2024-02-01", "2024-03-01"],

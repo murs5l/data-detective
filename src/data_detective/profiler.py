@@ -19,6 +19,13 @@ class DataProfiler:
 
     HIGH_CARDINALITY_THRESHOLD = 0.9
     CORRELATION_THRESHOLD = 0.9
+    # Above this many numeric columns, a full n x n correlation matrix
+    # (2,500+ cells) stops being something anyone can usefully read or
+    # render as a heatmap, even though computing it is still fast. Show
+    # the top correlated pairs instead of the full matrix, with a notice
+    # explaining why, rather than silently dumping an unusable payload.
+    MAX_COLUMNS_FOR_FULL_CORRELATION = 50
+    TOP_CORRELATED_PAIRS_LIMIT = 50
     # 0.75 quantile of the standard normal distribution; scales MAD so it's
     # comparable to standard deviation for normally distributed data.
     MAD_Z_CONSTANT = 0.6745
@@ -347,9 +354,17 @@ class DataProfiler:
 
         return duplicates
 
+    def _is_wide_for_correlation(self) -> bool:
+        return self._numeric_df.shape[1] > self.MAX_COLUMNS_FOR_FULL_CORRELATION
+
     def detect_correlated_columns(self, threshold: float | None = None) -> list[tuple[str, str, float]]:
         """
         Finds pairs of numeric columns with correlation above threshold.
+
+        Above MAX_COLUMNS_FOR_FULL_CORRELATION numeric columns, truncated
+        to the TOP_CORRELATED_PAIRS_LIMIT strongest pairs (by absolute
+        correlation, strongest first) rather than every qualifying pair:
+        see partial_analysis_notices().
         """
         if threshold is None:
             threshold = self.CORRELATION_THRESHOLD
@@ -366,6 +381,10 @@ class DataProfiler:
                 if pd.notna(value) and value >= threshold:
                     pairs.append((cols[i], cols[j], round(float(value), 3)))
 
+        if self._is_wide_for_correlation():
+            pairs.sort(key=lambda pair: pair[2], reverse=True)
+            pairs = pairs[: self.TOP_CORRELATED_PAIRS_LIMIT]
+
         return pairs
 
     def correlation_matrix(self) -> dict[str, dict[str, float]]:
@@ -373,14 +392,36 @@ class DataProfiler:
         Full pairwise correlation matrix for numeric columns, as a
         nested dict: {col_a: {col_b: correlation_value, ...}, ...}.
         Used for heatmap visualization.
+
+        Omitted (returns {}) above MAX_COLUMNS_FOR_FULL_CORRELATION
+        numeric columns: an n x n matrix that large stops being
+        renderable as a heatmap or a useful JSON payload, even though
+        computing it is still fast. detect_correlated_columns() still
+        surfaces the strongest pairs; see partial_analysis_notices().
         """
         if self._numeric_df.shape[1] < 2:
+            return {}
+        if self._is_wide_for_correlation():
             return {}
 
         corr = self._correlation_matrix_raw.round(3)
         # Replace NaN (e.g. constant columns) with 0 so it's JSON-safe.
         corr = corr.fillna(0)
         return {col: corr[col].to_dict() for col in corr.columns}
+
+    def partial_analysis_notices(self) -> list[str]:
+        """Human-readable notices when part of the report was
+        deliberately abbreviated for a very wide dataset, rather than
+        silently truncated with no explanation."""
+        notices: list[str] = []
+        if self._is_wide_for_correlation():
+            numeric_cols = self._numeric_df.shape[1]
+            notices.append(
+                f"Correlation matrix omitted: {numeric_cols} numeric columns exceeds the "
+                f"{self.MAX_COLUMNS_FOR_FULL_CORRELATION}-column display limit. Showing the "
+                f"top {self.TOP_CORRELATED_PAIRS_LIMIT} correlated pairs instead."
+            )
+        return notices
 
     def histogram_data(self, bins: int = 10) -> dict[str, dict[str, list]]:
         """
@@ -777,5 +818,6 @@ class DataProfiler:
             "text_column_stats": self.text_column_stats(),
             "memory_usage_kb": self.memory_usage(),
             "negative_in_nonnegative_columns": self.detect_negative_in_nonnegative_columns(),
-            "insights": self.generate_insights(outlier_method=outlier_method)
+            "insights": self.generate_insights(outlier_method=outlier_method),
+            "partial_analysis": self.partial_analysis_notices(),
         }

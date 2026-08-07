@@ -15,6 +15,11 @@ All notable changes to this project are documented here. Format follows
 - An end-to-end test (`e2e/`, new `e2e` extra, new CI job): a real Playwright browser driving the actual served web app against a real running server, uploading a CSV and checking the rendered health score and insights. Previously the frontend had zero automated coverage; every check was manual.
 - The health score now explicitly labels near-constant and date-like columns as "tracked but not scored" (in the CLI, HTML report, Markdown report, and web app) instead of silently excluding them from the breakdown with no explanation. Doesn't change any existing score: both categories default to zero weight.
 - Configurable health-score rules (`src/data_detective/rules.py`, new optional `rules` extra): an optional YAML file overrides per-category weights and severities, with per-column overrides (e.g. `negative_values` on a `price` column can be `severity: failure` while it's a `warning` everywhere else) and a new `failure` severity distinct from point-costing `warning`s. New `--rules`/`--fail-on` CLI flags and an optional `rules_file` field on `POST /api/analyze`. See `docs/rules-contract.md`. Omitting a rules file reproduces today's fixed scoring exactly.
+- A `partial_analysis` field on the report: above 50 numeric columns, the correlation matrix is omitted (an n&times;n matrix that wide isn't a useful heatmap or JSON payload) in favor of the top 50 correlated pairs, with a notice explaining why, surfaced in the CLI, HTML report, Markdown report, and web app rather than a silently empty section.
+
+### Changed
+- `detect_correlated_columns()` and `correlation_matrix()` no longer each compute the correlation matrix independently; the result is now computed once and shared, a real speedup that grows with column count.
+- `detect_duplicate_columns()` hash-buckets columns before comparing them, instead of comparing every possible pair unconditionally. About 24x faster on 300 mostly-unique columns in testing; duplicate columns are rare in practice, so most of the old algorithm's work was wasted.
 
 ## [0.4.0] - 2026-07-17
 

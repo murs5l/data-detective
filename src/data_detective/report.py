@@ -44,6 +44,8 @@ def print_report(report: dict):
 
     print("\n🔗 Correlated Columns:")
     print(pretty(report.get("correlated_columns", [])))
+    for notice in report.get("partial_analysis", []):
+        print(f"   ⚠️  {notice}")
 
     print("\n📅 Date-like Columns:")
     print(pretty(report.get("date_like_columns", [])))
