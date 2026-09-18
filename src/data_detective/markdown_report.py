@@ -63,7 +63,7 @@ def render_markdown_report(report: dict) -> str:
     shape = report.get("shape", {})
     rows = shape.get("rows", "N/A")
     cols = shape.get("columns", "N/A")
-    duplicates = report.get("duplicates", 0)
+    duplicates = report.get("duplicate_rows", 0)
     health = report.get("health_score")
 
     lines = ["# 🕵️ Data Detective Report", ""]

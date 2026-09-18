@@ -44,7 +44,9 @@ def run_analyze(args: argparse.Namespace) -> int:
 
     if emit_html:
         output_html_path = args.output_html or "report.html"
-        generate_html_report(report, output_path=output_html_path)
+        html_path = generate_html_report(report, output_path=output_html_path)
+        if not args.quiet:
+            print(f"📄 HTML report generated: {html_path}")
 
     if emit_markdown:
         output_markdown_path = args.output_markdown or "report.md"

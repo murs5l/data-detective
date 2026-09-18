@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -118,3 +120,64 @@ def test_html_report_handles_no_numeric_columns(tmp_path):
 
     assert "Not enough numeric columns for a heatmap." in html
     assert "No numeric columns to chart." in html
+
+
+def test_generate_html_report_returns_written_path(tmp_path, report):
+    output_path = tmp_path / "report.html"
+    result = generate_html_report(report, output_path=output_path)
+
+    assert isinstance(result, Path)
+    assert result == output_path
+    assert result.exists()
+
+
+def test_html_report_does_not_print_anything(tmp_path, report, capsys):
+    """The HTML generator only writes the file; the caller (the CLI) decides
+    what, if anything, to print about it."""
+    generate_html_report(report, output_path=str(tmp_path / "report.html"))
+    assert capsys.readouterr().out == ""
+
+
+def test_html_report_hero_shows_issues_rows_and_columns(tmp_path, report):
+    output_path = tmp_path / "report.html"
+    generate_html_report(report, output_path=str(output_path))
+    html = output_path.read_text(encoding="utf-8")
+
+    assert "Issues detected" in html
+    assert '<div class="hero-stat-value">5</div>' in html  # rows
+    assert '<div class="hero-stat-value">3</div>' in html  # columns
+
+
+def test_html_report_attention_section_lists_scored_deductions(tmp_path, report):
+    # The fixture's "a"/"b" columns are perfectly correlated, so
+    # correlated_columns is the only category with a nonzero deduction.
+    output_path = tmp_path / "report.html"
+    generate_html_report(report, output_path=str(output_path))
+    html = output_path.read_text(encoding="utf-8")
+
+    assert "What needs attention" in html
+    assert 'class="attention-table"' in html
+    assert "Correlated columns" in html
+    assert "a ↔ b" in html
+
+
+def test_html_report_attention_section_shows_clean_message_when_no_deductions(tmp_path):
+    df = pd.DataFrame({"x": list(range(1, 11))})
+    report = DataProfiler(df).run_full_profile()
+
+    output_path = tmp_path / "report.html"
+    generate_html_report(report, output_path=str(output_path))
+    html = output_path.read_text(encoding="utf-8")
+
+    assert "No major issues detected" in html
+    assert 'class="attention-table"' not in html
+
+
+def test_html_report_overview_grid_shows_dataset_structure(tmp_path, report):
+    output_path = tmp_path / "report.html"
+    generate_html_report(report, output_path=str(output_path))
+    html = output_path.read_text(encoding="utf-8")
+
+    assert "Dataset structure" in html
+    assert "Numeric columns" in html
+    assert "Missing values" in html

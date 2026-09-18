@@ -1,8 +1,12 @@
+from __future__ import annotations
+
+from datetime import datetime
 from html import escape
 from pathlib import Path
+from typing import Any, Callable, Optional
 
 
-def _render_kv_table(d: dict, empty_message="No data.") -> str:
+def _render_kv_table(d: dict[str, Any], empty_message: str = "No data.") -> str:
     if not d:
         return f'<p class="empty">{empty_message}</p>'
 
@@ -13,7 +17,7 @@ def _render_kv_table(d: dict, empty_message="No data.") -> str:
     return f"<table><tbody>{rows}</tbody></table>"
 
 
-def _render_list(items: list, empty_message="None found.") -> str:
+def _render_list(items: list[Any], empty_message: str = "None found.") -> str:
     if not items:
         return f'<p class="empty">{empty_message}</p>'
 
@@ -21,7 +25,7 @@ def _render_list(items: list, empty_message="None found.") -> str:
     return f"<ul>{lis}</ul>"
 
 
-def _render_pairs(pairs: list, empty_message="None found.") -> str:
+def _render_pairs(pairs: list[tuple], empty_message: str = "None found.") -> str:
     """Renders list of tuples like (col_a, col_b) or (col_a, col_b, score)."""
     if not pairs:
         return f'<p class="empty">{empty_message}</p>'
@@ -41,7 +45,7 @@ def _render_pairs(pairs: list, empty_message="None found.") -> str:
     return f"<ul>{''.join(lis)}</ul>"
 
 
-def _render_nested_table(d: dict, empty_message="No data.") -> str:
+def _render_nested_table(d: dict[str, Any], empty_message: str = "No data.") -> str:
     if not d:
         return f'<p class="empty">{empty_message}</p>'
 
@@ -60,7 +64,7 @@ def _render_nested_table(d: dict, empty_message="No data.") -> str:
     return f'<table class="nested-summary"><tbody>{"".join(rows)}</tbody></table>'
 
 
-def _render_insights(insights: list) -> str:
+def _render_insights(insights: list[str]) -> str:
     if not insights:
         return '<p class="empty">No notable insights. Data looks clean. ✅</p>'
 
@@ -85,44 +89,233 @@ _HEALTH_BREAKDOWN_LABELS = {
 }
 
 
-def _render_health_score(health: dict) -> str:
+def _render_informational_notice(health: dict[str, Any]) -> str:
+    informational = health.get("informational_categories", [])
+    if not informational:
+        return ""
+    labels = ", ".join(_HEALTH_BREAKDOWN_LABELS.get(col, col).lower() for col in informational)
+    return f'<p class="health-score-informational">Tracked but not scored: {escape(labels)}</p>'
+
+
+def _render_hero(report: dict[str, Any]) -> str:
+    """
+    The health score is the visual hero: score, grade, and the top-line
+    counts a reader needs before digging into anything else. Per-category
+    deduction detail lives in the "What needs attention" section below,
+    not duplicated here as a second breakdown list.
+    """
+    health = report.get("health_score", {})
     if not health:
         return ""
 
-    grade_class = _HEALTH_GRADE_CLASS.get(health["grade"], "")
-    items = [
-        (col, points) for col, points in health.get("breakdown", {}).items() if points > 0
-    ]
-    items.sort(key=lambda pair: pair[1], reverse=True)
-
-    if not items:
-        breakdown_html = '<span class="health-score-breakdown-item">No deductions, nothing flagged.</span>'
-    else:
-        breakdown_html = "".join(
-            f'<span class="health-score-breakdown-item">'
-            f'{escape(_HEALTH_BREAKDOWN_LABELS.get(col, col))}: <strong>-{points}</strong></span>'
-            for col, points in items
-        )
-
-    informational = health.get("informational_categories", [])
-    informational_html = ""
-    if informational:
-        labels = ", ".join(_HEALTH_BREAKDOWN_LABELS.get(col, col).lower() for col in informational)
-        informational_html = f'<p class="health-score-informational">Tracked but not scored: {escape(labels)}</p>'
+    shape = report.get("shape", {})
+    grade_class = _HEALTH_GRADE_CLASS.get(health.get("grade", ""), "")
+    issues_detected = sum(1 for points in health.get("breakdown", {}).values() if points > 0)
 
     return f"""
-    <div class="box health-score-card">
-        <div class="health-score-badge {grade_class}">
-            <div class="health-score-number">{health['score']}</div>
-            <div class="health-score-denom">/ 100</div>
-        </div>
-        <div class="health-score-main">
-            <div class="health-score-heading">
-                <h2>🏥 Data Health Score</h2>
-                <span class="health-score-grade {grade_class}">{escape(health['grade'])}</span>
+    <div class="box hero-card">
+        <div class="hero-top">
+            <div class="health-score-badge {grade_class}">
+                <div class="health-score-number">{health.get('score', 'N/A')}</div>
+                <div class="health-score-denom">/ 100</div>
             </div>
-            <div class="health-score-breakdown">{breakdown_html}</div>
-            {informational_html}
+            <div class="hero-heading">
+                <h2>🏥 Data Health Score</h2>
+                <span class="health-score-grade {grade_class}">{escape(str(health.get('grade', '')))}</span>
+                {_render_informational_notice(health)}
+            </div>
+        </div>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-value">{issues_detected}</div>
+                <div class="hero-stat-label">Issues detected</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value">{shape.get('rows', 'N/A')}</div>
+                <div class="hero-stat-label">Rows</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value">{shape.get('columns', 'N/A')}</div>
+                <div class="hero-stat-label">Columns</div>
+            </div>
+        </div>
+    </div>"""
+
+
+def _format_columns(cols: list[str], limit: int = 3) -> str:
+    if not cols:
+        return ""
+    shown = ", ".join(cols[:limit])
+    if len(cols) > limit:
+        shown += f", +{len(cols) - limit} more"
+    return shown
+
+
+def _worst_by_value(d: dict[str, float]) -> Optional[tuple[str, float]]:
+    if not d:
+        return None
+    col = max(d, key=lambda k: d[k])
+    return col, d[col]
+
+
+def _attention_row_missing_values(report: dict[str, Any]) -> tuple[str, str]:
+    worst = _worst_by_value(report.get("missing_percentage", {}))
+    if not worst:
+        return "", ""
+    col, pct = worst
+    return col, f"{pct}%"
+
+
+def _attention_row_duplicate_rows(report: dict[str, Any]) -> tuple[str, str]:
+    return "", str(report.get("duplicate_rows", 0))
+
+
+def _attention_row_outliers(report: dict[str, Any]) -> tuple[str, str]:
+    outliers = report.get("outliers_mad") or report.get("outliers_iqr") or {}
+    worst = _worst_by_value(outliers)
+    if not worst:
+        return "", ""
+    col, count = worst
+    return col, str(int(count))
+
+
+def _attention_row_duplicate_columns(report: dict[str, Any]) -> tuple[str, str]:
+    pairs = report.get("duplicate_columns", [])
+    if not pairs:
+        return "", "0"
+    a, b = pairs[0][0], pairs[0][1]
+    context = f"{a} ↔ {b}" if len(pairs) == 1 else f"{a} ↔ {b}, +{len(pairs) - 1} more"
+    return context, str(len(pairs))
+
+
+def _attention_row_correlated_columns(report: dict[str, Any]) -> tuple[str, str]:
+    pairs = report.get("correlated_columns", [])
+    if not pairs:
+        return "", "0"
+    a, b, score = pairs[0]
+    context = f"{a} ↔ {b}" if len(pairs) == 1 else f"{a} ↔ {b}, +{len(pairs) - 1} more"
+    return context, str(score)
+
+
+def _attention_row_skewed_distributions(report: dict[str, Any]) -> tuple[str, str]:
+    shapes = report.get("distribution_shape", {})
+    if not shapes:
+        return "", ""
+    col = max(shapes, key=lambda c: abs(shapes[c]["skewness"]))
+    return col, f"skew={shapes[col]['skewness']}"
+
+
+def _make_column_list_attention_row(report_key: str) -> Callable[[dict[str, Any]], tuple[str, str]]:
+    def row(report: dict[str, Any]) -> tuple[str, str]:
+        cols = report.get(report_key, [])
+        return _format_columns(cols), str(len(cols))
+
+    return row
+
+
+# One builder per scoreable health-score category (see
+# DataProfiler.HEALTH_SCORE_MAX_DEDUCTIONS), producing (where, value) for
+# the "What needs attention" table from data the report already contains.
+# No new detectors or statistics: each builder only selects/formats fields
+# run_full_profile() already computed.
+_ATTENTION_ROW_BUILDERS: dict[str, Callable[[dict[str, Any]], tuple[str, str]]] = {
+    "missing_values": _attention_row_missing_values,
+    "duplicate_rows": _attention_row_duplicate_rows,
+    "outliers": _attention_row_outliers,
+    "duplicate_columns": _attention_row_duplicate_columns,
+    "constant_columns": _make_column_list_attention_row("constant_columns"),
+    "mixed_type_columns": _make_column_list_attention_row("mixed_type_columns"),
+    "negative_values": _make_column_list_attention_row("negative_in_nonnegative_columns"),
+    "skewed_distributions": _attention_row_skewed_distributions,
+    "correlated_columns": _attention_row_correlated_columns,
+    "near_constant_columns": _make_column_list_attention_row("near_constant_columns"),
+    "date_like_columns": _make_column_list_attention_row("date_like_columns"),
+}
+
+
+def _render_attention_section(report: dict[str, Any]) -> str:
+    breakdown = report.get("health_score", {}).get("breakdown", {})
+    deductions = sorted(
+        ((category, points) for category, points in breakdown.items() if points > 0),
+        key=lambda pair: pair[1],
+        reverse=True,
+    )
+
+    if not deductions:
+        return '<p class="empty">No major issues detected. ✅</p>'
+
+    rows_html = []
+    for category, points in deductions:
+        builder = _ATTENTION_ROW_BUILDERS.get(category)
+        where, value = builder(report) if builder else ("", "")
+        label = _HEALTH_BREAKDOWN_LABELS.get(category, category)
+        rows_html.append(
+            "<tr>"
+            f"<td>{escape(label)}</td>"
+            f"<td>{escape(where)}</td>"
+            f"<td>{escape(value)}</td>"
+            "</tr>"
+        )
+
+    return (
+        '<table class="attention-table"><thead><tr><th>Issue</th><th>Where</th><th>Value</th></tr></thead>'
+        f"<tbody>{''.join(rows_html)}</tbody></table>"
+    )
+
+
+def _render_missing_values_summary(report: dict[str, Any], top_n: int = 8) -> str:
+    missing_pct = {col: pct for col, pct in report.get("missing_percentage", {}).items() if pct > 0}
+    if not missing_pct:
+        return '<p class="empty">No missing values.</p>'
+
+    top = sorted(missing_pct.items(), key=lambda kv: kv[1], reverse=True)[:top_n]
+    rows = "".join(
+        '<div class="missing-bar-row">'
+        f'<span class="missing-bar-label">{escape(col)}</span>'
+        f'<div class="missing-bar-track"><div class="missing-bar-fill" style="width:{min(pct, 100):.1f}%"></div></div>'
+        f'<span class="missing-bar-value">{pct}%</span>'
+        "</div>"
+        for col, pct in top
+    )
+    return f'<div class="missing-bar-list">{rows}</div>'
+
+
+def _render_dataset_structure(report: dict[str, Any]) -> str:
+    shape = report.get("shape", {})
+    rows, cols = shape.get("rows", 0), shape.get("columns", 0)
+    # outliers_iqr covers exactly the numeric columns run_full_profile()
+    # considers numeric (detect_outliers() iterates self._numeric_df.columns
+    # unconditionally), so its key count is the numeric-column count without
+    # re-deriving it from dtype strings.
+    numeric_columns = len(report.get("outliers_iqr", {}))
+    other_columns = max(cols - numeric_columns, 0)
+    total_missing_cells = sum(report.get("missing_values", {}).values())
+    total_cells = rows * cols
+    missing_cell_pct = round(total_missing_cells / total_cells * 100, 2) if total_cells else 0.0
+
+    facts = {
+        "Rows": rows,
+        "Columns": cols,
+        "Numeric columns": numeric_columns,
+        "Text / other columns": other_columns,
+        "Duplicate rows": report.get("duplicate_rows", 0),
+        "Missing cells": f"{total_missing_cells} ({missing_cell_pct}%)",
+    }
+    return _render_kv_table(facts)
+
+
+def _render_overview_grid(report: dict[str, Any]) -> str:
+    return f"""
+    <div class="box">
+        <div class="grid-2">
+            <div>
+                <h3 class="panel-title">Missing values</h3>
+                {_render_missing_values_summary(report)}
+            </div>
+            <div>
+                <h3 class="panel-title">Dataset structure</h3>
+                {_render_dataset_structure(report)}
+            </div>
         </div>
     </div>"""
 
@@ -138,7 +331,9 @@ def _color_for_correlation(value: float) -> str:
 
 
 def _render_correlation_heatmap(
-    matrix: dict, partial_analysis_notices=None, empty_message="Not enough numeric columns for a heatmap."
+    matrix: dict[str, dict[str, float]],
+    partial_analysis_notices: list[str] | None = None,
+    empty_message: str = "Not enough numeric columns for a heatmap.",
 ) -> str:
     cols = list(matrix.keys())
     if len(cols) < 2:
@@ -165,7 +360,7 @@ def _render_correlation_heatmap(
     )
 
 
-def _render_explorer_histogram(hist: dict, empty_message="No histogram data for this column.") -> str:
+def _render_explorer_histogram(hist: dict[str, Any], empty_message: str = "No histogram data for this column.") -> str:
     if not hist:
         return f'<p class="empty">{empty_message}</p>'
 
@@ -190,7 +385,7 @@ def _render_explorer_histogram(hist: dict, empty_message="No histogram data for 
     return f'<div class="explorer-hist-bars">{"".join(bars)}</div>'
 
 
-def _render_explorer_stats(col: str, box: dict, report: dict) -> str:
+def _render_explorer_stats(col: str, box: dict[str, Any], report: dict[str, Any]) -> str:
     if not box:
         return ""
 
@@ -225,7 +420,7 @@ def _render_explorer_stats(col: str, box: dict, report: dict) -> str:
     return f'<div class="explorer-stats">{chips}</div>'
 
 
-def _render_column_explorer(report: dict) -> str:
+def _render_column_explorer(report: dict[str, Any]) -> str:
     """
     Interactive per-column drill-down: a dropdown switches between hidden
     panels (one per column) via a tiny inline script, so this works in a
@@ -289,7 +484,7 @@ def _render_column_explorer(report: dict) -> str:
     return note + controls + f'<div id="explorer-blocks">{"".join(panels)}</div>' + script
 
 
-def _boxplot_svg(box: dict) -> str:
+def _boxplot_svg(box: dict[str, Any]) -> str:
     width, height, padding = 300, 46, 14
     values = [box["min"], box["max"], box["whisker_low"], box["whisker_high"], *box["outliers"]]
     domain_min, domain_max = min(values), max(values)
@@ -325,24 +520,6 @@ def _boxplot_svg(box: dict) -> str:
     )
 
 
-def _render_stat_grid(rows, cols, duplicates) -> str:
-    return f"""
-    <div class="stat-grid">
-        <div class="stat-card">
-            <div class="value">{rows}</div>
-            <div class="label">Rows</div>
-        </div>
-        <div class="stat-card">
-            <div class="value">{cols}</div>
-            <div class="label">Columns</div>
-        </div>
-        <div class="stat-card">
-            <div class="value">{duplicates}</div>
-            <div class="label">Duplicate rows</div>
-        </div>
-    </div>"""
-
-
 # (title, report key, render helper, empty message) for each section of the
 # collapsed technical report. Declarative so adding a detector's output here
 # is a one-line addition, not another copy-pasted <div class="tech-box">.
@@ -366,7 +543,7 @@ _TECH_SECTIONS = (
 )
 
 
-def _render_technical_report(report: dict) -> str:
+def _render_technical_report(report: dict[str, Any]) -> str:
     # {} is a safe empty-collection default for every renderer here: each
     # one only ever checks `if not x` for its "nothing to show" branch, so
     # a missing key renders identically regardless of the section's real
@@ -421,6 +598,14 @@ _STYLES = """
         margin-bottom: 32px;
     }
 
+    .header-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
     header h1 {
         font-size: 32px;
         font-weight: 700;
@@ -434,30 +619,9 @@ _STYLES = """
         font-size: 15px;
     }
 
-    .stat-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 16px;
-        margin-bottom: 32px;
-    }
-
-    .stat-card {
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 20px;
-        text-align: center;
-    }
-
-    .stat-card .value {
-        font-size: 28px;
-        font-weight: 700;
-    }
-
-    .stat-card .label {
+    .header-timestamp {
         font-size: 13px;
         color: var(--muted);
-        margin-top: 4px;
     }
 
     .box {
@@ -479,6 +643,14 @@ _STYLES = """
         display: flex;
         align-items: center;
         gap: 8px;
+    }
+
+    .panel-title {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+        margin: 0 0 12px 0;
     }
 
     table {
@@ -503,7 +675,8 @@ _STYLES = """
     }
 
     .nested-summary td:last-child,
-    .nested td:last-child {
+    .nested td:last-child,
+    .attention-table td:last-child {
         text-align: left;
     }
 
@@ -530,7 +703,13 @@ _STYLES = """
         margin-bottom: 6px;
     }
 
-    .health-score-card {
+    .hero-card {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .hero-top {
         display: flex;
         align-items: center;
         gap: 24px;
@@ -578,19 +757,16 @@ _STYLES = """
         color: var(--danger);
     }
 
-    .health-score-main {
+    .hero-heading {
         flex: 1;
         min-width: 0;
-    }
-
-    .health-score-heading {
         display: flex;
         align-items: center;
         gap: 10px;
         flex-wrap: wrap;
     }
 
-    .health-score-heading h2 {
+    .hero-heading h2 {
         margin: 0;
     }
 
@@ -613,31 +789,43 @@ _STYLES = """
         color: var(--danger);
     }
 
-    .health-score-breakdown {
-        margin-top: 12px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-
-    .health-score-breakdown-item {
-        font-size: 12px;
-        padding: 4px 10px;
-        border-radius: 999px;
-        background: var(--bg);
-        border: 1px solid var(--border);
-        color: var(--muted);
-    }
-
-    .health-score-breakdown-item strong {
-        color: var(--text);
-    }
-
     .health-score-informational {
+        flex-basis: 100%;
         font-size: 12px;
         color: var(--muted);
         font-style: italic;
-        margin: 10px 0 0 0;
+        margin: 4px 0 0 0;
+    }
+
+    .hero-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 16px;
+        padding-top: 4px;
+        border-top: 1px solid var(--border);
+    }
+
+    .hero-stat {
+        text-align: center;
+    }
+
+    .hero-stat-value {
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .hero-stat-label {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    .attention-table th {
+        text-align: left;
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 500;
+        padding: 0 4px 8px 4px;
     }
 
     .partial-analysis-notice {
@@ -677,6 +865,46 @@ _STYLES = """
 
     @media (max-width: 640px) {
         .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .missing-bar-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .missing-bar-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 2fr auto;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+    }
+
+    .missing-bar-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--muted);
+    }
+
+    .missing-bar-track {
+        background: var(--bg);
+        border-radius: 999px;
+        height: 8px;
+        overflow: hidden;
+    }
+
+    .missing-bar-fill {
+        background: var(--warning);
+        height: 100%;
+        border-radius: 999px;
+    }
+
+    .missing-bar-value {
+        font-weight: 600;
+        font-size: 12px;
+        text-align: right;
     }
 
     .heatmap-wrap {
@@ -872,11 +1100,17 @@ _STYLES = """
 """
 
 
-def generate_html_report(report: dict, output_path="report.html") -> None:
-    shape = report.get("shape", {})
-    rows = shape.get("rows", "N/A")
-    cols = shape.get("columns", "N/A")
-    duplicates = report.get("duplicates", 0)
+def generate_html_report(report: dict[str, Any], output_path: str | Path = "report.html") -> Path:
+    """
+    Renders the canonical report dict (DataProfiler.run_full_profile()'s
+    output) as a standalone, dependency-free HTML file and returns the
+    path written to. Purely a presentation layer: every number here comes
+    from a key already in `report`, nothing is recomputed.
+
+    Callers decide what to print about the result; this function only
+    writes the file.
+    """
+    generated_at = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -890,27 +1124,35 @@ def generate_html_report(report: dict, output_path="report.html") -> None:
 <div class="container">
 
     <header>
-        <h1>🕵️ Data Detective Report</h1>
-        <p>Automated data profiling summary</p>
+        <div class="header-row">
+            <h1>🕵️ Data Detective</h1>
+            <span class="header-timestamp">Generated {generated_at}</span>
+        </div>
+        <p>Dataset quality overview</p>
     </header>
 
-    {_render_health_score(report.get("health_score", {}))}
+    {_render_hero(report)}
+
+    <div class="box">
+        <h2>🚨 What needs attention</h2>
+        {_render_attention_section(report)}
+    </div>
+
+    {_render_overview_grid(report)}
 
     <div class="box">
         <h2>🧠 Insights</h2>
         {_render_insights(report.get("insights", []))}
     </div>
 
-    {_render_stat_grid(rows, cols, duplicates)}
+    <div class="box">
+        <h2>📊 Column Explorer</h2>
+        {_render_column_explorer(report)}
+    </div>
 
     <div class="box">
         <h2>🔗 Correlation Heatmap</h2>
         {_render_correlation_heatmap(report.get("correlation_matrix", {}), report.get("partial_analysis", []))}
-    </div>
-
-    <div class="box">
-        <h2>🔍 Column Explorer</h2>
-        {_render_column_explorer(report)}
     </div>
 
     {_render_technical_report(report)}
@@ -919,5 +1161,6 @@ def generate_html_report(report: dict, output_path="report.html") -> None:
 </body>
 </html>"""
 
-    Path(output_path).write_text(html, encoding="utf-8")
-    print(f"📄 HTML report generated: {output_path}")
+    path = Path(output_path)
+    path.write_text(html, encoding="utf-8")
+    return path

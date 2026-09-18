@@ -21,8 +21,8 @@ def print_report(report: dict):
 
     print(f"\n📦 Shape: {pretty(report.get('shape', {}))}")
 
-    print("\n🚨 Duplicates:")
-    print(pretty(report.get("duplicates", 0)))
+    print("\n🚨 Duplicate Rows:")
+    print(pretty(report.get("duplicate_rows", 0)))
 
     print("\n📉 Missing Values:")
     print(pretty(report.get("missing_values", {})))

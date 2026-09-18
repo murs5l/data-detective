@@ -56,6 +56,22 @@ def test_analyze_output_html_writes_given_path(sample_csv, tmp_path):
     out_path = tmp_path / "custom.html"
     _run(["analyze", str(sample_csv), "--output-html", str(out_path)])
 
+
+def test_analyze_html_flag_prints_generated_path_message(sample_csv, tmp_path, capsys):
+    out_path = tmp_path / "custom.html"
+    _run(["analyze", str(sample_csv), "--output-html", str(out_path)])
+
+    out = capsys.readouterr().out
+    assert f"HTML report generated: {out_path}" in out
+
+
+def test_analyze_html_flag_quiet_suppresses_generated_message(sample_csv, tmp_path, capsys):
+    out_path = tmp_path / "custom.html"
+    _run(["analyze", str(sample_csv), "--output-html", str(out_path), "--quiet"])
+
+    out = capsys.readouterr().out
+    assert out == ""
+
     assert out_path.exists()
 
 

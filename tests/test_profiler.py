@@ -301,7 +301,7 @@ def test_run_full_profile_keys(sample_df):
     report = profiler.run_full_profile()
     expected_keys = {
         "shape", "column_types", "missing_values", "missing_percentage",
-        "duplicates", "unique_counts", "constant_columns",
+        "duplicate_rows", "unique_counts", "constant_columns",
         "high_cardinality_columns", "outliers_iqr", "outliers_mad",
         "distribution_shape", "duplicate_columns", "correlated_columns",
         "histogram_data", "boxplot_stats", "date_like_columns",

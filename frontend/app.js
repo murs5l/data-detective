@@ -308,7 +308,7 @@
     const stats = [
       { label: "Rows", value: shape.rows ?? "N/A" },
       { label: "Columns", value: shape.columns ?? "N/A" },
-      { label: "Duplicate rows", value: report.duplicates ?? 0 },
+      { label: "Duplicate rows", value: report.duplicate_rows ?? 0 },
       { label: "Memory (KB)", value: totalMemory ? totalMemory.toFixed(1) : "0" },
       { label: "Processing time", value: `${report.processing_ms ?? "N/A"} ms` },
     ];

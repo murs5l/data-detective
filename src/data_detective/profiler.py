@@ -799,7 +799,7 @@ class DataProfiler:
             "column_types": self.column_types(),
             "missing_values": self.missing_values(),
             "missing_percentage": self.missing_percentage(),
-            "duplicates": self.duplicate_rows(),
+            "duplicate_rows": self.duplicate_rows(),
             "unique_counts": self.unique_counts(),
             "constant_columns": self.detect_constant_columns(),
             "near_constant_columns": self.detect_near_constant_columns(),
