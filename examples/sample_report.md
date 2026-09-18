@@ -13,6 +13,8 @@
 
 </details>
 
+_Tracked but not scored: date like columns, near constant columns._
+
 **Shape:** 1000 rows &times; 10 columns &nbsp;|&nbsp; **Duplicate rows:** 2
 
 ## Insights
